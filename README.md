@@ -22,3 +22,9 @@ https://www.figma.com/file/56p8e6feQxxJA5heYuQtmq/Prog-4-APP?type=design&node-id
 
    ```bash
    npm start
+
+3. **Run on Expo Go App:**
+
+Install Expo Go on your Android or iOS device from the respective app store.
+Open the Expo Go app on your device.
+Use the device's camera to scan the QR code displayed in the Expo DevTools in your browser.
