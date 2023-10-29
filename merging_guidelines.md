@@ -11,21 +11,13 @@
 - Include detailed testing instructions.
 - Assign a reviewer for code inspection.
 
-## Testing
-
-- Thoroughly test your changes before creating a PR.
-- Run automated tests when applicable.
-
 ## Review Process
 
 - Reviewers evaluate code quality and functionality.
 - Provide constructive feedback for improvement.
-- PR approval is required before merging.
+- PR approval is required before merging. When done, comment "lgtm + pull request ID". lgtm (Looks good to me)
 
 ## Merging
 
-- Only maintainers or team leads can merge PRs.
-- Squash commits into descriptive summaries.
-- Rebase your branch on the latest main branch before merging.
+- Once it has been reviewed, we can now merge it to parent branch.
 
-Thank you for contributing to the project!
