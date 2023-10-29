@@ -25,6 +25,17 @@ https://www.figma.com/file/56p8e6feQxxJA5heYuQtmq/Prog-4-APP?type=design&node-id
 
 3. **Run on Expo Go App:**
 
-Install Expo Go on your Android or iOS device from the respective app store.
-Open the Expo Go app on your device.
-Use the device's camera to scan the QR code displayed in the Expo DevTools in your browser.
+   1. **Install Expo Go:**
+   
+      Install Expo Go on your Android or iOS device from the respective app store.
+   
+   2. **Open Expo Go:**
+   
+      Open the Expo Go app on your device.
+   
+   3. **Scan QR Code:**
+   
+      Use the device's camera to scan the QR code displayed in the Expo DevTools in your browser.
+
+This will load and run your React Native app on your device.
+
