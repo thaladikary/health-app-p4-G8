@@ -16,19 +16,47 @@ export default function Navbar({ navigation }){
         navigation.navigate("Account")
     }
     return(
-        <View>
+        <View style={styles.navbarContainer}>
             <TouchableOpacity onPress={handleTrackCalories}>
-              <Text>Track Calories</Text>
+              <View style={styles.labelContainer}>
+                <Text>Track Calories</Text>
+              </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleMaps}>
+            <View style={styles.labelContainer}>
                 <Text>Maps</Text>
+              </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleGroceryList}>
-                 <Text>Groceries List</Text>
+            <View style={styles.labelContainer}>
+                <Text>Grocery</Text>
+              </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleAccount}>
-                 <Text>Account</Text>
+            <View style={styles.labelContainer}>
+                <Text>Profile</Text>
+              </View>
             </TouchableOpacity>
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    navbarContainer:{
+        display:'flex',
+        flexDirection:"row",
+        // width:360,
+        // height:50,
+        borderTopColor:"black",
+        borderTopWidth:1
+     
+
+    },
+    labelContainer:{
+        alignContent:"space-between",
+        margin:10,
+        marginTop:15,
+        marginBottom:15,
+        marginLeft:20
+    }
+})
