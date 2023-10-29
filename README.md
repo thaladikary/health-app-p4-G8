@@ -13,3 +13,12 @@ https://www.figma.com/file/56p8e6feQxxJA5heYuQtmq/Prog-4-APP?type=design&node-id
 
    ```bash
    npm install
+   
+**Running Your Project:**
+
+1. **Start the Development Server:**
+
+   Start the development server for your React Native project using Expo CLI:
+
+   ```bash
+   npm start
