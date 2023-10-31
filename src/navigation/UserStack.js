@@ -1,8 +1,8 @@
 import { View, Text, StyleSheet,Image, Dimensions, StatusBar} from 'react-native';
-import TrackCalories from "../screens/TrackCalories"
-import Maps from '../screens/Maps';
-import GroceryList from "../screens/GroceryList"
-import Account from '../screens/Account';
+import TrackCalories from "../screens/main/TrackCalories"
+import Maps from '../screens/main/Maps';
+import GroceryList from "../screens/main/GroceryList"
+import Account from '../screens/main/Account';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 const Stack = createStackNavigator();
