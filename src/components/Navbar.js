@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet,Image, Dimensions, StatusBar, TouchableOpacity} from 'react-native';
 
-
+const screenWidth = Dimensions.get('window').width
 export default function Navbar({ navigation }){
 
     const handleTrackCalories = () =>{
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     navbarContainer:{
         display:'flex',
         flexDirection:"row",
-        // width:360,
+        width:screenWidth,
         // height:50,
         borderTopColor:"black",
         borderTopWidth:1
