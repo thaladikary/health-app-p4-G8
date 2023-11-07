@@ -3,7 +3,7 @@ import Navbar from '../../components/Navbar';
 export default function TrackCalories({navigation}){
    return(
     <View>
-        <Text>TrackCalories Page!</Text>
+        <Text>Track Calories Page</Text>
         <Navbar navigation={navigation}/>
     </View>
    )

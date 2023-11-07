@@ -1,6 +1,10 @@
 import { View, Text, StyleSheet,Image, Dimensions, StatusBar, TouchableOpacity} from 'react-native';
 
 const screenWidth = Dimensions.get('window').width
+const screenHeight = Dimensions.get('window').height;
+
+const scaleFactor = 0.05;
+const marginValue = screenWidth * scaleFactor;
 export default function Navbar({ navigation }){
 
     const handleTrackCalories = () =>{
@@ -43,20 +47,27 @@ export default function Navbar({ navigation }){
 
 const styles = StyleSheet.create({
     navbarContainer:{
-        display:'flex',
-        flexDirection:"row",
-        width:screenWidth,
-        // height:50,
+        // display:'flex',
+        // flexDirection:"row",
+        // width:screenWidth,
+        // // height:50,
         borderTopColor:"black",
-        borderTopWidth:1
-     
+        justifyContent: "space-between",
+        borderTopWidth:1,
+        display: "flex",
+        flexDirection: "row",
+        marginTop: marginValue,
 
     },
     labelContainer:{
-        alignContent:"space-between",
-        margin:10,
-        marginTop:15,
-        marginBottom:15,
-        marginLeft:20
+        // alignContent:"space-between",
+        // margin:10,
+        // marginTop:15,
+        // marginBottom:15,
+        // marginLeft:20
+        borderWidth: 2,        // Border width
+        borderColor: 'red',  // Border color
+        borderRadius: 1,
+
     }
 })
