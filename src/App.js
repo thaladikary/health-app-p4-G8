@@ -9,8 +9,8 @@ import Scanner from './screens/main/Scanner';
 // if false load from firebase
 export default function App() {
   return (
-    <Scanner/>
-      //  <UserStack/>
+
+       <UserStack/>
       //  <SetupStack/>  -> for balki, uncomment this one and comment out the top
 
   );
