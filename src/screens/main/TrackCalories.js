@@ -19,6 +19,7 @@ export default function TrackCalories({ navigation }) {
     <View>
       <Text style={styles.header}>Track Calories </Text>
 
+      {/* KCAL TRACKER */}
       <View style={[styles.mainTrackerContainer]}>
         <View style={[styles.card]}>
           <View style={[styles.consumedContainer]}>
@@ -54,6 +55,8 @@ export default function TrackCalories({ navigation }) {
               </View>
             </View>
           </View>
+
+          {/* MACROS TRACKER */}
           <View style={styles.macroTrackerContainer}>
             <View style={[styles.carbTrackerContainer]}>
               <Text style={[styles.macroHeaderStyle, styles.flexStyle]}>
@@ -105,10 +108,32 @@ export default function TrackCalories({ navigation }) {
           </View>
         </View>
 
-        <View></View>
+        {/* WATER TRACKER */}
+        <View style={[styles.card, styles.waterTrackContainer]}>
+          <Text style={[styles.waterTrackHeader]}>Water Tracker</Text>
+          <View>
+            <Progress.Bar
+              progress={0.3}
+              width={350}
+              height={25}
+              color="#00bfff"
+              unfilledColor="lightgray"
+              borderWidth={0}
+            />
+            <Text style={[styles.waterTrackAmountHeader]}>
+              <Text>Goal: </Text>
+              <Text style={[styles.waterTrackAmount]}>755/2500</Text>
+              <Text> mL</Text>
+            </Text>
+          </View>
+        </View>
+
+        <View style={[styles.card]}>
+          <Text style={[styles.weightTrackHeader]}>Weight Tracker</Text>
+        </View>
       </View>
 
-      <Navbar navigation={navigation} />
+      {/* <Navbar navigation={navigation} /> */}
     </View>
   );
 }
@@ -127,7 +152,7 @@ const styles = StyleSheet.create({
 
   card: {
     height: 250,
-    margin: 20,
+    margin: 15,
     paddingTop: 25,
     backgroundColor: "white",
     borderRadius: 8,
@@ -213,6 +238,35 @@ const styles = StyleSheet.create({
   carbTrackerContainer: {},
   proteinTrackerContainer: {},
   fatsTrackerContainer: {},
+
+  waterTrackContainer: {
+    height: 125,
+    alignItems: "center",
+  },
+
+  waterTrackAmount: {
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 15,
+  },
+
+  waterTrackAmountHeader: {
+    textAlign: "center",
+    margin: 5,
+  },
+
+  waterTrackHeader: {
+    color: "black",
+    fontWeight: "700",
+    fontSize: 15,
+    marginBottom: 5,
+  },
+
+  weightTrackHeader: {
+    fontWeight: "bold",
+    fontSize: 20,
+    textAlign: "center",
+  },
 
   boldText: {
     fontWeight: "bold",
