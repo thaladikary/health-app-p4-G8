@@ -24,7 +24,7 @@ export default function UserStack(){
                         animation:"none",
                         animationEnabled: false
                     }}>
-                       
+                          
                         <Stack.Screen
                             name="TrackCalories"
                             component={TrackCalories}
@@ -41,7 +41,7 @@ export default function UserStack(){
                             name="Account"
                             component={Account}
                         />
-                          <Stack.Screen
+                        <Stack.Screen
                             name="Scanner"
                             component={Scanner}
                         />  
