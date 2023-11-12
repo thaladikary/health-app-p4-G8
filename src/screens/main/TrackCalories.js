@@ -10,6 +10,7 @@ import {
 import React, { useState, useEffect } from "react";
 import * as Progress from "react-native-progress";
 import Navbar from "../../components/Navbar";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("window");
 export default function TrackCalories({ navigation }) {
@@ -69,7 +70,7 @@ export default function TrackCalories({ navigation }) {
                 </Text>
                 <Progress.Bar
                   progress={0.5}
-                  width={100}
+                  width={width*0.23}
                   height={7}
                   color="#87cefa"
                   unfilledColor="lightgray"
@@ -85,7 +86,7 @@ export default function TrackCalories({ navigation }) {
                 </Text>
                 <Progress.Bar
                   progress={0.8}
-                  width={100}
+                  width={width*0.23}
                   height={7}
                   color="#cd5c5c"
                   unfilledColor="lightgray"
@@ -101,7 +102,7 @@ export default function TrackCalories({ navigation }) {
                 </Text>
                 <Progress.Bar
                   progress={0.3}
-                  width={100}
+                  width={width*0.23}
                   height={7}
                   color="#daa520"
                   unfilledColor="lightgray"
@@ -114,6 +115,53 @@ export default function TrackCalories({ navigation }) {
           </View>
 
           {/* WATER TRACKER */}
+          
+          <View style={[styles.card,styles.mealCard]}>
+            <View style={styles.mealContainer}>
+                <View style={styles.mealFontContainer}>
+                    <Text style={styles.mealFontText}>Breakfast</Text>
+                </View>
+                <TouchableOpacity>
+                <View style={styles.plusSign}>
+                    <Text style={styles.plusSignText}>+</Text>
+                </View>
+                </TouchableOpacity>
+
+            </View> 
+          </View>
+          <View style={[styles.card,styles.mealCard]}>
+            <View style={styles.mealContainer}>
+                <View style={styles.mealFontContainer}>
+                    <Text style={styles.mealFontText}>Lunch</Text>
+                </View>
+                <TouchableOpacity>
+                <View style={styles.plusSign}>
+                    <Text style={styles.plusSignText}>+</Text>
+                </View>
+                </TouchableOpacity>
+            </View> 
+          </View>
+
+          <View style={[styles.card,styles.mealCard]}>
+            <View style={styles.mealContainer}>
+                <View style={styles.mealFontContainer}>
+                    <Text style={styles.mealFontText}>Dinner</Text>
+                </View>
+                <View style={styles.plusSign}>
+                    <Text style={styles.plusSignText}>+</Text>
+                </View>
+            </View> 
+          </View>
+          <View style={[styles.card,styles.mealCard]}>
+            <View style={styles.mealContainer}>
+                <View style={styles.mealFontContainer}>
+                    <Text style={styles.mealFontText}>Snacks</Text>
+                </View>
+                <View style={styles.plusSign}>
+                    <Text style={styles.plusSignText}>+</Text>
+                </View>
+            </View> 
+          </View>
           <View style={[styles.card, styles.waterTrackContainer]}>
             <Text style={[styles.waterTrackHeader]}>Water Tracker</Text>
             <View>
@@ -131,7 +179,7 @@ export default function TrackCalories({ navigation }) {
                 <Text> mL</Text>
               </Text>
             </View>
-          </View>
+          </View>     
 
           <View style={[styles.card]}>
             <Text style={[styles.weightTrackHeader]}>Weight Tracker</Text>
@@ -150,9 +198,9 @@ const styles = StyleSheet.create({
     flex:1
   },
   header: {
-    fontSize: 25,
-    marginTop: 15,
-    marginLeft: 15,
+    fontSize: 30,
+    marginTop: 20,
+    marginLeft: 18,
     fontWeight: "bold",
   },
   mainTrackerContainer: {
@@ -161,11 +209,12 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    height: 250,
+    height: 232,
     margin: 15,
-    paddingTop: 25,
+    marginBottom:1,
+    paddingTop: 20,
     backgroundColor: "white",
-    borderRadius: 8,
+    borderRadius: 12,
     elevation: 5,
   },
 
@@ -250,8 +299,9 @@ const styles = StyleSheet.create({
   fatsTrackerContainer: {},
 
   waterTrackContainer: {
-    height: 125,
+    height: 97,
     alignItems: "center",
+    paddingTop:10
   },
 
   waterTrackAmount: {
@@ -280,6 +330,39 @@ const styles = StyleSheet.create({
 
   boldText: {
     fontWeight: "bold",
-    fontSize: 25,
+    fontSize: 23,   
   },
+  plusSignText:{
+    fontWeight: "bold",
+    fontSize: 23,   
+    color: "#4470e9"
+  },    
+  mealFontText:{
+    fontWeight: "bold",
+    fontSize: 23,
+    marginLeft:20,
+  },
+
+  mealCard:{
+    height: 84,
+    paddingTop: 12,
+  },
+  mealContainer:{
+    display:"flex",
+    flexDirection:"row",
+    
+  },
+  plusSign: {
+    width: 50,
+    height: 50,
+    backgroundColor: "#eaf4fe",
+    borderRadius: 50,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 10, 
+  },
+  mealFontContainer:{
+    width:width*0.74
+  }
 });
