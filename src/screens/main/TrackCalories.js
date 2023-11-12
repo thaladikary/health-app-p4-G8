@@ -19,8 +19,9 @@ export default function TrackCalories({ navigation }) {
   const [fatsProgress, setFatsProgress] = useState(0);
 
   return (
-    <View>
+    <View style={styles.container}>
       <ScrollView>
+       
         <Text style={styles.header}>Track Calories </Text>
 
         {/* KCAL TRACKER */}
@@ -137,14 +138,17 @@ export default function TrackCalories({ navigation }) {
             <Text>There should be a graph here...</Text>
           </View>
         </View>
+       
       </ScrollView>
-
       <Navbar navigation={navigation} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container:{
+    flex:1
+  },
   header: {
     fontSize: 25,
     marginTop: 15,
