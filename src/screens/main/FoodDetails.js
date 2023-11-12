@@ -1,6 +1,8 @@
 import { View, Text, StyleSheet,Image, Dimensions, StatusBar, TouchableOpacity} from 'react-native';
 import { useState } from 'react';
 import Navbar from '../../components/Navbar';
+const { width, height } = Dimensions.get('window');
+
 export default function FoodDetails({navigation,route}) {
     const foodData = route.params
     const [servingsAmt, setServingsAmt] = useState(1);
@@ -263,9 +265,6 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         alignItems:"center",
         flexDirection:"row",
-
-        
-      
     },
     numberBox:{
         width:100,
