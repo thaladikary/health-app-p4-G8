@@ -24,10 +24,7 @@ export default function UserStack(){
                         animation:"none",
                         animationEnabled: false
                     }}>
-                        <Stack.Screen
-                            name="Scanner"
-                            component={Scanner}
-                        />   
+                       
                         <Stack.Screen
                             name="TrackCalories"
                             component={TrackCalories}
@@ -44,10 +41,15 @@ export default function UserStack(){
                             name="Account"
                             component={Account}
                         />
+                          <Stack.Screen
+                            name="Scanner"
+                            component={Scanner}
+                        />  
                         <Stack.Screen
                              name="FoodDetails"
                              component={FoodDetails}
                         />
+                        
                 </Stack.Navigator>
         </NavigationContainer>
     )

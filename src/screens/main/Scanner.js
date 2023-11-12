@@ -21,7 +21,17 @@ export default function Scanner({navigation}) {
 
     getBarCodeScannerPermissions();
   }, []);
-
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setScanned(false);
+      setHasPermission(false);
+      (async () => {
+      const { status } = await BarCodeScanner.requestPermissionsAsync();
+      setHasPermission(status === "granted"); 
+      })();
+    });
+    return unsubscribe;
+  }, [navigation]);
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
     alert(`Bar code with type ${type} and data ${data} has been scanned!`);
@@ -94,13 +104,13 @@ export default function Scanner({navigation}) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
   camera: {
     flex: 1,
+    ...StyleSheet.absoluteFillObject, 
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,

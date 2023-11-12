@@ -11,10 +11,8 @@ export default function FoodDetails({navigation,route}) {
         fat: foodData.prop.nutriments.fat
     });
     
-    console.log("TEST", typeof foodData.prop.nutriments.carbohydrates, foodData.prop.nutriments.carbohydrates);
     
     const handleSubtractServing = () => {
-        console.log("test");
         const newServingsAmt = servingsAmt !== 1 ? servingsAmt - 1 : 1;
         setServingsAmt(newServingsAmt);
         setMacros({
@@ -23,11 +21,10 @@ export default function FoodDetails({navigation,route}) {
             protein: foodData.prop.nutriments.protein * newServingsAmt,
             fat: foodData.prop.nutriments.fat * newServingsAmt
         });
-        console.log(foodData.prop.nutriments.calories * newServingsAmt, foodData.prop.nutriments.calories, newServingsAmt);
+       
     };
     
     const handleAddServing = () => {
-        console.log("test2");
         const newServingsAmt = servingsAmt + 1;
         setServingsAmt(newServingsAmt);
         setMacros({
@@ -36,10 +33,19 @@ export default function FoodDetails({navigation,route}) {
             protein: foodData.prop.nutriments.protein * newServingsAmt,
             fat: foodData.prop.nutriments.fat * newServingsAmt
         });
-        console.log(foodData.prop.nutriments.calories * newServingsAmt, foodData.prop.nutriments.calories, newServingsAmt);
+       
     };
+    const handleReturn= ()=>{
+        console.log("return to scanner")
+        navigation.navigate("Scanner")
+    }
     return(
         <View style={styles.container}>
+            <TouchableOpacity onPress={handleReturn}>
+                <View style={styles.arrowContainer}>
+                    <Text style={styles.arrowText}>{'<'}</Text>
+                </View>
+            </TouchableOpacity>
             <View style={styles.imageContainer}>
                 <View style={styles.imageCard}>
                      <Image style={styles.icon}src={foodData.prop.image} resizeMode='contain'/>
@@ -96,19 +102,23 @@ export default function FoodDetails({navigation,route}) {
             <View style={styles.servingContainer}>
                 <Text style={styles.subText}>Servings</Text>
                 <View style={styles.servingNumberContainer}>
-                    <View>
-                        <TouchableOpacity onPress={handleSubtractServing}>
+                    
+                <TouchableOpacity onPress={handleSubtractServing}>
+                    <View style={styles.touchableOpacityInner}>
                         <Text style={styles.servingsFont}>-</Text>
-                        </TouchableOpacity>
                     </View>
-                    <View style={styles.numberBox}>
-                        <Text style={styles.servingsFont}>{servingsAmt}</Text>
+                </TouchableOpacity>
+
+                <View style={styles.numberBox}>
+                    <Text style={styles.servingsFont}>{servingsAmt}</Text>
+                </View>
+
+                <TouchableOpacity onPress={handleAddServing}>
+                    <View style={styles.touchableOpacityInner}>
+                        <Text style={styles.servingsFont}>+</Text>
                     </View>
-                    <View>
-                        <TouchableOpacity onPress={handleAddServing}>
-                            <Text style={styles.servingsFont}>+</Text>
-                        </TouchableOpacity>
-                    </View>
+                </TouchableOpacity>
+                    
                 </View>
             </View>
             <View style={styles.addButton}>
@@ -133,7 +143,7 @@ const styles = StyleSheet.create({
         display:"flex",
         justifyContent:"center",
         alignItems:"center",
-        height:270,
+        height:250,
     },
     imageCard:{
         display:"flex",
@@ -235,7 +245,7 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         alignItems:"center",
         borderRadius:20,
-        marginTop:35,
+        marginTop:5,
         backgroundColor:"#4c72d5",
         
     },
@@ -253,8 +263,7 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         alignItems:"center",
         flexDirection:"row",
-        // marginBottom:15,
-        // marginTop:15,
+
         
       
     },
@@ -277,5 +286,20 @@ const styles = StyleSheet.create({
     },
     servingsFont:{
         fontSize:50
-    }
+    },
+   
+    touchableOpacityInner: {
+        margin:20
+
+    },
+    arrowContainer: {
+       marginLeft:-160,
+       marginTop:5,
+    },
+    arrowText: {
+        fontSize: 35, 
+        fontWeight: 'bold',
+    },
+    
+    
 })
