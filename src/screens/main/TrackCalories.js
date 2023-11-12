@@ -130,10 +130,11 @@ export default function TrackCalories({ navigation }) {
 
         <View style={[styles.card]}>
           <Text style={[styles.weightTrackHeader]}>Weight Tracker</Text>
+          <Text>There should be a graph here...</Text>
         </View>
       </View>
 
-      {/* <Navbar navigation={navigation} /> */}
+      <Navbar navigation={navigation} />
     </View>
   );
 }
