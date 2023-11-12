@@ -1,8 +1,43 @@
-import { View, Text, StyleSheet,Image, Dimensions, StatusBar} from 'react-native';
+import { View, Text, StyleSheet,Image, Dimensions, StatusBar, TouchableOpacity} from 'react-native';
 import { useState } from 'react';
 import Navbar from '../../components/Navbar';
 export default function FoodDetails({navigation,route}) {
     const foodData = route.params
+    const [servingsAmt, setServingsAmt] = useState(1);
+    const [macros, setMacros] = useState({
+        calories: foodData.prop.nutriments.calories,
+        carbs: foodData.prop.nutriments.carbohydrates,
+        protein: foodData.prop.nutriments.protein,
+        fat: foodData.prop.nutriments.fat
+    });
+    
+    console.log("TEST", typeof foodData.prop.nutriments.carbohydrates, foodData.prop.nutriments.carbohydrates);
+    
+    const handleSubtractServing = () => {
+        console.log("test");
+        const newServingsAmt = servingsAmt !== 1 ? servingsAmt - 1 : 1;
+        setServingsAmt(newServingsAmt);
+        setMacros({
+            calories: foodData.prop.nutriments.calories * newServingsAmt,
+            carbs: foodData.prop.nutriments.carbohydrates * newServingsAmt,
+            protein: foodData.prop.nutriments.protein * newServingsAmt,
+            fat: foodData.prop.nutriments.fat * newServingsAmt
+        });
+        console.log(foodData.prop.nutriments.calories * newServingsAmt, foodData.prop.nutriments.calories, newServingsAmt);
+    };
+    
+    const handleAddServing = () => {
+        console.log("test2");
+        const newServingsAmt = servingsAmt + 1;
+        setServingsAmt(newServingsAmt);
+        setMacros({
+            calories: foodData.prop.nutriments.calories * newServingsAmt,
+            carbs: foodData.prop.nutriments.carbohydrates * newServingsAmt,
+            protein: foodData.prop.nutriments.protein * newServingsAmt,
+            fat: foodData.prop.nutriments.fat * newServingsAmt
+        });
+        console.log(foodData.prop.nutriments.calories * newServingsAmt, foodData.prop.nutriments.calories, newServingsAmt);
+    };
     return(
         <View style={styles.container}>
             <View style={styles.imageContainer}>
@@ -13,26 +48,13 @@ export default function FoodDetails({navigation,route}) {
             <View style={styles.headerContainer}>
                 <Text style={styles.headerText}>{foodData.prop.name}</Text>
              </View>
-             <View style={styles.servingContainer}>
-                <Text style={styles.subText}>Servings</Text>
-                <View style={styles.servingNumberContainer}>
-                    <View>
-                        <Text style={styles.servingsFont}>-</Text>
-                    </View>
-                    <View style={styles.numberBox}>
-                        <Text style={styles.servingsFont}>1</Text>
-                    </View>
-                    <View>
-                        <Text style={styles.servingsFont}>+</Text>
-                    </View>
-                </View>
-            </View>
+            
 
              <View style={styles.boxContainer}>
                  <View style={styles.nutritionBox}>
                     <View style={styles.macroBox}>
-                        <View style={styles.circle}>
-                            <Text>{Math.round(foodData.prop.nutriments.calories)}</Text> 
+                        <View style={[styles.circle,styles.circle1]}>
+                            <Text>{Math.round(macros.calories)}</Text> 
                         </View>
                         <View style={styles.center}>
                             <Text >Calories</Text>
@@ -41,8 +63,8 @@ export default function FoodDetails({navigation,route}) {
                        
                     </View>
                     <View style={styles.macroBox}>
-                        <View style={styles.circle}>
-                            <Text>{Math.round(foodData.prop.nutriments.carbohydrates)}</Text> 
+                        <View style={[styles.circle,styles.circle2]}>
+                            <Text>{Math.round(macros.carbs)}</Text> 
                         </View>
                         <View style={styles.center}>
                             <Text >Carbs</Text>
@@ -50,8 +72,8 @@ export default function FoodDetails({navigation,route}) {
                         </View>
                     </View>
                     <View style={styles.macroBox}>
-                        <View style={styles.circle}>
-                            <Text>{Math.round(foodData.prop.nutriments.protein)}</Text>
+                        <View style={[styles.circle,styles.circle3]}>
+                            <Text>{Math.round(macros.protein)}</Text>
                           
                         </View>
                         
@@ -61,8 +83,8 @@ export default function FoodDetails({navigation,route}) {
                         </View>
                     </View>
                     <View style={styles.macroBox}>
-                        <View style={styles.circle}>
-                            <Text>{Math.round(foodData.prop.nutriments.fat)}</Text> 
+                        <View style={[styles.circle,styles.circle4]}>
+                            <Text>{Math.round(macros.fat)}</Text> 
                         </View>
                         <View style={styles.center}>
                             <Text >Fat</Text>
@@ -71,7 +93,24 @@ export default function FoodDetails({navigation,route}) {
                     </View>
                 </View>
             </View>
-          
+            <View style={styles.servingContainer}>
+                <Text style={styles.subText}>Servings</Text>
+                <View style={styles.servingNumberContainer}>
+                    <View>
+                        <TouchableOpacity onPress={handleSubtractServing}>
+                        <Text style={styles.servingsFont}>-</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.numberBox}>
+                        <Text style={styles.servingsFont}>{servingsAmt}</Text>
+                    </View>
+                    <View>
+                        <TouchableOpacity onPress={handleAddServing}>
+                            <Text style={styles.servingsFont}>+</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
             <View style={styles.addButton}>
                 <Text style={styles.addText}>+ Add</Text>
             </View>
@@ -87,8 +126,8 @@ const styles = StyleSheet.create({
         alignItems:"center",
     },
     headerContainer:{
-        borderBottomColor:"black",
-        borderBottomWidth:1,
+        // borderBottomColor:"black",
+        // borderBottomWidth:1,
     },
     imageContainer:{
         display:"flex",
@@ -154,7 +193,7 @@ const styles = StyleSheet.create({
     circle:{
         width:60,
         height:60,
-        borderColor:"black",
+       
         borderWidth:2,
         borderRadius:30,
         marginLeft:9,
@@ -163,6 +202,19 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         alignItems:"center"
     },
+    circle1:{
+        borderColor:"#c2cfdf",
+    },
+    circle2:{
+        borderColor:"#f5a5b0",
+    },
+    circle3:{
+        borderColor:"#9ccaf8",
+    },
+    circle4:{
+        borderColor:"#fbc67f",
+    },
+
     center:{
         // marginLeft:15,
         marginTop:5,
