@@ -4,13 +4,16 @@ import Navbar from './components/Navbar';
 import UserStack from './navigation/UserStack';
 import SetupStack from './navigation/SetupStack';
 import Scanner from './screens/main/Scanner';
+import AuthStack from "./navigation/AuthStack"
+import RootNavigation from './navigation/RootNavigation';
 // so its gonna be login/register stack -> if true->
 // check if its first time -> if true ->  show setup stack
 // if false load from firebase
 export default function App() {
   return (
-
-       <UserStack/>
+      <RootNavigation/>
+      // <AuthStack/>
+      //  <UserStack/>
       //  <SetupStack/>  -> for balki, uncomment this one and comment out the top
 
   );
