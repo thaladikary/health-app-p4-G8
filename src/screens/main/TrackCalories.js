@@ -5,10 +5,13 @@ import {
   Image,
   Dimensions,
   StatusBar,
+  ScrollView,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import * as Progress from "react-native-progress";
 import Navbar from "../../components/Navbar";
+
+const { width, height } = Dimensions.get("window");
 export default function TrackCalories({ navigation }) {
   const [kcalprogress, setKcalProgress] = useState(0);
   const [carbsProgress, setCarbsProgress] = useState(0);
@@ -17,122 +20,124 @@ export default function TrackCalories({ navigation }) {
 
   return (
     <View>
-      <Text style={styles.header}>Track Calories </Text>
+      <ScrollView>
+        <Text style={styles.header}>Track Calories </Text>
 
-      {/* KCAL TRACKER */}
-      <View style={[styles.mainTrackerContainer]}>
-        <View style={[styles.card]}>
-          <View style={[styles.consumedContainer]}>
-            <View style={styles.consumedStyles}>
-              <Text style={[styles.consumedHeader]}>Consumed</Text>
-              <Text style={styles.consumedAmount}>
-                <Text style={styles.boldText}>990</Text>
-                <Text> kcals</Text>
-              </Text>
+        {/* KCAL TRACKER */}
+        <View style={[styles.mainTrackerContainer]}>
+          <View style={[styles.card]}>
+            <View style={[styles.consumedContainer]}>
+              <View style={styles.consumedStyles}>
+                <Text style={[styles.consumedHeader]}>Consumed</Text>
+                <Text style={styles.consumedAmount}>
+                  <Text style={styles.boldText}>990</Text>
+                  <Text> kcals</Text>
+                </Text>
+              </View>
+              <View style={[styles.progressSection]}>
+                <View>
+                  <Progress.Circle
+                    size={125}
+                    thickness={7}
+                    progress={0.6}
+                    showsText
+                    allowFontScaling
+                    unfilledColor="lightgray"
+                    strokeCap="round"
+                    borderWidth={0}
+                    formatText={() => (
+                      <Text style={styles.progressContainer}>
+                        <Text style={styles.progressAmtTextStyle}>2180</Text>
+                        {"\n"}
+                        <Text style={styles.progressTextStyle}>remaining</Text>
+                      </Text>
+                    )}
+                    // textStyle={styles.progressAmtTextStyle}
+                    alignText="center"
+                    color="#6495ED"
+                  />
+                </View>
+              </View>
             </View>
-            <View style={[styles.progressSection]}>
-              <View>
-                <Progress.Circle
-                  size={125}
-                  thickness={7}
-                  progress={0.6}
-                  showsText
-                  allowFontScaling
+
+            {/* MACROS TRACKER */}
+            <View style={styles.macroTrackerContainer}>
+              <View style={[styles.carbTrackerContainer]}>
+                <Text style={[styles.macroHeaderStyle, styles.flexStyle]}>
+                  Carbs
+                </Text>
+                <Progress.Bar
+                  progress={0.5}
+                  width={100}
+                  height={7}
+                  color="#87cefa"
                   unfilledColor="lightgray"
                   strokeCap="round"
                   borderWidth={0}
-                  formatText={() => (
-                    <Text style={styles.progressContainer}>
-                      <Text style={styles.progressAmtTextStyle}>2180</Text>
-                      {"\n"}
-                      <Text style={styles.progressTextStyle}>remaining</Text>
-                    </Text>
-                  )}
-                  // textStyle={styles.progressAmtTextStyle}
-                  alignText="center"
-                  color="#6495ED"
                 />
+                <Text style={styles.progressTextMacros}>50%</Text>
+              </View>
+
+              <View style={[styles.proteinTrackerContainer]}>
+                <Text style={[styles.macroHeaderStyle, styles.flexStyle]}>
+                  Protein
+                </Text>
+                <Progress.Bar
+                  progress={0.8}
+                  width={100}
+                  height={7}
+                  color="#cd5c5c"
+                  unfilledColor="lightgray"
+                  strokeCap="round"
+                  borderWidth={0}
+                />
+                <Text style={styles.progressTextMacros}>80%</Text>
+              </View>
+
+              <View style={[styles.fatsTrackerContainer]}>
+                <Text style={[styles.macroHeaderStyle, styles.flexStyle]}>
+                  Fats
+                </Text>
+                <Progress.Bar
+                  progress={0.3}
+                  width={100}
+                  height={7}
+                  color="#daa520"
+                  unfilledColor="lightgray"
+                  strokeCap="round"
+                  borderWidth={0}
+                />
+                <Text style={styles.progressTextMacros}>30%</Text>
               </View>
             </View>
           </View>
 
-          {/* MACROS TRACKER */}
-          <View style={styles.macroTrackerContainer}>
-            <View style={[styles.carbTrackerContainer]}>
-              <Text style={[styles.macroHeaderStyle, styles.flexStyle]}>
-                Carbs
-              </Text>
-              <Progress.Bar
-                progress={0.5}
-                width={100}
-                height={7}
-                color="#87cefa"
-                unfilledColor="lightgray"
-                strokeCap="round"
-                borderWidth={0}
-              />
-              <Text style={styles.progressTextMacros}>50%</Text>
-            </View>
-
-            <View style={[styles.proteinTrackerContainer]}>
-              <Text style={[styles.macroHeaderStyle, styles.flexStyle]}>
-                Protein
-              </Text>
-              <Progress.Bar
-                progress={0.8}
-                width={100}
-                height={7}
-                color="#cd5c5c"
-                unfilledColor="lightgray"
-                strokeCap="round"
-                borderWidth={0}
-              />
-              <Text style={styles.progressTextMacros}>80%</Text>
-            </View>
-
-            <View style={[styles.fatsTrackerContainer]}>
-              <Text style={[styles.macroHeaderStyle, styles.flexStyle]}>
-                Fats
-              </Text>
+          {/* WATER TRACKER */}
+          <View style={[styles.card, styles.waterTrackContainer]}>
+            <Text style={[styles.waterTrackHeader]}>Water Tracker</Text>
+            <View>
               <Progress.Bar
                 progress={0.3}
-                width={100}
-                height={7}
-                color="#daa520"
+                width={width - 100}
+                height={25}
+                color="#00bfff"
                 unfilledColor="lightgray"
-                strokeCap="round"
                 borderWidth={0}
               />
-              <Text style={styles.progressTextMacros}>30%</Text>
+              <Text style={[styles.waterTrackAmountHeader]}>
+                <Text>Goal: </Text>
+                <Text style={[styles.waterTrackAmount]}>755/2500</Text>
+                <Text> mL</Text>
+              </Text>
             </View>
           </View>
-        </View>
 
-        {/* WATER TRACKER */}
-        <View style={[styles.card, styles.waterTrackContainer]}>
-          <Text style={[styles.waterTrackHeader]}>Water Tracker</Text>
-          <View>
-            <Progress.Bar
-              progress={0.3}
-              width={350}
-              height={25}
-              color="#00bfff"
-              unfilledColor="lightgray"
-              borderWidth={0}
-            />
-            <Text style={[styles.waterTrackAmountHeader]}>
-              <Text>Goal: </Text>
-              <Text style={[styles.waterTrackAmount]}>755/2500</Text>
-              <Text> mL</Text>
-            </Text>
+          <View style={[styles.card]}>
+            <Text style={[styles.weightTrackHeader]}>Weight Tracker</Text>
+            <Text>There should be a graph here...</Text>
           </View>
         </View>
-
-        <View style={[styles.card]}>
-          <Text style={[styles.weightTrackHeader]}>Weight Tracker</Text>
-          <Text>There should be a graph here...</Text>
-        </View>
-      </View>
+      </ScrollView>
 
       <Navbar navigation={navigation} />
     </View>
