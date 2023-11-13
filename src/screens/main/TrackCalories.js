@@ -13,12 +13,24 @@ import Navbar from "../../components/Navbar";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("window");
-export default function TrackCalories({ navigation }) {
+export default function TrackCalories({ navigation, route }) {
   const [kcalprogress, setKcalProgress] = useState(0);
   const [carbsProgress, setCarbsProgress] = useState(0);
   const [proteinProgress, setProteinProgress] = useState(0);
   const [fatsProgress, setFatsProgress] = useState(0);
-
+  const [foodDiaryList, setFoodDiaryList] = useState([])
+  useEffect(()=>{
+    route.params ? setFoodDiaryList((prevList) => [...prevList, route.params.prop]) : console.log("none")
+  
+  },[route.params ])
+  useEffect(()=>{
+   
+    console.log(foodDiaryList[0])
+  },[foodDiaryList])
+  const handleSearchMeal=(mealType)=>{
+    navigation.navigate("Search",{mealType})
+  }
+  
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -116,52 +128,149 @@ export default function TrackCalories({ navigation }) {
 
           {/* WATER TRACKER */}
           
-          <View style={[styles.card,styles.mealCard]}>
+          <View style={[styles.card,styles.mealCard,foodDiaryList.some(item => item.mealType === 'breakfast') && styles.listExistsStyle]}>
             <View style={styles.mealContainer}>
                 <View style={styles.mealFontContainer}>
                     <Text style={styles.mealFontText}>Breakfast</Text>
                 </View>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={()=>handleSearchMeal('breakfast')}>
                 <View style={styles.plusSign}>
                     <Text style={styles.plusSignText}>+</Text>
                 </View>
                 </TouchableOpacity>
-
             </View> 
+           
           </View>
-          <View style={[styles.card,styles.mealCard]}>
+          {   foodDiaryList.length > 0 && (
+            foodDiaryList.map((item)=>{
+              if (item.mealType==="breakfast"){
+                return(
+                  <View style={styles.expandedCard}> 
+                  <View style={styles.foodNameContainer}>
+                      <Text>
+                        {item.name}
+                      </Text>
+                    </View> 
+                    
+                    <Text >
+                      {item.macros.calories}
+                    </Text>
+                  </View>
+                )
+              }
+            
+            })
+            
+          )   
+                  
+                }
+      
+         
+          <View style={[styles.card,styles.mealCard,foodDiaryList.some(item => item.mealType === 'lunch') && styles.listExistsStyle]}>
             <View style={styles.mealContainer}>
                 <View style={styles.mealFontContainer}>
                     <Text style={styles.mealFontText}>Lunch</Text>
                 </View>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={()=>handleSearchMeal('lunch')}>
                 <View style={styles.plusSign}>
                     <Text style={styles.plusSignText}>+</Text>
                 </View>
                 </TouchableOpacity>
             </View> 
           </View>
-
-          <View style={[styles.card,styles.mealCard]}>
+          {   foodDiaryList.length > 0 && (
+            foodDiaryList.map((item)=>{
+              if (item.mealType==="lunch"){
+                return(
+                  <View style={styles.expandedCard}> 
+                  <View style={styles.foodNameContainer}>
+                      <Text>
+                        {item.name}
+                      </Text>
+                    </View> 
+                    
+                    <Text >
+                      {item.macros.calories}
+                    </Text>
+                  </View>
+                )
+              }
+            
+            })
+            
+          )   
+                  
+                }     
+          <View style={[styles.card,styles.mealCard,foodDiaryList.some(item => item.mealType === 'dinner') && styles.listExistsStyle]}>
             <View style={styles.mealContainer}>
                 <View style={styles.mealFontContainer}>
                     <Text style={styles.mealFontText}>Dinner</Text>
                 </View>
+                <TouchableOpacity onPress={()=>handleSearchMeal('dinner')}>
                 <View style={styles.plusSign}>
                     <Text style={styles.plusSignText}>+</Text>
                 </View>
+                </TouchableOpacity>
             </View> 
           </View>
-          <View style={[styles.card,styles.mealCard]}>
+          {   foodDiaryList.length > 0 && (
+            foodDiaryList.map((item)=>{
+              if (item.mealType==="dinner"){
+                return(
+                  <View style={styles.expandedCard}> 
+                  <View style={styles.foodNameContainer}>
+                      <Text>
+                        {item.name}
+                      </Text>
+                    </View> 
+                    
+                    <Text >
+                      {item.macros.calories}
+                    </Text>
+                  </View>
+                )
+              }
+            
+            })
+            
+          )   
+                  
+                }
+          <View style={[styles.card,styles.mealCard,foodDiaryList.some(item => item.mealType === 'snacks') && styles.listExistsStyle]}>
             <View style={styles.mealContainer}>
                 <View style={styles.mealFontContainer}>
                     <Text style={styles.mealFontText}>Snacks</Text>
                 </View>
+                <TouchableOpacity onPress={()=>handleSearchMeal('snacks')}>
                 <View style={styles.plusSign}>
                     <Text style={styles.plusSignText}>+</Text>
                 </View>
+                </TouchableOpacity>
             </View> 
           </View>
+          {   foodDiaryList.length > 0 && (
+            foodDiaryList.map((item)=>{
+              if (item.mealType==="snacks"){
+                return(
+                  <View style={styles.expandedCard}> 
+                  <View style={styles.foodNameContainer}>
+                      <Text>
+                        {item.name}
+                      </Text>
+                    </View> 
+                    
+                    <Text >
+                      {item.macros.calories}
+                    </Text>
+                  </View>
+                )
+              }
+            
+            })
+            
+          )   
+                  
+                }
           <View style={[styles.card, styles.waterTrackContainer]}>
             <Text style={[styles.waterTrackHeader]}>Water Tracker</Text>
             <View>
@@ -195,7 +304,7 @@ export default function TrackCalories({ navigation }) {
 
 const styles = StyleSheet.create({
   container:{
-    flex:1
+    flex:1,
   },
   header: {
     fontSize: 30,
@@ -209,7 +318,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    height: 232,
+    height: "auto",
     margin: 15,
     marginBottom:1,
     paddingTop: 20,
@@ -346,6 +455,12 @@ const styles = StyleSheet.create({
   mealCard:{
     height: 84,
     paddingTop: 12,
+
+   
+  },
+  listExistsStyle:{
+    borderBottomRightRadius:1,
+    borderBottomLeftRadius:1,
   },
   mealContainer:{
     display:"flex",
@@ -363,6 +478,21 @@ const styles = StyleSheet.create({
     marginRight: 10, 
   },
   mealFontContainer:{
+    width:width*0.74
+  },
+  expandedCard:{
+    height: "auto",
+    flexDirection:"row",
+    width:width*0.915,
+    borderBottomRightRadius:2,
+    borderBottomLeftRadius:2,
+    marginLeft:15,
+    backgroundColor: "white",
+    paddingLeft:20,
+    padding:15,
+    elevation: 5,
+  },
+  foodNameContainer:{
     width:width*0.74
   }
 });
