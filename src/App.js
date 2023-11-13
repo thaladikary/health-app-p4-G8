@@ -9,8 +9,10 @@ import SetupStack from './navigation/SetupStack';
 // if false load from firebase
 export default function App() {
   return (
-       <UserStack/>
-      //  <SetupStack/>  -> for balki, uncomment this one and comment out the top
+      // <UserStack/>
+
+        <SetupStack/> // -> for balki, uncomment this one and comment out the top
+        
 
   );
 }
