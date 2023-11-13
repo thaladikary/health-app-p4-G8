@@ -59,10 +59,6 @@ export default function StepOne({ navigation }){
 
 
 
-
-
-
-
             
         </View>
 
