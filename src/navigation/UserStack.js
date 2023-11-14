@@ -7,6 +7,7 @@ import GroceryList from "../screens/main/GroceryList"
 import Account from '../screens/main/Account';
 import Scanner from '../screens/main/Scanner';
 import FoodDetails from '../screens/main/FoodDetails';
+import Search from '../screens/main/Search';
 const Stack = createStackNavigator();
 
 export default function UserStack(){
@@ -36,6 +37,10 @@ export default function UserStack(){
                          <Stack.Screen
                             name="GroceryList"
                             component={GroceryList}
+                        />
+                         <Stack.Screen
+                            name="Search"
+                            component={Search}
                         />
                         <Stack.Screen
                             name="Account"
