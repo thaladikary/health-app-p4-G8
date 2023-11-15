@@ -5,6 +5,7 @@ const { width, height } = Dimensions.get('window');
 
 export default function FoodDetails({navigation,route}) {
     const foodData = route.params
+  
     const [servingsAmt, setServingsAmt] = useState(1);
     const [macros, setMacros] = useState({
         calories: foodData.prop.nutriments.calories,
@@ -40,6 +41,17 @@ export default function FoodDetails({navigation,route}) {
     const handleReturn= ()=>{
         console.log("return to scanner")
         navigation.navigate("Scanner")
+    }
+    const handleAddToDiary = ()=>{
+        
+        console.log("food is logged")
+        const prop = {
+            macros,
+            name: foodData.prop.name,
+            mealType: foodData.mealType
+        }
+        console.log("PROP",prop)
+        navigation.navigate("TrackCalories",{prop})
     }
     return(
         <View style={styles.container}>
@@ -123,9 +135,11 @@ export default function FoodDetails({navigation,route}) {
                     
                 </View>
             </View>
+            <TouchableOpacity onPress={handleAddToDiary}>
             <View style={styles.addButton}>
                 <Text style={styles.addText}>+ Add</Text>
             </View>
+            </TouchableOpacity>
             
         </View>
     )

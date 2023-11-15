@@ -10,14 +10,27 @@ import {
 import React, { useState, useEffect } from "react";
 import * as Progress from "react-native-progress";
 import Navbar from "../../components/Navbar";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("window");
-export default function TrackCalories({ navigation }) {
+export default function TrackCalories({ navigation, route }) {
   const [kcalprogress, setKcalProgress] = useState(0);
   const [carbsProgress, setCarbsProgress] = useState(0);
   const [proteinProgress, setProteinProgress] = useState(0);
   const [fatsProgress, setFatsProgress] = useState(0);
-
+  const [foodDiaryList, setFoodDiaryList] = useState([])
+  useEffect(()=>{
+    route.params ? setFoodDiaryList((prevList) => [...prevList, route.params.prop]) : console.log("none")
+  
+  },[route.params ])
+  useEffect(()=>{
+   
+    console.log(foodDiaryList[0])
+  },[foodDiaryList])
+  const handleSearchMeal=(mealType)=>{
+    navigation.navigate("Search",{mealType})
+  }
+  
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -69,7 +82,7 @@ export default function TrackCalories({ navigation }) {
                 </Text>
                 <Progress.Bar
                   progress={0.5}
-                  width={100}
+                  width={width*0.23}
                   height={7}
                   color="#87cefa"
                   unfilledColor="lightgray"
@@ -85,7 +98,7 @@ export default function TrackCalories({ navigation }) {
                 </Text>
                 <Progress.Bar
                   progress={0.8}
-                  width={100}
+                  width={width*0.23}
                   height={7}
                   color="#cd5c5c"
                   unfilledColor="lightgray"
@@ -101,7 +114,7 @@ export default function TrackCalories({ navigation }) {
                 </Text>
                 <Progress.Bar
                   progress={0.3}
-                  width={100}
+                  width={width*0.23}
                   height={7}
                   color="#daa520"
                   unfilledColor="lightgray"
@@ -114,6 +127,150 @@ export default function TrackCalories({ navigation }) {
           </View>
 
           {/* WATER TRACKER */}
+          
+          <View style={[styles.card,styles.mealCard,foodDiaryList.some(item => item.mealType === 'breakfast') && styles.listExistsStyle]}>
+            <View style={styles.mealContainer}>
+                <View style={styles.mealFontContainer}>
+                    <Text style={styles.mealFontText}>Breakfast</Text>
+                </View>
+                <TouchableOpacity onPress={()=>handleSearchMeal('breakfast')}>
+                <View style={styles.plusSign}>
+                    <Text style={styles.plusSignText}>+</Text>
+                </View>
+                </TouchableOpacity>
+            </View> 
+           
+          </View>
+          {   foodDiaryList.length > 0 && (
+            foodDiaryList.map((item)=>{
+              if (item.mealType==="breakfast"){
+                return(
+                  <View style={styles.expandedCard}> 
+                  <View style={styles.foodNameContainer}>
+                      <Text>
+                        {item.name}
+                      </Text>
+                    </View> 
+                    
+                    <Text >
+                      {item.macros.calories}
+                    </Text>
+                  </View>
+                )
+              }
+            
+            })
+            
+          )   
+                  
+                }
+      
+         
+          <View style={[styles.card,styles.mealCard,foodDiaryList.some(item => item.mealType === 'lunch') && styles.listExistsStyle]}>
+            <View style={styles.mealContainer}>
+                <View style={styles.mealFontContainer}>
+                    <Text style={styles.mealFontText}>Lunch</Text>
+                </View>
+                <TouchableOpacity onPress={()=>handleSearchMeal('lunch')}>
+                <View style={styles.plusSign}>
+                    <Text style={styles.plusSignText}>+</Text>
+                </View>
+                </TouchableOpacity>
+            </View> 
+          </View>
+          {   foodDiaryList.length > 0 && (
+            foodDiaryList.map((item)=>{
+              if (item.mealType==="lunch"){
+                return(
+                  <View style={styles.expandedCard}> 
+                  <View style={styles.foodNameContainer}>
+                      <Text>
+                        {item.name}
+                      </Text>
+                    </View> 
+                    
+                    <Text >
+                      {item.macros.calories}
+                    </Text>
+                  </View>
+                )
+              }
+            
+            })
+            
+          )   
+                  
+                }     
+          <View style={[styles.card,styles.mealCard,foodDiaryList.some(item => item.mealType === 'dinner') && styles.listExistsStyle]}>
+            <View style={styles.mealContainer}>
+                <View style={styles.mealFontContainer}>
+                    <Text style={styles.mealFontText}>Dinner</Text>
+                </View>
+                <TouchableOpacity onPress={()=>handleSearchMeal('dinner')}>
+                <View style={styles.plusSign}>
+                    <Text style={styles.plusSignText}>+</Text>
+                </View>
+                </TouchableOpacity>
+            </View> 
+          </View>
+          {   foodDiaryList.length > 0 && (
+            foodDiaryList.map((item)=>{
+              if (item.mealType==="dinner"){
+                return(
+                  <View style={styles.expandedCard}> 
+                  <View style={styles.foodNameContainer}>
+                      <Text>
+                        {item.name}
+                      </Text>
+                    </View> 
+                    
+                    <Text >
+                      {item.macros.calories}
+                    </Text>
+                  </View>
+                )
+              }
+            
+            })
+            
+          )   
+                  
+                }
+          <View style={[styles.card,styles.mealCard,foodDiaryList.some(item => item.mealType === 'snacks') && styles.listExistsStyle]}>
+            <View style={styles.mealContainer}>
+                <View style={styles.mealFontContainer}>
+                    <Text style={styles.mealFontText}>Snacks</Text>
+                </View>
+                <TouchableOpacity onPress={()=>handleSearchMeal('snacks')}>
+                <View style={styles.plusSign}>
+                    <Text style={styles.plusSignText}>+</Text>
+                </View>
+                </TouchableOpacity>
+            </View> 
+          </View>
+          {   foodDiaryList.length > 0 && (
+            foodDiaryList.map((item)=>{
+              if (item.mealType==="snacks"){
+                return(
+                  <View style={styles.expandedCard}> 
+                  <View style={styles.foodNameContainer}>
+                      <Text>
+                        {item.name}
+                      </Text>
+                    </View> 
+                    
+                    <Text >
+                      {item.macros.calories}
+                    </Text>
+                  </View>
+                )
+              }
+            
+            })
+            
+          )   
+                  
+                }
           <View style={[styles.card, styles.waterTrackContainer]}>
             <Text style={[styles.waterTrackHeader]}>Water Tracker</Text>
             <View>
@@ -131,7 +288,7 @@ export default function TrackCalories({ navigation }) {
                 <Text> mL</Text>
               </Text>
             </View>
-          </View>
+          </View>     
 
           <View style={[styles.card]}>
             <Text style={[styles.weightTrackHeader]}>Weight Tracker</Text>
@@ -147,12 +304,12 @@ export default function TrackCalories({ navigation }) {
 
 const styles = StyleSheet.create({
   container:{
-    flex:1
+    flex:1,
   },
   header: {
-    fontSize: 25,
-    marginTop: 15,
-    marginLeft: 15,
+    fontSize: 30,
+    marginTop: 20,
+    marginLeft: 18,
     fontWeight: "bold",
   },
   mainTrackerContainer: {
@@ -161,11 +318,12 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    height: 250,
+    height: "auto",
     margin: 15,
-    paddingTop: 25,
+    marginBottom:1,
+    paddingTop: 20,
     backgroundColor: "white",
-    borderRadius: 8,
+    borderRadius: 12,
     elevation: 5,
   },
 
@@ -250,8 +408,9 @@ const styles = StyleSheet.create({
   fatsTrackerContainer: {},
 
   waterTrackContainer: {
-    height: 125,
+    height: 97,
     alignItems: "center",
+    paddingTop:10
   },
 
   waterTrackAmount: {
@@ -280,6 +439,60 @@ const styles = StyleSheet.create({
 
   boldText: {
     fontWeight: "bold",
-    fontSize: 25,
+    fontSize: 23,   
   },
+  plusSignText:{
+    fontWeight: "bold",
+    fontSize: 23,   
+    color: "#4470e9"
+  },    
+  mealFontText:{
+    fontWeight: "bold",
+    fontSize: 23,
+    marginLeft:20,
+  },
+
+  mealCard:{
+    height: 84,
+    paddingTop: 12,
+
+   
+  },
+  listExistsStyle:{
+    borderBottomRightRadius:1,
+    borderBottomLeftRadius:1,
+  },
+  mealContainer:{
+    display:"flex",
+    flexDirection:"row",
+    
+  },
+  plusSign: {
+    width: 50,
+    height: 50,
+    backgroundColor: "#eaf4fe",
+    borderRadius: 50,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 10, 
+  },
+  mealFontContainer:{
+    width:width*0.74
+  },
+  expandedCard:{
+    height: "auto",
+    flexDirection:"row",
+    width:width*0.915,
+    borderBottomRightRadius:2,
+    borderBottomLeftRadius:2,
+    marginLeft:15,
+    backgroundColor: "white",
+    paddingLeft:20,
+    padding:15,
+    elevation: 5,
+  },
+  foodNameContainer:{
+    width:width*0.74
+  }
 });
