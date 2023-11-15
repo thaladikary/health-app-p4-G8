@@ -23,7 +23,7 @@ export default function Navbar({ navigation }) {
     navigation.navigate("Maps");
   };
   const handleAdd = () => {
-    navigation.navigate("");
+    navigation.navigate("Add");
   };
 
   const handleGroceryList = () => {
@@ -37,26 +37,30 @@ export default function Navbar({ navigation }) {
     <View style={styles.navbarContainer}>
       <TouchableOpacity onPress={handleTrackCalories}>
         <View style={styles.labelContainer}>
-          <Ionicons name="calendar-outline" size={45} />
+          <Ionicons name="calendar-outline" size={35} />
+          <Text>Track</Text>
         </View>
       </TouchableOpacity>
       <TouchableOpacity onPress={handleMaps}>
-        <View style={styles.labelContainer}>
+        <View style={[styles.labelContainer, styles.shadow]}>
+          <Ionicons name="map-outline" size={35} />
           <Text>Maps</Text>
         </View>
       </TouchableOpacity>
       <TouchableOpacity onPress={handleAdd}>
-        <View style={styles.labelContainer}>
-          <Text>+</Text>
+        <View style={[styles.plusSign, styles.shadow]}>
+          <Text style={styles.plusSignText}>+</Text>
         </View>
       </TouchableOpacity>
       <TouchableOpacity onPress={handleGroceryList}>
         <View style={styles.labelContainer}>
+          <Ionicons name="cart-outline" size={35} />
           <Text>Grocery</Text>
         </View>
       </TouchableOpacity>
       <TouchableOpacity onPress={handleAccount}>
         <View style={styles.labelContainer}>
+          <Ionicons name="person-outline" size={35} />
           <Text>Profile</Text>
         </View>
       </TouchableOpacity>
@@ -72,18 +76,44 @@ const styles = StyleSheet.create({
     // // height:50,
     borderTopColor: "black",
     justifyContent: "space-between",
-    borderTopWidth: 1,
+    // borderTopWidth: 1,
     display: "flex",
     flexDirection: "row",
     marginTop: marginValue,
+    backgroundColor: "white",
   },
   labelContainer: {
-    margin: 10,
+    margin: 15,
     marginTop: 15,
     marginBottom: 15,
     marginLeft: 20,
     // borderWidth: 2, // Border width
     // borderColor: "red", // Border color
     // borderRadius: 1,
+  },
+  plusSign: {
+    width: 45,
+    height: 45,
+    backgroundColor: "#6495ED",
+    borderRadius: 50,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 10,
+    marginLeft: 10,
+    marginTop: 18,
+    elevation: 5,
+  },
+  plusSignText: {
+    fontWeight: "bold",
+    fontSize: 30,
+    color: "#4470e9",
+  },
+  add: {
+    marginLeft: 18,
+  },
+
+  shadow: {
+    elevation: 5,
   },
 });
