@@ -33,6 +33,7 @@ export default function UserStack() {
         <Stack.Screen name="TrackCalories" component={TrackCalories} />
         <Stack.Screen name="Maps" component={Maps} />
         <Stack.Screen name="Add" component={Add} />
+        <Stack.Screen name="Search" component={Search}/>
         <Stack.Screen name="GroceryList" component={GroceryList} />
         <Stack.Screen name="Account" component={Account} />
         <Stack.Screen name="Scanner" component={Scanner} />
