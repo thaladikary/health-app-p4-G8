@@ -15,6 +15,7 @@ import Account from "../screens/main/Account";
 import Scanner from "../screens/main/Scanner";
 import FoodDetails from "../screens/main/FoodDetails";
 import Add from "../screens/main/Add";
+import Search from "../screens/main/Search"
 const Stack = createStackNavigator();
 
 export default function UserStack() {
