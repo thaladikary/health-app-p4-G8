@@ -7,8 +7,8 @@ import axios from 'axios';
 import { APP_KEY,APP_ID } from '@env';
 const screenWidth = Dimensions.get('window').width
 const screenHeight = Dimensions.get('window').height;
-export default function Scanner({navigation}) {
-  
+export default function Scanner({navigation,route}) {
+    const mealType = route.params && route.params.mealType
     const [hasPermission, setHasPermission] = useState(null);
     const [scanned, setScanned] = useState(false);
     const [foodData, setFoodData] = useState()
@@ -58,7 +58,7 @@ export default function Scanner({navigation}) {
           }
           
         }
-        navigation.navigate("FoodDetails", {prop});
+        navigation.navigate("FoodDetails", {prop,mealType});
       })
       // console.log(headers)
       // axios.get("https://world.openfoodfacts.net/api/v2/product/"+data)
