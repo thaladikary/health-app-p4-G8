@@ -1,106 +1,148 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet,Image, Dimensions, StatusBar, TouchableOpacity, Picker} from 'react-native';
+import { View, Text, StyleSheet,Image, Dimensions, StatusBar, KeyboardAvoidingView, TouchableOpacity, TextInput, Keyboard, FlatList} from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 
 
 export default function StepOne({ navigation }){
     // if you want to have a button that navigates through different screens refer to /components/Navbar.js
-    // ask us if stuck
 
     //using this variable to store the age of the users, we also set the initial age at 18
-    const [selectedAge, setSelectedAge] = useState(18);
+    const setSelectedAge = useState(18);
+    const [inputAge, setInputAge] = useState('');
 
-    
-    //NEXT STEP button stuff
-    //SHOULD BE USING THIS: according to chat 
-   // const navigation = useNavigation();
+    //used for the age input
+    const renderItem = ({ item }) => (
+        <TouchableOpacity
+          style={styles.ageItem}
+          onPress={() => {
+            setSelectedAge(item.value.toString());
+            setInputAge('');
+          }}
+        >
+          <Text style={styles.ageItemText}>{item.label}</Text>
+        </TouchableOpacity>
+      );
 
-    // TO DO : change text styles
-    // Picker item lets the user pick from a list
-    // onValueChange is used to update the selectedAge
-    // Do I need to make the list of picker item from 0-100?
 
+   
+    // onValueChange is used to update the setSelectedAge
     return(
-        <View style={styles.container}>
-            <Text style={styles.steText}>Step 1 of 3</Text> 
+
+        <KeyboardAvoidingView style={styles.container} behavior='padding'>
+            
+            {/* used for the Step Progress Lines */}
+            <View style={styles.steText}>
+                <View style={styles.progressLine} />
+                <View style={styles.emptyLine} />
+                <View style={styles.emptyLine} />
+            </View>
+
+            <Text style={styles.steTextNumber}>Step 1 of 3</Text>
             <Text style={styles.mainLabel}>Enter your age</Text>
 
+            {/* we take inputs for the age 
+                Age is STORED into inputAge */}
+            <TextInput
+                style={styles.inputAge}
+                placeholder="18"
+                keyboardType="numeric"
+                value={inputAge}
+                onChangeText={(text) => setInputAge(text)}
+                onFocus={() => {}}
+                // onBlur={Keyboard.dismiss}
+            ></TextInput>
 
-            <Picker 
-                selectedValue={selectedAge}
-                onValueChange={(itemValue) => setSelectedAge(itemValue)}
-            >
-
-            <Picker.Item label="18" value={18} />
-            <Picker.Item label="19" value={19} />
-            <Picker.Item label="20" value={20} />
-            <Picker.Item label="21" value={21} />
-            <Picker.Item label="22" value={22} />
-            <Picker.Item label="23" value={23} />
-            <Picker.Item label="24" value={24} />
-            <Picker.Item label="25" value={25} />
-
-
-            </Picker>
-
-
-
+            {/* NEXT STEP Button here */}
             <TouchableOpacity
                 style={styles.nextButton}
                 onPress={() => navigation.navigate('StepTwo')}
-
->
-
-                <Text style={styles.nextButtonText}>NEXT STEP</Text>
+            >
+                <Text style={styles.nextButtonText}>Next Step</Text>
             </TouchableOpacity>
-
-
-
-
-
-
-            
-        </View>
-
+        </KeyboardAvoidingView>
     )
+}
 
 
 
 
 //all the styles
-// TO DO : make it look like the picture 
-
 const styles = StyleSheet.create ({
-    container: {
 
+    container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
         padding: 16,
-
+        margin: 20,
     },
 
     steText: {
-        fontSize: 24,
-        marginBottom: 25,
-
+        flexDirection: 'row',
+        fontSize: 18,
+        marginBottom: 20,
+        position: 'absolute',
+        top: 70,
+        color: 'dodgerblue',
+        fontFamily: 'Georgia',
+        fontWeight: '500',
+        flexDirection: 'row', // Use row direction for horizontal layout
+        alignItems: 'center', // Align items in the center
     },
-    label: {
-        fontSize: 16,
+
+    mainLabel: {
+        fontSize: 30,
+        marginTop: 30,
+        position: 'absolute',
+        top: 170,
+        fontWeight: 'bold',
     },
 
     nextButton: {
-        backgroundColor: "blue",
+        backgroundColor: "deepskyblue",
         fontSize: 18,
         textAlign: 'center',
-
+        padding: 10,
+        width: '75%',
+        borderRadius: 25,
     },
+
     nextButtonText: {
         color: 'black',
-        fontSize: 16,
+        fontSize: 22,
         textAlign: 'center',
-    }
+        fontWeight: 'bold',
 
-}
-)
-};
+    },
+
+    inputAge: {
+        fontSize: 26,
+        textAlign: 'center',
+        borderBottomWidth: 1,
+        width: '70%',
+        marginVertical: 200,
+    },
+
+    progressLine: {
+        flex: 1,
+        height: 2,
+        backgroundColor: 'dodgerblue',
+    },
+
+    emptyLine: {
+        flex: 1,
+        height: 2,
+        backgroundColor: '#ccc',
+    },
+
+    steTextNumber: {
+        fontSize: 18,
+        marginLeft: 10, // Adjust the spacing between the lines and the number
+        color: 'dodgerblue',
+        fontFamily: 'Georgia',
+        fontWeight: '500',
+        top: -90,
+    },
+    
+})
+;
