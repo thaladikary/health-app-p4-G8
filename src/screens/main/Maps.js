@@ -1,4 +1,5 @@
 import { View, Text, StyleSheet,Image, Dimensions, StatusBar, TouchableOpacity, ScrollView, Button} from 'react-native';
+import MapView from 'react-native-maps';
 import Navbar from '../../components/Navbar';
 const { width, height } = Dimensions.get("window");
 export default function Maps ({ navigation }){
@@ -16,7 +17,7 @@ export default function Maps ({ navigation }){
                     <TouchableOpacity style={styles.button} onPress={displayOther}><Text style={styles.buttonText}>Other</Text></TouchableOpacity>
                 </View>
                 <View style={styles.mapContainer}>
-
+                    <MapView style={styles.map} />
                 </View>
                 <View style={styles.locationContainer}></View>
                 <View style={styles.locationContainer}></View>
@@ -60,6 +61,7 @@ const styles = StyleSheet.create({
     mapContainer:{
         borderWidth: 1,
         borderRadius: 15,
+        overflow:"hidden",
         width:"90%",
         height: height * 0.55,
         backgroundColor:"white",
@@ -90,5 +92,9 @@ const styles = StyleSheet.create({
         shadowOpacity:0.3,
         shadowRadius:3,
         elevation: 3,
+    },
+    map: {
+        width: '100%',
+        height: '100%',
     }
 })
