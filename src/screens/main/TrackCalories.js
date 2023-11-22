@@ -11,6 +11,9 @@ import React, { useState, useEffect } from "react";
 import * as Progress from "react-native-progress";
 import Navbar from "../../components/Navbar";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { useUser } from "../../context/userContext";
+import { doc, getDoc, collection, query, getDocs, where } from '@firebase/firestore';
+import { db } from "../../config/firebase";
 
 const { width, height } = Dimensions.get("window");
 export default function TrackCalories({ navigation, route }) {
@@ -19,14 +22,49 @@ export default function TrackCalories({ navigation, route }) {
   const [proteinProgress, setProteinProgress] = useState(0);
   const [fatsProgress, setFatsProgress] = useState(0);
   const [foodDiaryList, setFoodDiaryList] = useState([])
-  useEffect(()=>{
-    route.params ? setFoodDiaryList((prevList) => [...prevList, route.params.prop]) : console.log("none")
+  const user = useUser()
+  // useEffect(()=>{
+  //   route.params ? setFoodDiaryList((prevList) => [...prevList, route.params.prop]) : console.log("none")
   
-  },[route.params ])
-  useEffect(()=>{
+  // },[route.params ])
+  // useEffect(()=>{
    
-    console.log(foodDiaryList[0])
-  },[foodDiaryList])
+  //   console.log(foodDiaryList[0])
+  // },[foodDiaryList])
+
+  const getCurrentDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); 
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  
+  useEffect(()=>{
+    async function fetchData(){
+      try {
+        const userId = user.uid;
+        const date = getCurrentDate();
+        const querySnapshot = await getDocs(collection(db, "users", userId, "foodDiaries", date,"entries"));
+        const retArray = []
+        querySnapshot.forEach((doc) => {
+          try{
+            // console.log(doc.data())
+            retArray.push(doc.data())
+            // console.log(retArray[0]);
+          }catch(e){
+            console.log("not workin")
+          }
+        });
+          console.log(retArray)
+          setFoodDiaryList(retArray)
+      } catch (error) {
+        console.error('Error retrieving document: ', error);
+      }
+    }
+    fetchData()
+   
+  },[route.params])
   const handleSearchMeal=(mealType)=>{
     navigation.navigate("Search",{mealType})
   }
@@ -144,16 +182,17 @@ export default function TrackCalories({ navigation, route }) {
           {   foodDiaryList.length > 0 && (
             foodDiaryList.map((item)=>{
               if (item.mealType==="breakfast"){
+
                 return(
                   <View style={styles.expandedCard}> 
                   <View style={styles.foodNameContainer}>
                       <Text>
-                        {item.name}
+                        {item.prop.name}
                       </Text>
                     </View> 
                     
                     <Text >
-                      {item.macros.calories}
+                      {item.prop.nutriments.calories}
                     </Text>
                   </View>
                 )
@@ -181,16 +220,17 @@ export default function TrackCalories({ navigation, route }) {
           {   foodDiaryList.length > 0 && (
             foodDiaryList.map((item)=>{
               if (item.mealType==="lunch"){
+
                 return(
                   <View style={styles.expandedCard}> 
                   <View style={styles.foodNameContainer}>
                       <Text>
-                        {item.name}
+                        {item.prop.name}
                       </Text>
                     </View> 
                     
                     <Text >
-                      {item.macros.calories}
+                      {item.prop.nutriments.calories}
                     </Text>
                   </View>
                 )
@@ -200,7 +240,7 @@ export default function TrackCalories({ navigation, route }) {
             
           )   
                   
-                }     
+                }
           <View style={[styles.card,styles.mealCard,foodDiaryList.some(item => item.mealType === 'dinner') && styles.listExistsStyle]}>
             <View style={styles.mealContainer}>
                 <View style={styles.mealFontContainer}>
@@ -216,16 +256,17 @@ export default function TrackCalories({ navigation, route }) {
           {   foodDiaryList.length > 0 && (
             foodDiaryList.map((item)=>{
               if (item.mealType==="dinner"){
+
                 return(
                   <View style={styles.expandedCard}> 
                   <View style={styles.foodNameContainer}>
                       <Text>
-                        {item.name}
+                        {item.prop.name}
                       </Text>
                     </View> 
                     
                     <Text >
-                      {item.macros.calories}
+                      {item.prop.nutriments.calories}
                     </Text>
                   </View>
                 )
@@ -251,16 +292,17 @@ export default function TrackCalories({ navigation, route }) {
           {   foodDiaryList.length > 0 && (
             foodDiaryList.map((item)=>{
               if (item.mealType==="snacks"){
+
                 return(
                   <View style={styles.expandedCard}> 
                   <View style={styles.foodNameContainer}>
                       <Text>
-                        {item.name}
+                        {item.prop.name}
                       </Text>
                     </View> 
                     
                     <Text >
-                      {item.macros.calories}
+                      {item.prop.nutriments.calories}
                     </Text>
                   </View>
                 )

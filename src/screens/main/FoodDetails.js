@@ -1,11 +1,15 @@
 import { View, Text, StyleSheet,Image, Dimensions, StatusBar, TouchableOpacity} from 'react-native';
 import { useState } from 'react';
 import Navbar from '../../components/Navbar';
+import { collection, addDoc, doc } from '@firebase/firestore';
+import {db} from "../../config/firebase"
+import { useUser } from '../../context/userContext';
+
 const { width, height } = Dimensions.get('window');
 
 export default function FoodDetails({navigation,route}) {
     const foodData = route.params
-  
+    const user = useUser()
     const [servingsAmt, setServingsAmt] = useState(1);
     const [macros, setMacros] = useState({
         calories: foodData.prop.nutriments.calories,
@@ -42,7 +46,15 @@ export default function FoodDetails({navigation,route}) {
         console.log("return to scanner")
         navigation.navigate("Scanner")
     }
-    const handleAddToDiary = ()=>{
+    const getCurrentDate = () => {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0'); 
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+      
+    const handleAddToDiary = async()=>{
         
         console.log("food is logged")
         const prop = {
@@ -51,7 +63,17 @@ export default function FoodDetails({navigation,route}) {
             mealType: foodData.mealType
         }
         console.log("PROP",prop)
-        navigation.navigate("TrackCalories",{prop})
+        
+        // navigation.navigate("TrackCalories",{prop})
+       
+        try {
+            const userId = user.uid
+            const entryPath = `users/${userId}/foodDiaries/${getCurrentDate()}/entries`;
+            const docRef = await addDoc(collection(db, entryPath), foodData);
+            navigation.navigate("TrackCalories", { prop });
+        } catch (e) {
+            console.error("Error adding document: ", e);
+        }
     }
     return(
         <View style={styles.container}>
