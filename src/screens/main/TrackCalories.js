@@ -67,7 +67,7 @@ export default function TrackCalories({ navigation, route }) {
    
   },[route.params])
   const handleSearchMeal=(mealType)=>{
-    navigation.navigate("Search",{mealType})
+    navigation.navigate("Add",{mealType})
   }
   
 
@@ -206,7 +206,8 @@ export default function TrackCalories({ navigation, route }) {
                   </View>
                 );
               }
-            })}
+            }))}
+          
 
           <View
             style={[
@@ -248,7 +249,7 @@ export default function TrackCalories({ navigation, route }) {
                 );
 
             
-            })
+            }})
             
           )   
                   
@@ -285,7 +286,7 @@ export default function TrackCalories({ navigation, route }) {
                   </View>
                 );
               }
-            })}
+            }))}
           <View
             style={[
               styles.card,
@@ -325,7 +326,7 @@ export default function TrackCalories({ navigation, route }) {
                   </View>
                 );
               }
-            })}
+            }))}
           <View style={[styles.card, styles.waterTrackContainer]}>
             <Text style={[styles.waterTrackHeader]}>Water Tracker</Text>
             <View>

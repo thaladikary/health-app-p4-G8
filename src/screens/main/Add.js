@@ -13,7 +13,7 @@ import Navbar from "../../components/Navbar";
 import React, { useState, useEffect } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import axios from "axios";
-import { TEST_KEY1, TEST_APP_ID1 } from "@env";
+import { APP_ID , APP_KEY} from "@env";
 
 export default function Add({ navigation, route }) {
   const [query, setQuery] = useState();
@@ -21,8 +21,8 @@ export default function Add({ navigation, route }) {
   const [suggestions, setSuggestions] = useState([]);
 
   const headers = {
-    "x-app-id": TEST_APP_ID1,
-    "x-app-key": TEST_KEY1,
+    "x-app-id": APP_ID ,
+    "x-app-key": APP_KEY,
   };
 
   const searchEndpoint = "https://trackapi.nutritionix.com/v2/search/instant";
