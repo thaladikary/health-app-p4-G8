@@ -12,7 +12,7 @@ export default function StepTwo({ navigation }){
 
 
     return(
-        <KeyboardAvoidingView style={styles.container} behavior='padding'>
+        <View style={styles.container} behavior='padding'>
 
         {/* Progress Lines 2/3 */}
             <View style={styles.steText}>
@@ -29,7 +29,7 @@ export default function StepTwo({ navigation }){
                 {/* getting the input for weight, we store the value in Weight, we also store the unit in setUnit*/}
                 <TextInput
                     style={styles.inputWeight}
-                    placeholder='58 Kg'
+                    placeholder='58'
                     keyboardType='numeric'
                     value={weight}
                     onChangeText={setWeight}
@@ -72,7 +72,7 @@ export default function StepTwo({ navigation }){
                 <Text style={styles.previousButtonText}>Previous Step</Text>
             </TouchableOpacity>
             
-        </KeyboardAvoidingView>
+        </View>
     );
 }
 

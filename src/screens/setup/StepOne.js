@@ -28,7 +28,7 @@ export default function StepOne({ navigation }){
     // onValueChange is used to update the setSelectedAge
     return(
 
-        <KeyboardAvoidingView style={styles.container} behavior='padding'>
+        <View style={styles.container} behavior='padding'>
             
             {/* used for the Step Progress Lines */}
             <View style={styles.steText}>
@@ -59,7 +59,7 @@ export default function StepOne({ navigation }){
             >
                 <Text style={styles.nextButtonText}>Next Step</Text>
             </TouchableOpacity>
-        </KeyboardAvoidingView>
+        </View>
     )
 }
 
@@ -75,6 +75,8 @@ const styles = StyleSheet.create ({
         alignItems: 'center',
         padding: 16,
         margin: 20,
+        position: 'relative',
+        //marginTop: 70,
     },
 
     steText: {
@@ -82,20 +84,24 @@ const styles = StyleSheet.create ({
         fontSize: 18,
         marginBottom: 20,
         position: 'absolute',
-        top: 70,
+        top: 0,
+        marginTop: 70,
         color: 'dodgerblue',
         fontFamily: 'Georgia',
         fontWeight: '500',
         flexDirection: 'row', // Use row direction for horizontal layout
         alignItems: 'center', // Align items in the center
+
+        zIndex: 1, // Add this line
     },
 
     mainLabel: {
         fontSize: 30,
         marginTop: 30,
-        position: 'absolute',
-        top: 170,
+        //position: 'absolute',
+        top: -210,
         fontWeight: 'bold',
+        
     },
 
     nextButton: {
@@ -105,6 +111,7 @@ const styles = StyleSheet.create ({
         padding: 10,
         width: '75%',
         borderRadius: 25,
+        top: -50,
     },
 
     nextButtonText: {
@@ -120,7 +127,9 @@ const styles = StyleSheet.create ({
         textAlign: 'center',
         borderBottomWidth: 1,
         width: '70%',
-        marginVertical: 200,
+        //marginVertical: 200,
+        margin: 20,
+        top: -50,
     },
 
     progressLine: {
@@ -141,7 +150,7 @@ const styles = StyleSheet.create ({
         color: 'dodgerblue',
         fontFamily: 'Georgia',
         fontWeight: '500',
-        top: -90,
+        top: -247,
     },
     
 })
