@@ -17,11 +17,19 @@ import { db } from "../../config/firebase";
 
 const { width, height } = Dimensions.get("window");
 export default function TrackCalories({ navigation, route }) {
-  const [kcalprogress, setKcalProgress] = useState(0);
-  const [carbsProgress, setCarbsProgress] = useState(0);
-  const [proteinProgress, setProteinProgress] = useState(0);
-  const [fatsProgress, setFatsProgress] = useState(0);
 
+  const [progress, setProgress] = useState({
+    kcal: 0,
+    carbs: 0,
+    protein: 0,
+    fats: 0,
+  });
+  const [goals,setGoals]= useState({
+    caloriesGoal : 2500,
+    carbsGoal: 500,
+    proteinGoal:150,
+    fatGoal:100
+  })
   const [foodDiaryList, setFoodDiaryList] = useState([])
   const user = useUser()
   // useEffect(()=>{
@@ -57,7 +65,30 @@ export default function TrackCalories({ navigation, route }) {
             console.log("not workin")
           }
         });
-          console.log(retArray)
+        const initializeProgressState = () => {
+          return {
+            kcal: 0,
+            carbs: 0,
+            protein: 0,
+            fats: 0,
+          };
+        };
+        const calculateTotals = (progressState, meal) => {
+          progressState.kcal += meal.prop.nutriments.calories;
+          progressState.carbs += meal.prop.nutriments.carbohydrates;
+          progressState.protein += meal.prop.nutriments.protein;
+          progressState.fats += meal.prop.nutriments.fat;
+          return progressState;
+        };
+          
+          let totals = initializeProgressState();
+          retArray.forEach((meal)=>{
+            console.log(meal)
+            totals = calculateTotals(totals, meal);
+       
+          })
+          console.log("TOTAL",totals)
+          setProgress(totals);
           setFoodDiaryList(retArray)
       } catch (error) {
         console.error('Error retrieving document: ', error);
@@ -69,7 +100,11 @@ export default function TrackCalories({ navigation, route }) {
   const handleSearchMeal=(mealType)=>{
     navigation.navigate("Add",{mealType})
   }
-  
+    const calculateRemaningCalories=()=>{
+      return Math.round(goals.caloriesGoal-progress.kcal)
+    }
+
+    
 
   return (
     <View style={styles.container}>
@@ -83,7 +118,7 @@ export default function TrackCalories({ navigation, route }) {
               <View style={styles.consumedStyles}>
                 <Text style={[styles.consumedHeader]}>Consumed</Text>
                 <Text style={styles.consumedAmount}>
-                  <Text style={styles.boldText}>990</Text>
+                  <Text style={styles.boldText}>{Math.round(progress.kcal)}</Text>
                   <Text> kcals</Text>
                 </Text>
               </View>
@@ -92,7 +127,7 @@ export default function TrackCalories({ navigation, route }) {
                   <Progress.Circle
                     size={125}
                     thickness={7}
-                    progress={0.6}
+                    progress={progress.kcal/goals.caloriesGoal}
                     showsText
                     allowFontScaling
                     unfilledColor="lightgray"
@@ -100,7 +135,7 @@ export default function TrackCalories({ navigation, route }) {
                     borderWidth={0}
                     formatText={() => (
                       <Text style={styles.progressContainer}>
-                        <Text style={styles.progressAmtTextStyle}>2180</Text>
+                        <Text style={styles.progressAmtTextStyle}>{calculateRemaningCalories()}</Text>
                         {"\n"}
                         <Text style={styles.progressTextStyle}>remaining</Text>
                       </Text>
@@ -120,7 +155,7 @@ export default function TrackCalories({ navigation, route }) {
                   Carbs
                 </Text>
                 <Progress.Bar
-                  progress={0.5}
+                  progress={progress.carbs/goals.carbsGoal}
                   width={width * 0.23}
                   height={7}
                   color="#87cefa"
@@ -128,7 +163,7 @@ export default function TrackCalories({ navigation, route }) {
                   strokeCap="round"
                   borderWidth={0}
                 />
-                <Text style={styles.progressTextMacros}>50%</Text>
+                <Text style={styles.progressTextMacros}>{Math.round(progress.carbs)}g / {goals.carbsGoal}g</Text>
               </View>
 
               <View style={[styles.proteinTrackerContainer]}>
@@ -136,7 +171,7 @@ export default function TrackCalories({ navigation, route }) {
                   Protein
                 </Text>
                 <Progress.Bar
-                  progress={0.8}
+                  progress={progress.protein/goals.proteinGoal}
                   width={width * 0.23}
                   height={7}
                   color="#cd5c5c"
@@ -144,7 +179,7 @@ export default function TrackCalories({ navigation, route }) {
                   strokeCap="round"
                   borderWidth={0}
                 />
-                <Text style={styles.progressTextMacros}>80%</Text>
+                <Text style={styles.progressTextMacros}>{Math.round(progress.protein)}g / {goals.proteinGoal}g</Text>
               </View>
 
               <View style={[styles.fatsTrackerContainer]}>
@@ -152,7 +187,7 @@ export default function TrackCalories({ navigation, route }) {
                   Fats
                 </Text>
                 <Progress.Bar
-                  progress={0.3}
+                  progress={progress.fats/goals.fatGoal}
                   width={width * 0.23}
                   height={7}
                   color="#daa520"
@@ -160,7 +195,7 @@ export default function TrackCalories({ navigation, route }) {
                   strokeCap="round"
                   borderWidth={0}
                 />
-                <Text style={styles.progressTextMacros}>30%</Text>
+                <Text style={styles.progressTextMacros}>{Math.round(progress.fats)}g / {goals.fatGoal}g</Text>
               </View>
             </View>
           </View>
@@ -196,6 +231,9 @@ export default function TrackCalories({ navigation, route }) {
                   <View style={styles.foodNameContainer}>
                       <Text>
                         {item.prop.name}
+                      </Text>
+                      <Text>
+                        {item.servingsAmt} serving(s)
                       </Text>
                     </View> 
                     
