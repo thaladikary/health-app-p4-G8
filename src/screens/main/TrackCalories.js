@@ -17,10 +17,7 @@ import { db } from "../../config/firebase";
 
 const { width, height } = Dimensions.get("window");
 export default function TrackCalories({ navigation, route }) {
-  const [kcalprogress, setKcalProgress] = useState(0);
-  const [carbsProgress, setCarbsProgress] = useState(0);
-  const [proteinProgress, setProteinProgress] = useState(0);
-  const [fatsProgress, setFatsProgress] = useState(0);
+
   const [progress, setProgress] = useState({
     kcal: 0,
     carbs: 0,
@@ -234,6 +231,9 @@ export default function TrackCalories({ navigation, route }) {
                   <View style={styles.foodNameContainer}>
                       <Text>
                         {item.prop.name}
+                      </Text>
+                      <Text>
+                        {item.servingsAmt} serving(s)
                       </Text>
                     </View> 
                     

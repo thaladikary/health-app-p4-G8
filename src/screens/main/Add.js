@@ -19,7 +19,7 @@ export default function Add({ navigation, route }) {
   const [query, setQuery] = useState();
   const [searchedItem, setSearchedItem] = useState();
   const [suggestions, setSuggestions] = useState([]);
-
+  const mealType = route.params && route.params.mealType
   const headers = {
     "x-app-id": APP_ID ,
     "x-app-key": APP_KEY,
@@ -107,7 +107,7 @@ export default function Add({ navigation, route }) {
           carbohydrates: foodData.nf_total_carbohydrate,
         },
       };
-      const mealType = route.params && route.params.mealType;
+      
 
       navigation.navigate("FoodDetails", { prop, mealType });
     } else {
@@ -154,6 +154,9 @@ export default function Add({ navigation, route }) {
     setSuggestions([]);
     setQuery();
   };
+  const handleBarcodeNavigation = ()=>{
+    navigation.navigate("Scanner",{mealType})
+  }
 
   return (
     <View>
@@ -180,9 +183,12 @@ export default function Add({ navigation, route }) {
         </View>
         {query === undefined || query === "" ? (
           <View style={styles.searchOptions}>
-            <View style={styles.searchOptionContainer}>
-              <Text>Barcode scanner</Text>
-            </View>
+            <TouchableOpacity onPress={handleBarcodeNavigation}>
+              <View style={styles.searchOptionContainer}>
+                <Text>Barcode scanner</Text>
+              </View>
+            </TouchableOpacity>
+            
             <View style={styles.searchOptionContainer}>
               <Text>Natural language search</Text>
             </View>

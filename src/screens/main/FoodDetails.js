@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet,Image, Dimensions, StatusBar, TouchableOpacity} from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Navbar from '../../components/Navbar';
 import { collection, addDoc, doc } from '@firebase/firestore';
 import {db} from "../../config/firebase"
@@ -17,7 +17,26 @@ export default function FoodDetails({navigation,route}) {
         protein: foodData.prop.nutriments.protein,
         fat: foodData.prop.nutriments.fat
     });
-    
+    const [foodDataWithServings,setFoodDataWithServings] =useState({
+            ...foodData,
+           
+    })
+
+    useEffect(() => {
+        setFoodDataWithServings({
+          ...foodDataWithServings,
+          prop: {
+            ...foodDataWithServings.prop,
+            nutriments: {
+              calories: macros.calories,
+              carbohydrates: macros.carbs,
+              protein: macros.protein,
+              fat: macros.fat,
+            },
+          },
+          servingsAmt:servingsAmt
+        });
+      }, [macros]);
     
     const handleSubtractServing = () => {
         const newServingsAmt = servingsAmt !== 1 ? servingsAmt - 1 : 1;
@@ -60,7 +79,8 @@ export default function FoodDetails({navigation,route}) {
         const prop = {
             macros,
             name: foodData.prop.name,
-            mealType: foodData.mealType
+            mealType: foodData.mealType,
+            servingsAmt:servingsAmt
         }
         console.log("PROP",prop)
         
@@ -69,7 +89,9 @@ export default function FoodDetails({navigation,route}) {
         try {
             const userId = user.uid
             const entryPath = `users/${userId}/foodDiaries/${getCurrentDate()}/entries`;
-            const docRef = await addDoc(collection(db, entryPath), foodData);
+            
+            console.log("FOODDATA,",foodDataWithServings)
+            const docRef = await addDoc(collection(db, entryPath), foodDataWithServings);
             navigation.navigate("TrackCalories", { prop });
         } catch (e) {
             console.error("Error adding document: ", e);
