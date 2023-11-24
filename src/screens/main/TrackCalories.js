@@ -309,6 +309,9 @@ export default function TrackCalories({ navigation, route }) {
                       <Text>
                         {item.prop.name}
                       </Text>
+                       <Text>
+                        {item.servingsAmt} serving(s)
+                      </Text>
                     </View> 
                     
                     <Text >
@@ -346,6 +349,9 @@ export default function TrackCalories({ navigation, route }) {
                   <View style={styles.foodNameContainer}>
                       <Text>
                         {item.prop.name}
+                      </Text>
+                      <Text>
+                        {item.servingsAmt} serving(s)
                       </Text>
                     </View> 
                     
@@ -386,6 +392,9 @@ export default function TrackCalories({ navigation, route }) {
                   <View style={styles.foodNameContainer}>
                       <Text>
                         {item.prop.name}
+                      </Text>
+                      <Text>
+                        {item.servingsAmt} serving(s)
                       </Text>
                     </View> 
                     
