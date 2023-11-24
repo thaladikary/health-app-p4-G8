@@ -17,6 +17,7 @@ import { db } from "../../config/firebase";
 
 const { width, height } = Dimensions.get("window");
 export default function TrackCalories({ navigation, route }) {
+  const [currentDate, setCurrentDate] = useState(new Date());
 
   const [progress, setProgress] = useState({
     kcal: 0,
@@ -40,9 +41,29 @@ export default function TrackCalories({ navigation, route }) {
    
   //   console.log(foodDiaryList[0])
   // },[foodDiaryList])
+  
+  const handlePrevDate = () => {
+   
+    const newDate = new Date(currentDate);
+    newDate.setDate(currentDate.getDate() - 1);
+    setCurrentDate(newDate);
+  };
+
+  const handleNextDate = () => {
+    
+    const newDate = new Date(currentDate);
+    newDate.setDate(currentDate.getDate() + 1);
+    setCurrentDate(newDate);
+  };
+  const formattedDate = currentDate.toLocaleDateString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
 
   const getCurrentDate = () => {
-    const today = new Date();
+    const today = currentDate;
     const year = today.getFullYear();
     const month = String(today.getMonth() + 1).padStart(2, '0'); 
     const day = String(today.getDate()).padStart(2, '0');
@@ -96,7 +117,7 @@ export default function TrackCalories({ navigation, route }) {
     }
     fetchData()
    
-  },[route.params])
+  },[route.params,currentDate])
   const handleSearchMeal=(mealType)=>{
     navigation.navigate("Add",{mealType})
   }
@@ -110,7 +131,18 @@ export default function TrackCalories({ navigation, route }) {
     <View style={styles.container}>
       <ScrollView>
         <Text style={styles.header}>Track Calories </Text>
-
+        <View style={styles.dateHeader}>
+        <TouchableOpacity onPress={handlePrevDate}>
+          <View>
+            <Text  style={styles.arrowSize}>{"<"}</Text>
+          </View>
+       
+        </TouchableOpacity>
+        <Text style={styles.dateSize}>{formattedDate}</Text>
+        <TouchableOpacity onPress={handleNextDate}>
+        <Text  style={styles.arrowSize}>{">"}</Text>
+        </TouchableOpacity>
+      </View>
         {/* KCAL TRACKER */}
         <View style={[styles.mainTrackerContainer]}>
           <View style={[styles.card]}>
@@ -585,4 +617,17 @@ const styles = StyleSheet.create({
   foodNameContainer: {
     width: width * 0.74,
   },
+  dateHeader:{
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    paddingHorizontal: 20,
+    
+  },
+  arrowSize:{
+    fontSize:30
+  },
+  dateSize:{
+    fontSize:17
+  }
 });
