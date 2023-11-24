@@ -1,5 +1,6 @@
 import { View, Text, StyleSheet,Image, Dimensions, StatusBar, TouchableOpacity, ScrollView, Button} from 'react-native';
 import MapView from 'react-native-maps';
+import Stars from 'react-native-stars';
 import Navbar from '../../components/Navbar';
 const { width, height } = Dimensions.get("window");
 export default function Maps ({ navigation }){
@@ -19,10 +20,114 @@ export default function Maps ({ navigation }){
                 <View style={styles.mapContainer}>
                     <MapView style={styles.map} />
                 </View>
-                <View style={styles.locationContainer}></View>
-                <View style={styles.locationContainer}></View>
-                <View style={styles.locationContainer}></View>
-                <View style={styles.locationContainer}></View>
+                <View style={styles.locationContainer}>
+                    <View style={styles.locationInfo}>
+                        <View style={styles.locationInfoName}>
+                            <Text  style={styles.locationInfoNameText}>Dinny's Diner</Text>
+                        </View>
+                        <View style={styles.locationInfoRating}>
+                            <Text style={styles.locationInfoRatingText}>4.6 <Stars
+                            half={true}
+                            default={3.5}
+                            spacing={4}
+                            starSize={12}
+                            count={5}
+                            fullStar={require("../../assets/full-star.png")}
+                            emptyStar={require("../../assets/empty-star.png")}
+                            halfStar={require("../../assets/half-star.png")}/> (27)</Text>
+                        </View>
+                        <View style={styles.locationInfoAddress}>
+                            <Text style={styles.locationInfoAddressText}>Restaurant · 1715 27 Ave NE #4</Text>
+                        </View>
+                    </View>
+                    <View style={styles.locationButtons}>
+                        <TouchableOpacity style={styles.locationButtonsDirection}>
+                            <Image style={styles.directionsImg} source={require('../../assets/direction-icon.png')}></Image>
+                            <Text style={styles.directionsImgText}>Direction</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <View style={styles.locationContainer}>
+                    <View style={styles.locationInfo}>
+                        <View style={styles.locationInfoName}>
+                            <Text  style={styles.locationInfoNameText}>Yaseen's Shawrama</Text>
+                        </View>
+                        <View style={styles.locationInfoRating}>
+                            <Text style={styles.locationInfoRatingText}>5.0 <Stars
+                            half={true}
+                            default={5}
+                            spacing={4}
+                            starSize={12}
+                            count={5}
+                            fullStar={require("../../assets/full-star.png")}
+                            emptyStar={require("../../assets/empty-star.png")}
+                            halfStar={require("../../assets/half-star.png")}/> (242)</Text>
+                        </View>
+                        <View style={styles.locationInfoAddress}>
+                            <Text style={styles.locationInfoAddressText}>Restaurant · 1611 Rouleau Cres SE</Text>
+                        </View>
+                    </View>
+                    <View style={styles.locationButtons}>
+                        <TouchableOpacity style={styles.locationButtonsDirection}>
+                            <Image style={styles.directionsImg} source={require('../../assets/direction-icon.png')}></Image>
+                            <Text style={styles.directionsImgText}>Direction</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <View style={styles.locationContainer}>
+                    <View style={styles.locationInfo}>
+                        <View style={styles.locationInfoName}>
+                            <Text  style={styles.locationInfoNameText}>Thals Borgers</Text>
+                        </View>
+                        <View style={styles.locationInfoRating}>
+                            <Text style={styles.locationInfoRatingText}>1.2 <Stars
+                            half={true}
+                            default={1.2}
+                            spacing={4}
+                            starSize={12}
+                            count={5}
+                            fullStar={require("../../assets/full-star.png")}
+                            emptyStar={require("../../assets/empty-star.png")}
+                            halfStar={require("../../assets/half-star.png")}/> (27)</Text>
+                        </View>
+                        <View style={styles.locationInfoAddress}>
+                            <Text style={styles.locationInfoAddressText}>Restaurant · 5126 52 St SW #1</Text>
+                        </View>
+                    </View>
+                    <View style={styles.locationButtons}>
+                        <TouchableOpacity style={styles.locationButtonsDirection}>
+                            <Image style={styles.directionsImg} source={require('../../assets/direction-icon.png')}></Image>
+                            <Text style={styles.directionsImgText}>Direction</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+                <View style={styles.locationContainer}>
+                    <View style={styles.locationInfo}>
+                        <View style={styles.locationInfoName}>
+                            <Text  style={styles.locationInfoNameText}>Mikes Halal Steak</Text>
+                        </View>
+                        <View style={styles.locationInfoRating}>
+                            <Text style={styles.locationInfoRatingText}>3.9 <Stars
+                            half={true}
+                            default={3.9}
+                            spacing={4}
+                            starSize={12}
+                            count={5}
+                            fullStar={require("../../assets/full-star.png")}
+                            emptyStar={require("../../assets/empty-star.png")}
+                            halfStar={require("../../assets/half-star.png")}/> (15)</Text>
+                        </View>
+                        <View style={styles.locationInfoAddress}>
+                            <Text style={styles.locationInfoAddressText}>Steakhouse · 1715 27 Ave NE #4</Text>
+                        </View>
+                    </View>
+                    <View style={styles.locationButtons}>
+                        <TouchableOpacity style={styles.locationButtonsDirection}>
+                            <Image style={styles.directionsImg} source={require('../../assets/direction-icon.png')}></Image>
+                            <Text style={styles.directionsImgText}>Direction</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </ScrollView>
            <Navbar navigation={navigation}/>
         </View>
@@ -92,9 +197,50 @@ const styles = StyleSheet.create({
         shadowOpacity:0.3,
         shadowRadius:3,
         elevation: 3,
+        flexDirection: "row",
+        overflow: "hidden"
     },
     map: {
         width: '100%',
         height: '100%',
+    },
+    locationInfo: {
+        flex: 3.2,
+        paddingLeft: "3%",
+        flexDirection: "column"
+    }, 
+    locationInfoNameText: {
+        fontWeight: "500",
+        fontSize: 15
+    },
+    locationInfoName: {
+        
+    },
+    locationInfoRating: {
+        flexDirection:"row"
+    },
+    locationInfoRatingText: {
+        color: "#595959"
+    },
+    locationInfoAddressText:{
+        color: "#595959"
+    }, directionsImg:{
+        width: 32,
+        height: 32
+    }, 
+    locationButtons: {
+        flex: 1,
+        display: "flex",
+        justifyContent:"center",
+        
+    },
+    locationButtonsDirection:{
+        display:"flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent:"center"
+    }, directionsImgText: {
+        fontSize: 12,
+        color: "#1FA5DE"
     }
 })
