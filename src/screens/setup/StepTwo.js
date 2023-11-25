@@ -1,16 +1,30 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, Image, Dimensions, StatusBar, TouchableOpacity, KeyboardAvoidingView} from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { useUser } from '../../context/userContext';
+import { db } from '../../config/firebase';
+import { addDoc,collection } from '@firebase/firestore';
 
 
-
-export default function StepTwo({ navigation }){
+export default function StepTwo({ navigation, route }){
 
     //creating the variables used in this function
-    const [weight, setWeight] = useState('');
-    const [unit, setUnit] = useState('Kg'); //we set kg as default
-
-
+    const inputAge = route.params.inputAge
+   
+    const [measurement, setMeasurement] = useState({
+        weight: '',
+        unit: 'kg',
+    });
+    const handleNextStep = () => {
+      
+       if(measurement.weight.trim()!==''){
+            console.log(measurement)
+            console.log(inputAge)
+            navigation.navigate('StepThree',{measurement,inputAge});
+       }else{
+            console.warn('Please enter your weight');
+       }
+    };
     return(
         <View style={styles.container} behavior='padding'>
 
@@ -31,36 +45,32 @@ export default function StepTwo({ navigation }){
                     style={styles.inputWeight}
                     placeholder='58'
                     keyboardType='numeric'
-                    value={weight}
-                    onChangeText={setWeight}
+                    value={measurement.weight}
+                    onChangeText={(text) => setMeasurement((prev) => ({ ...prev, weight: text }))}
                     onFocus={() => {}}
                 >
                 </TextInput>
 
                 <TouchableOpacity
-
-                    // This is what lets the user pick between the two unit Buttons
-                    style={[styles.unitButton, unit === 'lb' ? styles.selectedUnit : styles.unselectedUnit]}
-                    onPress={() => setUnit('lb')}
+                    style={[styles.unitButton, measurement.unit === 'lb' ? styles.selectedUnit : styles.unselectedUnit]}
+                    onPress={() => setMeasurement((prev) => ({ ...prev, unit: 'lb' }))}
                 >
-                    <Text style={[styles.unitText, unit === 'lb' ? styles.selectedText : styles.unselectedText]}
+                    <Text style={[styles.unitText, measurement.unit === 'lb' ? styles.selectedText : styles.unselectedText]}
                     >lb</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity 
-                    style={[styles.unitButton, unit === 'kg' ? styles.selectedUnit : styles.unselectedUnit]}
-                    onPress={() => setUnit('kg')}
-
+                <TouchableOpacity
+                    style={[styles.unitButton, measurement.unit === 'kg' ? styles.selectedUnit : styles.unselectedUnit]}
+                    onPress={() => setMeasurement((prev) => ({ ...prev, unit: 'kg' }))}
                 >
-                    <Text style={[styles.unitText, unit === 'kg' ? styles.selectedText : styles.unselectedText]}
+                    <Text style={[styles.unitText, measurement.unit === 'kg' ? styles.selectedText : styles.unselectedText]}
                     >kg</Text>
                 </TouchableOpacity>
             </View>
 
-            {/* NEXT Button */}
             <TouchableOpacity
                 style={styles.nextButton}
-                onPress={() => navigation.navigate('StepThree')}
+                onPress={handleNextStep}
             >
                 <Text style={styles.nextButtonText}>Next Step</Text>
             </TouchableOpacity>
@@ -71,7 +81,6 @@ export default function StepTwo({ navigation }){
             >
                 <Text style={styles.previousButtonText}>Previous Step</Text>
             </TouchableOpacity>
-            
         </View>
     );
 }

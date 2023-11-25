@@ -69,6 +69,32 @@ export default function TrackCalories({ navigation, route }) {
     const day = String(today.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const userId = user.uid;
+        const querySnapshot = await getDocs(collection(db, "users", userId, "userInfo"));
+        querySnapshot.forEach((doc) => {
+          try{
+            const data = doc.data()
+            setGoals({
+              caloriesGoal : data.caloriesIntake,
+              carbsGoal: data.carbIntake,
+              proteinGoal:data.proteinIntake,
+              fatGoal:data.fatIntake
+            })
+            // console.log(retArray[0]);
+          }catch(e){
+            console.log("not workin")
+          }
+        });
+      } catch (error) {
+        console.error('Error retrieving document: ', error);
+      }
+    };
+  
+    fetchData();
+  }, []); // Add dependencies if needed
   
   useEffect(()=>{
     async function fetchData(){
