@@ -1,15 +1,29 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet,Image, Dimensions, StatusBar, KeyboardAvoidingView, TouchableOpacity, TextInput, Keyboard, FlatList} from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
-
-
+import { useUser } from '../../context/userContext';
+import { db } from '../../config/firebase';
+import { addDoc,collection } from '@firebase/firestore';
 export default function StepOne({ navigation }){
     // if you want to have a button that navigates through different screens refer to /components/Navbar.js
 
     //using this variable to store the age of the users, we also set the initial age at 18
     const setSelectedAge = useState(18);
     const [inputAge, setInputAge] = useState('');
-
+    const userId = useUser().uid
+    const handleNextStep = async() => {
+        // Check if inputAge is not empty before navigating to the next step
+        if (inputAge.trim() !== '') {
+            
+                // const entryPath = `users/${userId}/userInfo`
+                // const docRef = await addDoc(collection(db, entryPath), {age:inputAge});
+                navigation.navigate('StepTwo',{inputAge});
+         
+        } else {
+            // You can add an alert or other feedback for the user to enter their age
+            console.warn('Please enter your age');
+        }
+    };
     //used for the age input
     const renderItem = ({ item }) => (
         <TouchableOpacity
@@ -55,7 +69,7 @@ export default function StepOne({ navigation }){
             {/* NEXT STEP Button here */}
             <TouchableOpacity
                 style={styles.nextButton}
-                onPress={() => navigation.navigate('StepTwo')}
+                onPress={handleNextStep}
             >
                 <Text style={styles.nextButtonText}>Next Step</Text>
             </TouchableOpacity>

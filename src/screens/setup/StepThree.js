@@ -1,11 +1,12 @@
 import { View, Text, StyleSheet,Image, Dimensions, StatusBar, TouchableOpacity, KeyboardAvoidingView, TextInput} from 'react-native';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 
 
 
-export default function StepThree(){
-
+export default function StepThree({route}){
+    const inputAge = route.params.inputAge
+    const meansurement = route.params.meansurement
     //these are the variables used 
     const [selectedOption, setSelectedOption] = useState(null);
     const navigation = useNavigation();
@@ -13,10 +14,16 @@ export default function StepThree(){
 
     //can add more options if needed
     const goals = ['Stay Healthy', 'Lose Weight', 'Gain Weight'];
-
+    // useEffect(()=>{
+    //     console.log(selectedOption)
+    // },[selectedOption])
 
     //using goals.map because it will be easier to add more options in the future
-
+    const handleFinishButton = () =>{
+        if(selectedOption!== null){
+            console.log(selectedOption)
+        }
+    }
     //might need to do: KeyboardAvoidingView
     return(
         <KeyboardAvoidingView style={styles.container} behavior='padding'>
@@ -85,14 +92,14 @@ export default function StepThree(){
                     The Finish Button points to this page for now.  */}
             <TouchableOpacity
                 style={styles.previousButton}
-                onPress={() => navigation.navigate('StepThree')}
+                onPress={handleFinishButton}
             >
                 <Text style={styles.previousButtonText}>Finish</Text>
             </TouchableOpacity>
                 
             <TouchableOpacity
                 style={styles.previousButton}
-                onPress={() => navigation.navigate('StepTwo')}
+                onPress={() => navigation.navigate('StepTwo',{inputAge})}
             >
                 <Text style={styles.previousButtonText}>Previous Step</Text>
             </TouchableOpacity> 

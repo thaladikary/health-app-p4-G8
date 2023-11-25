@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import StepOne from '../screens/setup/StepOne';
 import StepTwo from '../screens/setup/StepTwo';
 import StepThree from "../screens/setup/StepThree"
-
+import CalculateBMR from '../screens/setup/CalculateBMR';
 const Stack = createStackNavigator();
 export default function SetupStack(){
     return(
@@ -17,7 +17,10 @@ export default function SetupStack(){
                         animation:"none",
                         animationEnabled: false
                     }}>
-
+                         <Stack.Screen
+                            name="CalculateBMR"
+                            component={CalculateBMR}
+                        />
                         <Stack.Screen
                             name="StepOne"
                             component={StepOne}
