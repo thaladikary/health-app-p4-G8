@@ -16,6 +16,7 @@ const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
 export default function Scanner({ navigation, route }) {
   const mealType = route.params && route.params.mealType;
+  const currentDate = route.params && route.params.currentDate;
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [foodData, setFoodData] = useState();
@@ -63,7 +64,7 @@ export default function Scanner({ navigation, route }) {
             carbohydrates: data.nf_total_carbohydrate,
           },
         };
-        navigation.navigate("FoodDetails", { prop, mealType });
+        navigation.navigate("FoodDetails", { prop, mealType, currentDate});
       });
       // console.log(headers)
       // axios.get("https://world.openfoodfacts.net/api/v2/product/"+data)
