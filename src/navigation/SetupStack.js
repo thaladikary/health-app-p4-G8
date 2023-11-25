@@ -17,10 +17,7 @@ export default function SetupStack(){
                         animation:"none",
                         animationEnabled: false
                     }}>
-                         <Stack.Screen
-                            name="CalculateBMR"
-                            component={CalculateBMR}
-                        />
+                     
                         <Stack.Screen
                             name="StepOne"
                             component={StepOne}
@@ -33,7 +30,10 @@ export default function SetupStack(){
                             name="StepThree"
                             component={StepThree}
                         />
-
+                             <Stack.Screen
+                            name="CalculateBMR"
+                            component={CalculateBMR}
+                        />
                     </Stack.Navigator>
         </NavigationContainer>
     )
