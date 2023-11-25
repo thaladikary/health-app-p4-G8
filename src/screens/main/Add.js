@@ -25,7 +25,7 @@ export default function Add({ navigation, route }) {
   const [modalSearchText, setModalSearchText] = useState();
   const [nlAddedList, setNlAddedList] = useState();
   const [fontSize, setFontSize] = useState(14);
-
+  const currentDate = route.params && route.params.currentDate;
   const mealType = route.params && route.params.mealType;
   const headers = {
     "x-app-id": APP_ID,
@@ -122,7 +122,7 @@ export default function Add({ navigation, route }) {
         },
       };
 
-      navigation.navigate("FoodDetails", { prop, mealType });
+      navigation.navigate("FoodDetails", { prop, mealType, currentDate });
     } else {
       console.log("test");
     }
@@ -168,7 +168,7 @@ export default function Add({ navigation, route }) {
     setQuery();
   };
   const handleBarcodeNavigation = () => {
-    navigation.navigate("Scanner", { mealType }); //mealtype should be selected once in the food details page if searched from this page
+    navigation.navigate("Scanner", { mealType,currentDate }); //mealtype should be selected once in the food details page if searched from this page
   };
 
   const toggleModal = () => {

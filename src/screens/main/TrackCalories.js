@@ -119,7 +119,7 @@ export default function TrackCalories({ navigation, route }) {
    
   },[route.params,currentDate])
   const handleSearchMeal=(mealType)=>{
-    navigation.navigate("Add",{mealType})
+    navigation.navigate("Add",{mealType,currentDate})
   }
     const calculateRemaningCalories=()=>{
       return Math.round(goals.caloriesGoal-progress.kcal)

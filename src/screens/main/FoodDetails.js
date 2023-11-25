@@ -9,6 +9,7 @@ const { width, height } = Dimensions.get('window');
 
 export default function FoodDetails({navigation,route}) {
     const foodData = route.params
+   
     const user = useUser()
     const [servingsAmt, setServingsAmt] = useState(1);
     const [macros, setMacros] = useState({
@@ -66,13 +67,13 @@ export default function FoodDetails({navigation,route}) {
         navigation.navigate("Scanner")
     }
     const getCurrentDate = () => {
-        const today = new Date();
+        const today = foodData.currentDate;
         const year = today.getFullYear();
         const month = String(today.getMonth() + 1).padStart(2, '0'); 
         const day = String(today.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
       };
-      
+      console.log(getCurrentDate())
     const handleAddToDiary = async()=>{
         
         console.log("food is logged")
