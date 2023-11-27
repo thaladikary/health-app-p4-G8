@@ -150,7 +150,7 @@ const styles = StyleSheet.create ({
         color: 'dodgerblue',
         fontFamily: 'Georgia',
         fontWeight: '500',
-        top: -247,
+        top: -240,
     },
     
 })
