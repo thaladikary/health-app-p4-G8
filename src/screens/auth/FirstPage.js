@@ -6,12 +6,12 @@ export default function FirstPage({ navigation }) {
     return (
 
         <ImageBackground
-        source={require('/Users/bbalk/repo/health-app-p4-G8/src/assets/Setup-pages/white-background-2.jpg')}
+        source={require('../../assets/Setup-pages/white-background-2.jpg')}
         style={styles.backgroundImage}
         >
             <View style={styles.container}>
             
-                <Image source={require('/Users/bbalk/repo/health-app-p4-G8/src/assets/Setup-pages/human-fruit-gym-WHITE.jpg')} style={styles.logo} />
+                <Image source={require('../../assets/Setup-pages/human-fruit-gym-WHITE.jpg')} style={styles.logo} />
                 <Text style={styles.appName}>FITNESS CLUB</Text>
 
                 <Text style={styles.middleText}>BE STRONGER </Text>

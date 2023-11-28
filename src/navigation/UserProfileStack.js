@@ -1,12 +1,10 @@
 import { View, Text, StyleSheet,Image, Dimensions, StatusBar} from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import Login from '../screens/auth/Login';
-import FirstPage from '../screens/auth/FirstPage';
-import Register from '../screens/auth/Register';
+import UserProfile from '../screens/main/UserProfile';
 
 const Stack = createStackNavigator();
-export default function LoginRegisterStack(){
+export default function UserProfileStack(){
     return(
         <NavigationContainer>
             <Stack.Navigator
@@ -20,17 +18,10 @@ export default function LoginRegisterStack(){
                 }}
             >
                 <Stack.Screen
-                            name="FirstPage"
-                            component={FirstPage}
+                            name="UserProfile"
+                            component={UserProfile}
                         />
-                <Stack.Screen
-                            name="Login"
-                            component={Login}
-                        />
-                         <Stack.Screen
-                            name="Register"
-                            component={Register}
-                        />
+                
 
 
             </Stack.Navigator>

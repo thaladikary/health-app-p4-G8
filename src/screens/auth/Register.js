@@ -9,7 +9,7 @@ export default function Register({ navigation }){
 
     return(
         <ImageBackground
-        source={require('/Users/bbalk/repo/health-app-p4-G8/src/assets/Setup-pages/white-background-2.jpg')}
+        source={require('../../assets/Setup-pages/white-background-2.jpg')}
         style={styles.backgroundImage}
         >
 
@@ -18,7 +18,7 @@ export default function Register({ navigation }){
           <StatusBar barStyle="dark-content" />
 
             {/* APP logo here */}
-          <Image source={require('/Users/bbalk/repo/health-app-p4-G8/src/assets/Setup-pages/human-fruit-gym-BLACK.jpg')} style={styles.logo} />
+          <Image source={require('../../assets/Setup-pages/human-fruit-gym-BLACK.jpg')} style={styles.logo} />
 
             {/* ALL the functions need to be set up according to the logic  */}
             <View style={styles.inputContainer}>
