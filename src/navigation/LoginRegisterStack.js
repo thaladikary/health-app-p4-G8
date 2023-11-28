@@ -27,10 +27,10 @@ export default function LoginRegisterStack(){
                             name="Login"
                             component={Login}
                         />
-                         <Stack.Screen
+                <Stack.Screen
                             name="Register"
                             component={Register}
-                        />
+                />
 
 
             </Stack.Navigator>

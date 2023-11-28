@@ -1,24 +1,24 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet,Image, Dimensions, StatusBar, KeyboardAvoidingView, TouchableOpacity, TextInput, Keyboard, FlatList, ImageBackground} from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
-
+import {signInWithEmailAndPassword} from "@firebase/auth";
+import {auth} from "../../config/firebase"
 
 export default function Login({ navigation }){
 
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-
-    const handleLogin = () => {
-    // Implement your login logic here
-    // just going to use navgation here
-    console.log('Login pressed');
+    const [email, setEmail] = useState('test@gmail.com');
+    const [password, setPassword] = useState('testest');
+    async function handleLogin (){
+      if (email !== "" && password !== ""){
+        console.log("test")
+      try{
+        await signInWithEmailAndPassword(auth,email,password)
+      } catch (e) {
+        console.log('error',e)
+      }
+  
     };
-
-    //TO DO : make it go to Register with navigation
-    const handleRegister = () => {
-    // Implement your registration logic here
-    console.log('Register pressed');
-    };
+  }
 
       return (
 
@@ -52,8 +52,8 @@ export default function Login({ navigation }){
           </View>
 
             {/* LOGIN BUTTON */}
-        <TouchableOpacity style={styles.button} 
-        onPress={() => navigation.navigate('FirstPage')} >
+          <TouchableOpacity style={styles.button} 
+          onPress={handleLogin} >
             <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
       </View>

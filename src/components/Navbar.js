@@ -30,7 +30,7 @@ export default function Navbar({ navigation }) {
     navigation.navigate("GroceryList");
   };
   const handleAccount = () => {
-    navigation.navigate("Account");
+    navigation.navigate("UserProfile");
   };
 
   return (

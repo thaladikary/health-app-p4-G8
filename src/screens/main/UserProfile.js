@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet,Image, Dimensions, StatusBar, KeyboardAvoidingView, TouchableOpacity, TextInput, Keyboard, FlatList, ImageBackground} from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
-
+import Navbar from '../../components/Navbar';
 
 export default function UserProfile({ navigation }) {
   const [firstName] = useState('John');
@@ -12,7 +12,7 @@ export default function UserProfile({ navigation }) {
 
   return (
     <ImageBackground
-      source={require('/Users/bbalk/repo/health-app-p4-G8/src/assets/Setup-pages/white-background-1.jpg')}
+      source={require('../../assets/Setup-pages/white-background-1.jpg')}
       style={styles.backgroundImage}
     >
       <View style={styles.container}>
@@ -20,7 +20,7 @@ export default function UserProfile({ navigation }) {
         <View style={styles.topSection}>
           <Text style={styles.profileText}>Profile</Text>
           <Image
-            source={require('/Users/bbalk/repo/health-app-p4-G8/src/assets/Setup-pages/human-fruit-gym-WHITE.jpg')}
+            source={require('../../assets/Setup-pages/human-fruit-gym-WHITE.jpg')}
             style={styles.userImage}
           />
 
@@ -51,6 +51,7 @@ export default function UserProfile({ navigation }) {
 </View>
        </View> 
       </View>
+      <Navbar navigation={navigation} />
     </ImageBackground>
   );
 }
@@ -72,6 +73,7 @@ const styles = StyleSheet.create({
     flex: 0.4,
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop:20
     // marginTop: -50, // Adjust the value based on your design
   },
 
@@ -104,6 +106,7 @@ const styles = StyleSheet.create({
   userName: {
     fontSize: 26,
     fontWeight: 'bold',
+    
   },
 
 
@@ -117,7 +120,7 @@ infoContainer: {
     alignItems: 'center', // Center items vertically
     backgroundColor: 'white',
     padding: 20,
-    marginTop: -20,
+    marginTop:10,  
     borderRadius: 20,
     flex: 0.1,
 
@@ -129,8 +132,6 @@ infoContainer: {
     flex: 0.3
 
   },
-
-
 
   infoItemValue: {
     fontSize: 20,
