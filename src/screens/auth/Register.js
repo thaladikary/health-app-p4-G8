@@ -1,11 +1,29 @@
 import { useState } from 'react';
 import { View, Text, StyleSheet,Image, Dimensions, StatusBar, KeyboardAvoidingView, TouchableOpacity, TextInput, Keyboard, FlatList, ImageBackground} from 'react-native';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
-
+import {createUserWithEmailAndPassword,signInWithEmailAndPassword} from "@firebase/auth";
+import {auth} from "../../config/firebase"
 export default function Register({ navigation }){
-
-
-    const [firstName, setFirstName, lastName, setLastName, email, setEmail, age, setAge, password, setPassword ] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [age, setAge] = useState('');
+    const handleSignUp = async () => {
+      if (password !== confirmPassword) {
+        console.error('Passwords do not match');
+        return;
+      }
+  
+      try {
+        const response = createUserWithEmailAndPassword(auth,email, password);
+        // You can handle the response or navigate to the next screen
+        console.log('User registered successfully!', response);
+      } catch (error) {
+        console.error('Error registering user', error.message);
+      }
+    };
 
     return(
         <ImageBackground
@@ -26,59 +44,52 @@ export default function Register({ navigation }){
               style={styles.input}
               placeholder="First Name"
               onChangeText={(text) => setFirstName(text)}
-              value={email}
+              value={firstName}
             />
             <TextInput
               style={styles.input}
     
               placeholder="Last Name"
-              secureTextEntry={true}
+
               onChangeText={(text) => setLastName(text)}
-              value={password}
+              value={lastName}
             />
             <TextInput
               style={styles.input}
-    
               placeholder="email"
-              secureTextEntry={true}
-              onChangeText={(text) => setEmail(text)}
-              value={password}
+              onChangeText={(text) => setAge(text)}
+              value={age}
             />
             <TextInput
               style={styles.input}
-    
               placeholder="Password"
               secureTextEntry={true}
               onChangeText={(text) => setPassword(text)}
               value={password}
             />
 
-
-            {/* MIGHT HAVE TO DO SOMETHING HERE for comfirm password*/}
             <TextInput
-              style={styles.input}
-    
-              placeholder="Confirm Password"
-              secureTextEntry={true}
-              onChangeText={(text) => setPassword(text)}
-              value={password}
-            />
-
-            <TextInput
+                    style={styles.input}
+                    placeholder="Confirm Password"
+                    secureTextEntry={true}
+                    onChangeText={(text) => setConfirmPassword(text)}
+                    value={confirmPassword}
+                  />
+            {/* <TextInput
               style={styles.input}
     
               placeholder="Age"
               secureTextEntry={true}
               onChangeText={(text) => setAge(text)}
               value={password}
-            />
+            /> */}
           </View>
 
             {/* TO DO: TO set it up to the desired page, now it just returns to the first page */}
 
             <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('Login')}
+          onPress={handleSignUp}
         >
           <Text style={styles.buttonText}>Sign Up</Text>
         </TouchableOpacity>
