@@ -67,37 +67,46 @@ export default function FoodDetails({navigation,route}) {
         navigation.navigate("Scanner")
     }
     const getCurrentDate = () => {
-        const today = foodData.currentDate;
+        const today = foodData.currentDate ? foodData.currentDate : new Date()
         const year = today.getFullYear();
         const month = String(today.getMonth() + 1).padStart(2, '0'); 
         const day = String(today.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
       };
       console.log(getCurrentDate())
-    const handleAddToDiary = async()=>{
-        
-        console.log("food is logged")
-        const prop = {
+      const handleAddToDiary = async () => {
+        console.log(foodData.mealType)
+        if (!foodData.mealType) {
+          // Show a pop-up to select a meal type
+          console.log("test")
+         return(
+            <View>
+                <Text>Breakfast</Text>
+                <Text>Breakfast</Text>
+                <Text>Breakfast</Text>
+                <Text>Breakfast</Text>
+            </View>
+         )
+          
+        } else {
+          // Continue with the existing logic
+          console.log('food is logged');
+          const prop = {
             macros,
             name: foodData.prop.name,
             mealType: foodData.mealType,
-            servingsAmt:servingsAmt
+            servingsAmt: servingsAmt,
+          };
+          console.log('PROP', prop);
+      
+          // Rest of your logic...
         }
-        console.log("PROP",prop)
-        
-        // navigation.navigate("TrackCalories",{prop})
-       
-        try {
-            const userId = user.uid
-            const entryPath = `users/${userId}/foodDiaries/${getCurrentDate()}/entries`;
-            
-            console.log("FOODDATA,",foodDataWithServings)
-            const docRef = await addDoc(collection(db, entryPath), foodDataWithServings);
-            navigation.navigate("TrackCalories", { prop });
-        } catch (e) {
-            console.error("Error adding document: ", e);
-        }
-    }
+      };
+      
+      const handleAddToDiaryWithMealType = (selectedMealType) => {
+            console.log(selectedMealType)
+        };
+      
     return(
         <View style={styles.container}>
             <TouchableOpacity onPress={handleReturn}>
