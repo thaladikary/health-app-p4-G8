@@ -113,8 +113,9 @@ const styles = StyleSheet.create ({
         fontSize: 30,
         marginTop: 30,
         //position: 'absolute',
-        top: -210,
+        top: 100,
         fontWeight: 'bold',
+        position: 'absolute',
         
     },
 
@@ -164,7 +165,8 @@ const styles = StyleSheet.create ({
         color: 'dodgerblue',
         fontFamily: 'Georgia',
         fontWeight: '500',
-        top: -240,
+        top: 41.5,
+        position: 'absolute',
     },
     
 })

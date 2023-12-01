@@ -101,9 +101,11 @@ const styles = StyleSheet.create({
     mainLabel: {
         fontSize: 30,
         marginTop: 30,
-        position: 'absolute',
-        top: 170,
+        //position: 'absolute',
+        top: 100,
         fontWeight: 'bold',
+        position: 'absolute',
+        
     },
 
 
@@ -140,7 +142,8 @@ const styles = StyleSheet.create({
         color: 'dodgerblue',
         fontFamily: 'Georgia',
         fontWeight: '500',
-        top: -233,
+        top: 41.5,
+        position: 'absolute',
     },
 
 
