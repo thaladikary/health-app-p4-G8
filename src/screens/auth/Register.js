@@ -57,8 +57,8 @@ export default function Register({ navigation }){
             <TextInput
               style={styles.input}
               placeholder="email"
-              onChangeText={(text) => setAge(text)}
-              value={age}
+              onChangeText={(text) => setEmail(text)}
+              value={email}
             />
             <TextInput
               style={styles.input}
