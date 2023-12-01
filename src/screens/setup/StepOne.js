@@ -10,7 +10,7 @@ export default function StepOne({ navigation }){
     //using this variable to store the age of the users, we also set the initial age at 18
     const setSelectedAge = useState(18);
     const [inputAge, setInputAge] = useState('');
-    const userId = useUser().uid
+    // const userId = useUser().uid
     const handleNextStep = async() => {
         // Check if inputAge is not empty before navigating to the next step
         if (inputAge.trim() !== '') {
