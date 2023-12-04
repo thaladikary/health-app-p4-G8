@@ -23,7 +23,7 @@ export default function Add({ navigation, route }) {
   const [suggestions, setSuggestions] = useState([]);
   const [isModalVisible, setModalVisibile] = useState(false);
   const [modalSearchText, setModalSearchText] = useState();
-  const [nlAddedList, setNlAddedList] = useState();
+  const [nlAddedList, setNlAddedList] = useState([]);
   const [fontSize, setFontSize] = useState(14);
   const currentDate = route.params && route.params.currentDate;
   const mealType = route.params && route.params.mealType;
@@ -168,7 +168,7 @@ export default function Add({ navigation, route }) {
     setQuery();
   };
   const handleBarcodeNavigation = () => {
-    navigation.navigate("Scanner", { mealType,currentDate }); //mealtype should be selected once in the food details page if searched from this page
+    navigation.navigate("Scanner", { mealType, currentDate }); //mealtype should be selected once in the food details page if searched from this page
   };
 
   const toggleModal = () => {
@@ -191,12 +191,27 @@ export default function Add({ navigation, route }) {
   };
 
   const handleAddItem = (item) => {
-    console.log(item);
+    // console.log(item);
+    setNlAddedList((prevList) => [...prevList, item]);
+
+    //remove clicked item from suggestion list
+    setNlSuggestionList((prevElements) =>
+      prevElements.filter((addedItem) => addedItem.food_name !== item.food_name)
+    );
+
+    console.log(nlAddedList);
+  };
+
+  const removeFromNlAddedList = (item) => {
+    setNlAddedList((prevElements) =>
+      prevElements.filter((addedItem) => addedItem.food_name !== item.food_name)
+    );
   };
 
   const clearNlSearch = () => {
     setModalSearchText();
     setNlSuggestionList([]);
+    setNlAddedList([]);
   };
 
   return (
@@ -299,8 +314,42 @@ export default function Add({ navigation, route }) {
               </TouchableOpacity>
             </View>
             <View>
+              {nlAddedList.length != 0 ? (
+                <Text style={styles.nlItemsFoundHeader}>Added:</Text>
+              ) : undefined}
+              {nlAddedList.map((item) => {
+                return (
+                  <View style={styles.nlSuggestionList}>
+                    <Image
+                      source={{ uri: item.photo.thumb }}
+                      style={[styles.nlImage]}
+                    />
+                    <Text style={styles.nlFoodItem}>
+                      {item.food_name.charAt(0).toUpperCase() +
+                        item.food_name.slice(1)}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => removeFromNlAddedList(item)}
+                    >
+                      <View style={styles.plusSign}>
+                        <Text style={styles.plusSignText}>
+                          <Ionicons
+                            name="checkmark-outline"
+                            size={25}
+                            color={"green"}
+                          />
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+                );
+              })}
+            </View>
+            <View>
+              {nlSuggestionList.length != 0 ? (
+                <Text style={styles.nlItemsFoundHeader}>Results:</Text>
+              ) : undefined}
               <View>
-                {console.log("test", nlSuggestionList)}
                 {nlSuggestionList.map((item) => {
                   return (
                     <View style={styles.nlSuggestionList}>
@@ -312,11 +361,8 @@ export default function Add({ navigation, route }) {
                         {item.food_name.charAt(0).toUpperCase() +
                           item.food_name.slice(1)}
                       </Text>
-                      <TouchableOpacity>
-                        <View
-                          onPress={() => handleAddItem(item)}
-                          style={styles.plusSign}
-                        >
+                      <TouchableOpacity onPress={() => handleAddItem(item)}>
+                        <View style={styles.plusSign}>
                           <Text style={styles.plusSignText}>+</Text>
                         </View>
                       </TouchableOpacity>
@@ -326,9 +372,15 @@ export default function Add({ navigation, route }) {
               </View>
             </View>
 
-            <TouchableOpacity onPress={handleSubmitModalSearch}>
-              <Text style={styles.nlSearchBtn}>Search</Text>
-            </TouchableOpacity>
+            {nlAddedList.length == 0 && nlSuggestionList.length >= 0 ? (
+              <TouchableOpacity onPress={handleSubmitModalSearch}>
+                <Text style={styles.nlSearchBtn}>Search</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={toggleModal}>
+                <Text style={styles.nlDoneBtn}>Done</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </Modal>
       </View>
@@ -505,5 +557,21 @@ const styles = StyleSheet.create({
   nlClearBtn: {
     marginTop: 14,
     right: 30,
+  },
+  nlItemsFoundHeader: {
+    textAlign: "center",
+    color: "white",
+    fontWeight: "bold",
+    marginTop: 25,
+  },
+  nlDoneBtn: {
+    backgroundColor: "green",
+    borderRadius: 10,
+    margin: 5,
+    padding: 5,
+    width: 100,
+    textAlign: "center",
+    color: "white",
+    fontWeight: "bold",
   },
 });
