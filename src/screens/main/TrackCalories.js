@@ -7,18 +7,20 @@ import {
   StatusBar,
   ScrollView,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import * as Progress from "react-native-progress";
 import Navbar from "../../components/Navbar";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { TouchableOpacity,TouchableWithoutFeedback } from "react-native-gesture-handler";
 import { useUser } from "../../context/userContext";
-import { doc, getDoc, collection, query, getDocs, where } from '@firebase/firestore';
+import { doc, getDoc, collection, query, getDocs, where, deleteDoc} from '@firebase/firestore';
 import { db } from "../../config/firebase";
+import {Swipeable} from "react-native-gesture-handler"
 
 const { width, height } = Dimensions.get("window");
 export default function TrackCalories({ navigation, route }) {
+  
   const [currentDate, setCurrentDate] = useState(new Date());
-
+  const swipeableRef = useRef (null)
   const [progress, setProgress] = useState({
     kcal: 0,
     carbs: 0,
@@ -33,6 +35,7 @@ export default function TrackCalories({ navigation, route }) {
   })
   const [foodDiaryList, setFoodDiaryList] = useState([])
   const user = useUser()
+  const userId = user.uid;
   // useEffect(()=>{
   //   route.params ? setFoodDiaryList((prevList) => [...prevList, route.params.prop]) : console.log("none")
   
@@ -72,7 +75,7 @@ export default function TrackCalories({ navigation, route }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userId = user.uid;
+        
         const querySnapshot = await getDocs(collection(db, "users", userId, "userInfo"));
         querySnapshot.forEach((doc) => {
           try{
@@ -95,18 +98,41 @@ export default function TrackCalories({ navigation, route }) {
   
     fetchData();
   }, []); // Add dependencies if needed
-  
+  const calculateTotals = (meals) => {
+    let totals = {
+      kcal: 0,
+      carbs: 0,
+      protein: 0,
+      fats: 0,
+    };
+
+    meals.forEach((meal) => {
+      totals.kcal += meal.prop.nutriments.calories;
+      totals.carbs += meal.prop.nutriments.carbohydrates;
+      totals.protein += meal.prop.nutriments.protein;
+      totals.fats += meal.prop.nutriments.fat;
+    });
+
+    return totals;
+  };
+
+
   useEffect(()=>{
     async function fetchData(){
       try {
-        const userId = user.uid;
+        
         const date = getCurrentDate();
         const querySnapshot = await getDocs(collection(db, "users", userId, "foodDiaries", date,"entries"));
         const retArray = []
         querySnapshot.forEach((doc) => {
           try{
-            // console.log(doc.data())
-            retArray.push(doc.data())
+            // console.log("DOCDATA",doc.id)
+            const dataWithId = {
+              id: doc.id,
+              ...doc.data(),
+            };
+            // console.log(dataWithId)
+            retArray.push(dataWithId)
             // console.log(retArray[0]);
           }catch(e){
             console.log("not workin")
@@ -150,10 +176,53 @@ export default function TrackCalories({ navigation, route }) {
     const calculateRemaningCalories=()=>{
       return Math.round(goals.caloriesGoal-progress.kcal)
     }
+  const handleDetails= (item)=>{
+    console.log(item)
+    const prop = {
+      ...item.prop
+    }
+    const mealType = item.mealType
 
+    navigation.navigate("FoodDetails",{prop,mealType,currentDate})
+  }
+    
+  const renderRightActions = (progress, dragX, itemId) => {
+    const trans = dragX.interpolate({
+      inputRange: [0, 50, 100],
+      outputRange: [0, 0.5, 1],
+    });
+
+    return (
+      <TouchableOpacity
+        onPress={() => handleDelete(itemId)}
+        style={[styles.deleteButton]}
+      >
+        <Text style={styles.deleteText}>Delete</Text>
+      </TouchableOpacity>
+    )}
+    
+  const handleDelete=async(itemId)=>{
+    console.log("deelte")
+    
+    try{
+     
+      const date = getCurrentDate();
+      const docRef = doc(db, "users", userId, "foodDiaries", date, "entries", itemId);
+      await deleteDoc(docRef);
+      setFoodDiaryList((prevList) => prevList.filter((item) => item.id !== itemId));
+      const updatedTotals = calculateTotals(foodDiaryList.filter((item) => item.id !== itemId));
+      setProgress(updatedTotals);
+      console.log("Document successfully deleted!");
+    
+    }catch(e){
+      console.error("Error deleting doc" , e)
+    }
+  }
+ 
+  return (
     
 
-  return (
+  
     <View style={styles.container}>
       <ScrollView>
         <Text style={styles.header}>Track Calories </Text>
@@ -285,21 +354,27 @@ export default function TrackCalories({ navigation, route }) {
               if (item.mealType==="breakfast"){
 
                 return(
-                  <View style={styles.expandedCard}> 
-                  <View style={styles.foodNameContainer}>
-                      <Text>
-                        {item.prop.name}
+                  <Swipeable key={item.id}
+                    renderRightActions={(progress, dragX) =>
+                    renderRightActions(progress, dragX, item.id)}>
+                  <TouchableOpacity onPress={()=>handleDetails(item)}>
+                    <View style={styles.expandedCard}> 
+                    <View style={styles.foodNameContainer}>
+                        <Text>
+                          {item.prop.name}
+                        </Text>
+                        <Text>
+                          {item.servingsAmt} serving(s)
+                        </Text>
+                      </View> 
+                      
+                      <Text >
+                        {item.prop.nutriments.calories}
                       </Text>
-                      <Text>
-                        {item.servingsAmt} serving(s)
-                      </Text>
-                    </View> 
-                    
-                    <Text >
-                      {item.prop.nutriments.calories}
-                    </Text>
 
-                  </View>
+                    </View>
+                  </TouchableOpacity>
+                  </Swipeable>
                 );
               }
             }))}
@@ -330,6 +405,10 @@ export default function TrackCalories({ navigation, route }) {
               if (item.mealType==="lunch"){
 
                 return(
+                  <Swipeable key={item.id}
+                    renderRightActions={(progress, dragX) =>
+                    renderRightActions(progress, dragX, item.id)}>
+                  <TouchableOpacity onPress={()=>handleDetails(item)}>
                   <View style={styles.expandedCard}> 
                   <View style={styles.foodNameContainer}>
                       <Text>
@@ -345,6 +424,8 @@ export default function TrackCalories({ navigation, route }) {
                     </Text>
 
                   </View>
+                  </TouchableOpacity>
+                  </Swipeable>
                 );
 
             
@@ -371,6 +452,10 @@ export default function TrackCalories({ navigation, route }) {
               if (item.mealType==="dinner"){
 
                 return(
+                  <Swipeable key={item.id}
+                  renderRightActions={(progress, dragX) =>
+                  renderRightActions(progress, dragX, item.id)}>
+                  <TouchableOpacity onPress={()=>handleDetails(item)}> 
                   <View style={styles.expandedCard}> 
                   <View style={styles.foodNameContainer}>
                       <Text>
@@ -386,6 +471,8 @@ export default function TrackCalories({ navigation, route }) {
                     </Text>
 
                   </View>
+                  </TouchableOpacity>
+                  </Swipeable>
                 );
               }
             }))}
@@ -414,6 +501,10 @@ export default function TrackCalories({ navigation, route }) {
               if (item.mealType==="snacks"){
 
                 return(
+                  <Swipeable key={item.id}
+                  renderRightActions={(progress, dragX) =>
+                  renderRightActions(progress, dragX, item.id)}>
+                  <TouchableOpacity onPress={()=>handleDetails(item)}>
                   <View style={styles.expandedCard}> 
                   <View style={styles.foodNameContainer}>
                       <Text>
@@ -429,6 +520,8 @@ export default function TrackCalories({ navigation, route }) {
                     </Text>
 
                   </View>
+                  </TouchableOpacity>
+                  </Swipeable>
                 );
               }
             }))}
@@ -459,6 +552,7 @@ export default function TrackCalories({ navigation, route }) {
       </ScrollView>
       <Navbar navigation={navigation} />
     </View>
+    
   );
 }
 
@@ -645,7 +739,7 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 2,
     marginLeft: 15,
     backgroundColor: "white",
-    paddingLeft: 20,
+    // paddingLeft: 20,
     padding: 15,
     elevation: 5,
   },
@@ -664,5 +758,19 @@ const styles = StyleSheet.create({
   },
   dateSize:{
     fontSize:17
-  }
+  },
+  deleteButton: {
+    backgroundColor: 'red',
+    justifyContent: 'center',
+    alignItems: 'center',
+    display:"flex",
+    width: 80,
+    height:80,
+    marginRight:15,
+   
+  },
+  deleteText: {
+    color: 'white',
+    marginBottom:10
+  },
 });
