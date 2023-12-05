@@ -10,14 +10,15 @@ export default function StepOne({ navigation }){
     //using this variable to store the age of the users, we also set the initial age at 18
     const setSelectedAge = useState(18);
     const [inputAge, setInputAge] = useState('');
-    // const userId = useUser().uid
+    // const userId = useUser().uid;
     const handleNextStep = async() => {
         // Check if inputAge is not empty before navigating to the next step
         if (inputAge.trim() !== '') {
             
-                // const entryPath = `users/${userId}/userInfo`
-                // const docRef = await addDoc(collection(db, entryPath), {age:inputAge});
-                navigation.navigate('StepTwo',{inputAge});
+                const entryPath = `users/${userId}/userInfo`
+                const docRef = await addDoc(collection(db, entryPath), {age:inputAge});
+                navigation.navigate('StepTwo'  ,{inputAge});
+              
          
         } else {
             // You can add an alert or other feedback for the user to enter their age
@@ -51,8 +52,12 @@ export default function StepOne({ navigation }){
                 <View style={styles.emptyLine} />
             </View>
 
-            <Text style={styles.steTextNumber}>Step 1 of 3</Text>
-            <Text style={styles.mainLabel}>Enter your age</Text>
+            <Text style={styles.steTextNumber}>Step 1 of 8</Text>
+
+            <View style={styles.mainLabelContainer}>
+                <Image source={require('../../assets/Setup-pages/anti-aging.png')} style={styles.mainLabelIcon}/>
+                <Text style={styles.mainLabel}>Enter your age</Text>
+            </View>
 
             {/* we take inputs for the age 
                 Age is STORED into inputAge */}
@@ -80,7 +85,6 @@ export default function StepOne({ navigation }){
 
 
 
-//all the styles
 const styles = StyleSheet.create ({
 
     container: {
@@ -90,7 +94,6 @@ const styles = StyleSheet.create ({
         padding: 16,
         margin: 20,
         position: 'relative',
-        //marginTop: 70,
     },
 
     steText: {
@@ -103,21 +106,46 @@ const styles = StyleSheet.create ({
         color: 'dodgerblue',
         fontFamily: 'Georgia',
         fontWeight: '500',
-        flexDirection: 'row', // Use row direction for horizontal layout
+        flexDirection: 'row', 
         alignItems: 'center', // Align items in the center
-
-        zIndex: 1, // Add this line
+        zIndex: 1, 
     },
+
+    // mainLabel: {
+    //     fontSize: 30,
+    //     marginTop: 30,
+    //     //position: 'absolute',
+    //     top: 100,
+    //     fontWeight: 'bold',
+    //     position: 'absolute',
+        
+    // },
 
     mainLabel: {
         fontSize: 30,
         marginTop: 30,
-        //position: 'absolute',
-        top: 100,
         fontWeight: 'bold',
+        // top: -120,
+      },
+
+
+    mainLabelContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
         position: 'absolute',
-        
-    },
+        top: 110,
+      },
+    
+      mainLabelIcon: {
+        width: 60,
+        height: 60,
+        marginRight: 5,
+        resizeMode: 'contain',
+         top: 10,
+      },
+    
+
+
 
     nextButton: {
         backgroundColor: "deepskyblue",
@@ -136,6 +164,8 @@ const styles = StyleSheet.create ({
         fontWeight: 'bold',
 
     },
+
+    
 
     inputAge: {
         fontSize: 26,

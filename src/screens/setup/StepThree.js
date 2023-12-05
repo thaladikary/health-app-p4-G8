@@ -2,148 +2,149 @@ import { View, Text, StyleSheet,Image, Dimensions, StatusBar, TouchableOpacity, 
 import { useEffect, useState } from 'react';
 import { NavigationContainer, useNavigation } from '@react-navigation/native';
 
+export default function StepThree({ navigation }){
+
+    const setSelectedWeight = useState(68);
+    const [inputWeight, setInputWeight] = useState('');
+    const [measurement, setMeasurement] = useState({
+        weight: '',
+        unit: 'cm',
+    });
 
 
-export default function StepThree({route}){
-    const inputAge = route.params.inputAge
-    const meansurement = route.params.meansurement
-    //these are the variables used 
-    const [selectedOption, setSelectedOption] = useState(null);
-    const navigation = useNavigation();
-    
 
-    //can add more options if needed
-    const goals = ['Stay Healthy', 'Lose Weight', 'Gain Weight'];
-    // useEffect(()=>{
-    //     console.log(selectedOption)
-    // },[selectedOption])
-
-    //using goals.map because it will be easier to add more options in the future
-    const handleFinishButton = () =>{
-        if(selectedOption!== null){
-            console.log(selectedOption)
+    //I do not know if this is correct but it wouldnt work without it. Copied from StepOne
+    const handleNextStep = async() => {
+        // Check if inputAge is not empty before navigating to the next step
+        if (inputAge.trim() !== '') {
+            
+                const entryPath = `users/${userId}/userInfo`
+                const docRef = await addDoc(collection(db, entryPath), {age:inputAge});
+                navigation.navigate('StepTwo'  ,{inputAge});
+              
+         
+        } else {
+            // You can add an alert or other feedback for the user to enter their age
+            console.warn('Please enter your height');
         }
-    }
-    //might need to do: KeyboardAvoidingView
-    return(
-        <KeyboardAvoidingView style={styles.container} behavior='padding'>
+    };
 
+
+
+    return(
+
+       
+        <KeyboardAvoidingView style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'} // Adjust the behavior based on the platform
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : -100} // Adjust the vertical offset as needed
+
+        
+        >
+            
+            {/* used for the Step Progress Lines */}
             <View style={styles.steText}>
                 <View style={styles.progressLine} />
-                <View style={styles.progressLine} />
-                <View style={styles.progressLine} />
+                <View style={styles.emptyLine} />
+                <View style={styles.emptyLine} />
             </View>
 
-            <Text style={styles.steTextNumber}>Step 3 of 3</Text>
-            <Text style={styles.mainLabel}>What is your Goal</Text>
+            <Text style={styles.steTextNumber}>Step 3 of 8</Text>
+            <Text style={styles.mainLabel}>Enter your height</Text>
 
-                
-                {/* 3 different buttons for the 3 different options that we have 
-                    We store the selected goal in setSelectedOption*/}
-            <View style={styles.inputContainer}>
 
-                <TouchableOpacity
-                    style={[
-                    styles.gainWeightButton,
-                    selectedOption === 'gainWeight' ? styles.gainWeightSelected : styles.gainWeightUnselected,
-                    ]}
-                    onPress={() => setSelectedOption('gainWeight')}
->
-                    <Text style={[
-                        styles.gainWeightText,
-                        selectedOption === 'gainWeight' ? styles.gainWeightSelectedText : styles.gainWeightUnselectedText,
-                    ]}>
-                        Gain weight
-                    </Text>
-                </TouchableOpacity>
+            <TextInput
+                style={styles.inputWeight}
+                placeholder="68 cm"
+                keyboardType="numeric"
+                value={inputWeight}
+                onChangeText={(text) => setInputWeight(text)}
+                onFocus={() => {}}
+                // onBlur={Keyboard.dismiss}
+            ></TextInput>
 
-                <TouchableOpacity
-                    style={[
-                    styles.loseWeightButton,
-                    selectedOption === 'loseWeight' ? styles.loseWeightSelected : styles.loseWeightUnselected,
-                    ]}
-                    onPress={() => setSelectedOption('loseWeight')}
+
+
+            {/* This part is if we want to add an option for the measurement : cm and ft */}
+            {/* <TouchableOpacity
+                    style={[styles.unitButton, measurement.unit === 'ft' ? styles.selectedUnit : styles.unselectedUnit]}
+                    onPress={() => setMeasurement((prev) => ({ ...prev, unit: 'ft' }))}
                 >
-                    <Text style={[
-                    styles.loseWeightText,
-                    selectedOption === 'loseWeight' ? styles.loseWeightSelectedText : styles.loseWeightUnselectedText,
-                    ]}>
-                        Lose weight
-                    </Text>
+                    <Text style={[styles.unitText, measurement.unit === 'ft' ? styles.selectedText : styles.unselectedText]}
+                    >ft</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    style={[
-                    styles.stayHealthyButton,
-                    selectedOption === 'stayHealthy' ? styles.stayHealthySelected : styles.stayHealthyUnselected,
-                    ]}
-                    onPress={() => setSelectedOption('stayHealthy')}
+                    style={[styles.unitButton, measurement.unit === 'cm' ? styles.selectedUnit : styles.unselectedUnit]}
+                    onPress={() => setMeasurement((prev) => ({ ...prev, unit: 'cm' }))}
                 >
-                    <Text style={[
-                        styles.stayHealthyText,
-                        selectedOption === 'stayHealthy' ? styles.stayHealthySelectedText : styles.stayHealthyUnselectedText,
-                    ]}>
-                        Stay Healthy
-                    </Text>
-                </TouchableOpacity>
-            </View>
+                    <Text style={[styles.unitText, measurement.unit === 'cm' ? styles.selectedText : styles.unselectedText]}
+                    >cm</Text>
+                </TouchableOpacity> */}
 
-                {/* Finish Button and Previous buttons
-                    The Finish Button points to this page for now.  */}
+
+
+
+
             <TouchableOpacity
                 style={styles.previousButton}
-                onPress={handleFinishButton}
+                onPress={() => navigation.navigate('StepFour')}
+                // onPress={handleNextStep}
             >
-                <Text style={styles.previousButtonText}>Finish</Text>
+                <Text style={styles.previousButtonText}>Next Step</Text>
             </TouchableOpacity>
-                
+
+
             <TouchableOpacity
                 style={styles.previousButton}
-                onPress={() => navigation.navigate('StepTwo',{inputAge})}
+                onPress={() => navigation.navigate('StepTwo')}
             >
                 <Text style={styles.previousButtonText}>Previous Step</Text>
-            </TouchableOpacity> 
-                
+            </TouchableOpacity>
+
+
 
         </KeyboardAvoidingView>
     )
 }
-
-//this CSS part will be changed according to the output or will just use the CSS file 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create ({
 
     container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 16,
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 16,
+        margin: 20,
+        position: 'relative',
+        //marginTop: 70,
     },
-
-    mainLabel: {
-        fontSize: 30,
-        marginTop: 30,
-        position: 'absolute',
-        top: 170,
-        fontWeight: 'bold',
-    },
-
-
 
     steText: {
         flexDirection: 'row',
         fontSize: 18,
         marginBottom: 20,
         position: 'absolute',
-        top: 86,
+        top: 0,
+        marginTop: 70,
         color: 'dodgerblue',
-        width: '85%',
         fontFamily: 'Georgia',
         fontWeight: '500',
-
         flexDirection: 'row', // Use row direction for horizontal layout
         alignItems: 'center', // Align items in the center
+
+        zIndex: 1, // Add this line
+    },
+
+    mainLabel: {
+        fontSize: 30,
+        marginTop: 30,
+        //position: 'absolute',
+        top: 100,
+        fontWeight: 'bold',
+        position: 'absolute',
         
     },
+
+
 
     progressLine: {
         flex: 1,
@@ -151,21 +152,51 @@ const styles = StyleSheet.create({
         backgroundColor: 'dodgerblue',
     },
 
+    emptyLine: {
+        flex: 1,
+        height: 2,
+        backgroundColor: '#ccc',
+    },
+
+
     steTextNumber: {
         fontSize: 18,
         marginLeft: 10, // Adjust the spacing between the lines and the number
         color: 'dodgerblue',
         fontFamily: 'Georgia',
         fontWeight: '500',
-        top: -195,
+        top: 41.5,
+        position: 'absolute',
+    },
+
+    inputWeight: {
+        fontSize: 26,
+        textAlign: 'center',
+        borderBottomWidth: 1,
+        width: '70%',
+        //marginVertical: 200,
+        margin: 10,
+        top: -50,
     },
 
 
+    nextButton: {
+        backgroundColor: "deepskyblue",
+        fontSize: 18,
+        textAlign: 'center',
+        padding: 10,
+        width: '75%',
+        borderRadius: 25,
+        top: -50,
+    },
 
+    nextButtonText: {
+        color: 'black',
+        fontSize: 22,
+        textAlign: 'center',
+        fontWeight: 'bold',
 
-
-   
-
+    },
 
     previousButton: {
         backgroundColor: "deepskyblue",
@@ -184,85 +215,43 @@ const styles = StyleSheet.create({
 
     },
 
+    
 
-    gainWeightButton: {
-        padding: 10,
-        marginBottom: 11,
-    },
-
-    gainWeightText: {
+    unitText: {
         fontSize: 25,
+        bottom: -10,
     },
 
-    gainWeightSelected: {
+
+    unitButton: {
+        padding: 10,
+        //need more
+        marginBottom: 20,
+    },
+    selectedUnit: {
         borderBottomWidth: 2,
         borderColor: 'black',
     },
 
-    gainWeightUnselected: {
+
+    unselectedUnit: {
         borderBottomWidth: 1,
         borderColor: 'grey',
     },
 
-    gainWeightSelectedText: {
+    selectedText: {
         fontWeight: 'bold',
         color: 'black',
     },
 
-    gainWeightUnselectedText: {
+    unselectedText: {
         color: 'grey',
     },
 
-    // Styles for "Lose weight" option
-    loseWeightButton: {
-        padding: 10,
-        marginBottom: 11,
-    },
 
-    loseWeightText: {
-        fontSize: 25,
-    },
 
-    loseWeightSelected: {
-        borderBottomWidth: 2,
-        borderColor: 'black',
-    },
 
-    loseWeightUnselected: {
-        borderBottomWidth: 1,
-        borderColor: 'grey',
-    },
 
-    loseWeightSelectedText: {
-        fontWeight: 'bold',
-        color: 'black',
-    },
 
-    loseWeightUnselectedText: {
-        color: 'grey',
-    },
 
-    // for "Stay Healthy" option
-    stayHealthyButton: {
-        padding: 10,
-        marginBottom: 11,
-    },
-    stayHealthyText: {
-        fontSize: 25,
-    },
-    stayHealthySelected: {
-        borderBottomWidth: 2,
-        borderColor: 'black',
-    },
-    stayHealthyUnselected: {
-        borderBottomWidth: 1,
-        borderColor: 'grey',
-    },
-    stayHealthySelectedText: {
-        fontWeight: 'bold',
-        color: 'black',
-    },
-    stayHealthyUnselectedText: {
-        color: 'grey',
-    },
-  });
+});

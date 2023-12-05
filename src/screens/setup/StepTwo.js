@@ -9,7 +9,7 @@ import { addDoc,collection } from '@firebase/firestore';
 export default function StepTwo({ navigation, route }){
 
     //creating the variables used in this function
-    const inputAge = route.params.inputAge
+    // const inputAge = route.params.inputAge
    
     const [measurement, setMeasurement] = useState({
         weight: '',
@@ -18,9 +18,10 @@ export default function StepTwo({ navigation, route }){
     const handleNextStep = () => {
       
        if(measurement.weight.trim()!==''){
-            console.log(measurement)
-            console.log(inputAge)
+            // console.log(measurement)
+            // console.log(inputAge)
             navigation.navigate('StepThree',{measurement,inputAge});
+            
        }else{
             console.warn('Please enter your weight');
        }
