@@ -177,13 +177,24 @@ export default function TrackCalories({ navigation, route }) {
       return Math.round(goals.caloriesGoal-progress.kcal)
     }
   const handleDetails= (item)=>{
-    console.log(item)
+    console.log(item.prop)
+    const servingsAmt = item.servingsAmt
     const prop = {
-      ...item.prop
+      name:item.prop.name,
+      image:item.prop.image,
+      nutriments:{
+        calories:item.prop.nutriments.calories/servingsAmt,
+        carbohydrates: item.prop.nutriments.carbohydrates/servingsAmt,
+        fat: item.prop.nutriments.fat/servingsAmt,
+        protein: item.prop.nutriments.protein/servingsAmt
+      }
     }
+    console.log("RPORESPOR",prop)
     const mealType = item.mealType
-
-    navigation.navigate("FoodDetails",{prop,mealType,currentDate})
+    
+    const editMode = true
+    const itemId = item.id
+    navigation.navigate("FoodDetails",{prop,mealType,currentDate,servingsAmt, editMode, itemId})
   }
     
   const renderRightActions = (progress, dragX, itemId) => {
@@ -199,7 +210,7 @@ export default function TrackCalories({ navigation, route }) {
       >
         <Text style={styles.deleteText}>Delete</Text>
       </TouchableOpacity>
-    )}
+    )} 
     
   const handleDelete=async(itemId)=>{
     console.log("deelte")
