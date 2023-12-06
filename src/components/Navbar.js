@@ -153,6 +153,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     justifyContent: "space-around",
     alignItems: "center",
+    borderTopColor: "black",
+    borderTopWidth: 0.5,
   },
   labelContainer: {
     margin: 5,
