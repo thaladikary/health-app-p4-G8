@@ -72,23 +72,47 @@ export default function NaturalLanguageSearch({ visible, setVisible }) {
 
   const handleSubmitModalSearch = () => {
     setMealType("");
-    const wordsToCheck = ["breakfast", "lunch", "dinner", "snack"];
-    const result = findMealTypeInString(modalSearchText, wordsToCheck);
+    const mealTypes = ["breakfast", "lunch", "dinner", "snack"];
 
-    if (result.startsWith("Error")) {
-      // console.log(result);
+    if (modalSearchText) {
+      if (!mealTypes.includes(modalSearchText.toLowerCase().trim())) {
+        // console.log(modalSearchText);
+        //to check if input contains the specified meal types
+
+        const mealResult = findMealTypeInString(modalSearchText, mealTypes);
+
+        if (mealResult) {
+          if (!mealResult.startsWith("Error")) {
+            setMealType(mealResult);
+
+            const naturalPostUrl =
+              "https://trackapi.nutritionix.com/v2/natural/nutrients";
+            const naturalQueryData = { query: `${modalSearchText}` };
+            requestCommonFoodItems(naturalPostUrl, naturalQueryData, headers);
+          }
+        } else {
+          return console.log("Specify a meal type");
+        }
+      } else {
+        return console.log("Specify type of food");
+      }
     } else {
-      console.log(`The string contains only one specific word: ${result}`);
-      setMealType(result);
+      return console.log("Specify a type of food");
     }
 
-    if (modalSearchText && mealType != undefined) {
-      const naturalPostUrl =
-        "https://trackapi.nutritionix.com/v2/natural/nutrients";
-      const naturalQueryData = { query: `${modalSearchText}` };
-      requestCommonFoodItems(naturalPostUrl, naturalQueryData, headers);
-    }
+    // let searchTextWithoutMeal = removeWordsFromString(
+    //   modalSearchText,
+    //   wordsToCheck
+    // );
   };
+
+  function removeWordsFromString(inputString, wordsToRemove) {
+    const pattern = new RegExp("\\b(" + wordsToRemove.join("|") + ")\\b", "gi");
+
+    const resultString = inputString.replace(pattern, "");
+
+    return resultString;
+  }
 
   const findMealTypeInString = (inputStr, wordsToCheck) => {
     const inputStringLower = inputStr.toLowerCase();
