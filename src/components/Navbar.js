@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useState, useEffect } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import NaturalLanguageSearch from "./NaturalLanguageSearch";
 
 const screenWidth = Dimensions.get("window").width;
 const screenHeight = Dimensions.get("window").height;
@@ -16,6 +17,8 @@ const screenHeight = Dimensions.get("window").height;
 const scaleFactor = 0.05;
 const marginValue = screenWidth * scaleFactor;
 export default function Navbar({ navigation }) {
+  const [isModalVisible, setModalVisibile] = useState(false);
+
   const handleTrackCalories = () => {
     navigation.navigate("TrackCalories");
   };
@@ -23,9 +26,8 @@ export default function Navbar({ navigation }) {
     navigation.navigate("Maps");
   };
   const handleAdd = () => {
-    navigation.navigate("Add");
+    setModalVisibile(!isModalVisible);
   };
-
   const handleGroceryList = () => {
     navigation.navigate("GroceryList");
   };
@@ -33,37 +35,51 @@ export default function Navbar({ navigation }) {
     navigation.navigate("UserProfile");
   };
 
+  const setVisibleFromChild = (data) => {
+    setModalVisibile(data);
+  };
+
   return (
-    <View style={styles.navbarContainer}>
-      <TouchableOpacity onPress={handleTrackCalories}>
-        <View style={styles.labelContainer}>
-          <Ionicons name="calendar-outline" size={35} />
-          <Text>Track</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={handleMaps}>
-        <View style={[styles.labelContainer, styles.shadow]}>
-          <Ionicons name="map-outline" size={35} />
-          <Text>Maps</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={handleAdd}>
-        <View style={[styles.plusSign, styles.shadow]}>
-          <Text style={styles.plusSignText}>+</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={handleGroceryList}>
-        <View style={styles.labelContainer}>
-          <Ionicons name="cart-outline" size={35} />
-          <Text>Grocery</Text>
-        </View>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={handleAccount}>
-        <View style={styles.labelContainer}>
-          <Ionicons name="person-outline" size={35} />
-          <Text>Profile</Text>
-        </View>
-      </TouchableOpacity>
+    <View>
+      {isModalVisible ? (
+        <NaturalLanguageSearch
+          visible={isModalVisible}
+          setVisible={(data) => setVisibleFromChild(data)}
+        />
+      ) : (
+        <View></View>
+      )}
+      <View style={styles.navbarContainer}>
+        <TouchableOpacity onPress={handleTrackCalories}>
+          <View style={styles.labelContainer}>
+            <Ionicons name="calendar-outline" size={35} />
+            <Text>Track</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleMaps}>
+          <View style={[styles.labelContainer, styles.shadow]}>
+            <Ionicons name="map-outline" size={35} />
+            <Text>Maps</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleAdd}>
+          <View style={[styles.plusSign, styles.shadow]}>
+            <Text style={styles.plusSignText}>+</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleGroceryList}>
+          <View style={styles.labelContainer}>
+            <Ionicons name="cart-outline" size={35} />
+            <Text>Grocery</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleAccount}>
+          <View style={styles.labelContainer}>
+            <Ionicons name="person-outline" size={35} />
+            <Text>Profile</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
