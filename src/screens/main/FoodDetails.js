@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet,Image, Dimensions, StatusBar, TouchableOpacity} from 'react-native';
 import { useEffect, useState } from 'react';
 import Navbar from '../../components/Navbar';
-import { collection, addDoc, doc } from '@firebase/firestore';
+import { collection, addDoc, doc,updateDoc } from '@firebase/firestore';
 import {db} from "../../config/firebase"
 import { useUser } from '../../context/userContext';
 
@@ -9,21 +9,36 @@ const { width, height } = Dimensions.get('window');
 
 export default function FoodDetails({navigation,route}) {
     const foodData = route.params
-   
+    console.log("TESTSETSETST",foodData.editMode)
     const user = useUser()
-    const [servingsAmt, setServingsAmt] = useState(1);
+    const [servingsAmt, setServingsAmt] = useState(foodData.servingsAmt || 1);
     const [macros, setMacros] = useState({
         calories: foodData.prop.nutriments.calories,
         carbs: foodData.prop.nutriments.carbohydrates,
         protein: foodData.prop.nutriments.protein,
         fat: foodData.prop.nutriments.fat
-    });
+    }
+    );
     const [foodDataWithServings,setFoodDataWithServings] =useState({
             ...foodData,
-           
     })
 
+    useEffect(()=>{
+        console.log(foodData.servingsAmt)
+        if(foodData.servingsAmt){
+            setMacros({
+                calories: foodData.prop.nutriments.calories*foodData.servingsAmt,
+                carbs: foodData.prop.nutriments.carbohydrates*foodData.servingsAmt,
+                protein: foodData.prop.nutriments.protein*foodData.servingsAmt,
+                fat: foodData.prop.nutriments.fat*foodData.servingsAmt  
+                })
+        }
+       
+        console.log(macros)
+    },[foodData])
+
     useEffect(() => {
+    
         setFoodDataWithServings({
           ...foodDataWithServings,
           prop: {
@@ -37,7 +52,7 @@ export default function FoodDetails({navigation,route}) {
           },
           servingsAmt:servingsAmt
         });
-      }, [macros]);
+      }, [servingsAmt]);
     
     const handleSubtractServing = () => {
         const newServingsAmt = servingsAmt !== 1 ? servingsAmt - 1 : 1;
@@ -74,8 +89,8 @@ export default function FoodDetails({navigation,route}) {
         return `${year}-${month}-${day}`;
       };
       console.log(getCurrentDate())
+  
     const handleAddToDiary = async()=>{
-        
         console.log("food is logged")
         const prop = {
             macros,
@@ -84,9 +99,16 @@ export default function FoodDetails({navigation,route}) {
             servingsAmt:servingsAmt
         }
         console.log("PROP",prop)
-        
         // navigation.navigate("TrackCalories",{prop})
-       
+        if(!foodData.editMode){
+            addToFirebase(prop)
+        }else{
+            editToFirebase(prop)
+        }
+   
+    }
+
+    const addToFirebase=async(prop)=>{
         try {
             const userId = user.uid
             const entryPath = `users/${userId}/foodDiaries/${getCurrentDate()}/entries`;
@@ -98,6 +120,29 @@ export default function FoodDetails({navigation,route}) {
             console.error("Error adding document: ", e);
         }
     }
+
+
+    const editToFirebase = async (prop) => {
+        console.log(foodData.itemId)
+        try {
+            const userId = user.uid;
+            const entryPath = `users/${userId}/foodDiaries/${getCurrentDate()}/entries`;
+    
+            console.log("FOODDATA,", foodDataWithServings);
+        
+            if (!foodData.itemId) {
+                console.error("No document ID found for editing.");
+                return;
+            }
+    
+            const docRef = doc(db, entryPath, foodData.itemId);
+            await updateDoc(docRef, foodDataWithServings);
+            
+            navigation.navigate("TrackCalories", { prop });
+        } catch (e) {
+            console.error("Error updating document: ", e);
+        }
+    };
     return(
         <View style={styles.container}>
             <TouchableOpacity onPress={handleReturn}>
