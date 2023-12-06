@@ -16,7 +16,7 @@ const screenHeight = Dimensions.get("window").height;
 
 const scaleFactor = 0.05;
 const marginValue = screenWidth * scaleFactor;
-export default function Navbar({ navigation }) {
+export default function Navbar({ active, navigation }) {
   const [isModalVisible, setModalVisibile] = useState(false);
 
   const handleTrackCalories = () => {
@@ -40,7 +40,7 @@ export default function Navbar({ navigation }) {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       {isModalVisible ? (
         <NaturalLanguageSearch
           visible={isModalVisible}
@@ -51,32 +51,93 @@ export default function Navbar({ navigation }) {
       )}
       <View style={styles.navbarContainer}>
         <TouchableOpacity onPress={handleTrackCalories}>
-          <View style={styles.labelContainer}>
-            <Ionicons name="calendar-outline" size={35} />
-            <Text>Track</Text>
+          <View
+            style={[
+              styles.labelContainer,
+              styles.navText,
+              // active === "TrackCalorie" && styles.activeText,
+            ]}
+          >
+            <View style={styles.icon}>
+              <Ionicons
+                name={
+                  active === "TrackCalorie" ? "calendar" : "calendar-outline"
+                }
+                size={25}
+                color={active === "TrackCalorie" ? "#4470e9" : "black"}
+              />
+            </View>
+
+            <Text style={active === "TrackCalorie" && styles.activeText}>
+              Track
+            </Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleMaps}>
-          <View style={[styles.labelContainer, styles.shadow]}>
-            <Ionicons name="map-outline" size={35} />
-            <Text>Maps</Text>
+          <View
+            style={[
+              styles.labelContainer,
+              styles.navText,
+              // active === "Maps" && styles.activeText,
+            ]}
+          >
+            <View style={styles.icon}>
+              <Ionicons
+                name={active === "Maps" ? "navigate" : "navigate-outline"}
+                size={25}
+                color={active === "Maps" ? "#4470e9" : "black"}
+              />
+            </View>
+            <Text style={active === "Maps" && styles.activeText}>Maps</Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleAdd}>
-          <View style={[styles.plusSign, styles.shadow]}>
+          {/* <View style={[styles.plusSign, styles.shadow]}>
             <Text style={styles.plusSignText}>+</Text>
+          </View> */}
+          <View style={[styles.labelContainer, styles.plusSign, styles.shadow]}>
+            <Ionicons name="mic" size={35} color="black" />
           </View>
         </TouchableOpacity>
+
         <TouchableOpacity onPress={handleGroceryList}>
-          <View style={styles.labelContainer}>
-            <Ionicons name="cart-outline" size={35} />
-            <Text>Grocery</Text>
+          <View
+            style={[
+              styles.labelContainer,
+              styles.navText,
+              // active === "Grocery" && styles.activeText,
+            ]}
+          >
+            <View style={styles.icon}>
+              <Ionicons
+                name={active === "Grocery" ? "cart" : "cart-outline"}
+                size={25}
+                color={active === "Grocery" ? "#4470e9" : "black"}
+              />
+            </View>
+            <Text style={active === "Grocery" && styles.activeText}>
+              Grocery
+            </Text>
           </View>
         </TouchableOpacity>
         <TouchableOpacity onPress={handleAccount}>
-          <View style={styles.labelContainer}>
-            <Ionicons name="person-outline" size={35} />
-            <Text>Profile</Text>
+          <View
+            style={[
+              styles.labelContainer,
+              styles.navText,
+              // active === "Profile" && styles.activeText,
+            ]}
+          >
+            <View style={styles.icon}>
+              <Ionicons
+                name={active === "Profile" ? "person" : "person-outline"}
+                size={25}
+                color={active === "Profile" ? "#4470e9" : "black"}
+              />
+            </View>
+            <Text style={active === "Profile" && styles.activeText}>
+              Account
+            </Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -86,38 +147,61 @@ export default function Navbar({ navigation }) {
 
 const styles = StyleSheet.create({
   navbarContainer: {
-    // display:'flex',
-    // flexDirection:"row",
-    // width:screenWidth,
-    // // height:50,
-    borderTopColor: "black",
-    justifyContent: "space-between",
-    // borderTopWidth: 1,
     display: "flex",
     flexDirection: "row",
-    marginTop: marginValue,
+    // marginTop: marginValue,
     backgroundColor: "white",
+    justifyContent: "space-around",
+    alignItems: "center",
   },
   labelContainer: {
-    margin: 15,
-    marginTop: 15,
-    marginBottom: 15,
-    marginLeft: 20,
-    // borderWidth: 2, // Border width
-    // borderColor: "red", // Border color
-    // borderRadius: 1,
+    margin: 5,
+    // marginLeft: 2,
+    // width: 60,
+    // height: 60,
+    display: "flex",
+    flexDirection: "column",
+    alignContent: "center",
+    justifyContent: "center",
+    // backgroundColor: "red",
   },
+
+  navText: {
+    color: "black",
+    // justifyContent: "center",
+    borderTopWidth: 2, // Initial borderBottomWidth
+    borderTopColor: "transparent", // Initial borderBottomColor
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  activeText: {
+    color: "#6495ED",
+    borderTopColor: "#6495ED", // Color of the line when the item is active
+    // backgroundColor: "#6495ED",
+    // padding: 1,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  lowerIconText: {},
+
+  icon: {
+    // marginLeft: 4,
+  },
+
   plusSign: {
-    width: 45,
-    height: 45,
+    width: 50,
+    height: 50,
     backgroundColor: "#6495ED",
     borderRadius: 50,
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    marginRight: 10,
-    marginLeft: 10,
-    marginTop: 18,
+    // marginRight: 10,
+    // marginLeft: 10,
+    // marginTop: 18,
+    paddingLeft: 2,
     elevation: 5,
   },
   plusSignText: {
