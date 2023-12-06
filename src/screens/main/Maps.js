@@ -19,12 +19,10 @@ export default function Maps ({ navigation }) {
     useEffect(() => {
         const getPermissions = async () => {
         await Location.requestForegroundPermissionsAsync()
-        let currentLocation = await Location.getLastKnownPositionAsync({})
+        let currentLocation = await Location.getLastKnownPositionAsync({}) // quickly gets the location so everything loads fast
         setLoc(currentLocation)
-        console.log(currentLocation)
-        currentLocation = await Location.getCurrentPositionAsync({})
+        currentLocation = await Location.getCurrentPositionAsync({}) // accuratly gets the location with a small dely
         setLoc(currentLocation)
-        console.log(currentLocation)
         }
         getPermissions()
         displayFood()
@@ -114,7 +112,6 @@ export default function Maps ({ navigation }) {
         markerList=[]
         
         filteredPlaces.forEach((locInfo) => {
-            console.log(locInfo)
             markerList.push(
                 <Marker
                       key={locInfo.id}
@@ -153,7 +150,6 @@ export default function Maps ({ navigation }) {
                 </View>
             )
         })
-        console.log(markerList)
         setMarkers(markerList)
         return cardList
     }
