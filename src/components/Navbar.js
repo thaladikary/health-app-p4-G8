@@ -45,6 +45,7 @@ export default function Navbar({ active, navigation }) {
         <NaturalLanguageSearch
           visible={isModalVisible}
           setVisible={(data) => setVisibleFromChild(data)}
+          navigation={navigation}
         />
       ) : (
         <View></View>
