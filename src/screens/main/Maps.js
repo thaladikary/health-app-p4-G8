@@ -39,7 +39,7 @@ export default function Maps ({ navigation }) {
                 body: JSON.stringify(
                     {
                         "textQuery" : "healthy restaurants",
-                        "maxResultCount": 7,
+                        "maxResultCount": 10,
                         "locationBias": {
                           "circle": {
                             "center": {
@@ -157,11 +157,7 @@ export default function Maps ({ navigation }) {
     return(
         <View style={styles.container}>
             <ScrollView>
-                <View style={styles.buttons}>
-                    <TouchableOpacity style={styles.button} onPress={displayGyms}><Text style={styles.buttonText}>Gyms</Text></TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={displayRecreation}><Text style={styles.buttonText}>Recreation</Text></TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={displayFood}><Text style={styles.buttonText}>Food</Text></TouchableOpacity>
-                </View>
+                
                 <View style={styles.mapContainer}>
                     <MapView style={styles.map} showsUserLocation={true}
                      region={{
@@ -172,6 +168,11 @@ export default function Maps ({ navigation }) {
                       }}>
                         {markers}
                     </MapView>
+                </View>
+                <View style={styles.buttons}>
+                    <TouchableOpacity style={styles.button} onPress={displayGyms}><Text style={styles.buttonText}>Gyms</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={displayRecreation}><Text style={styles.buttonText}>Recreation</Text></TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={displayFood}><Text style={styles.buttonText}>Food</Text></TouchableOpacity>
                 </View>
                 {cards}
             </ScrollView>
@@ -192,8 +193,8 @@ const styles = StyleSheet.create({
         display: "flex"
     },
     button:{
-        marginVertical: "3%",
-        borderWidth: 1.5,
+        marginVertical: "1.5%",
+        borderWidth: 0.8,
         borderRadius: 18,
         backgroundColor:"white",
         shadowColor:"#333333",
@@ -213,13 +214,11 @@ const styles = StyleSheet.create({
         paddingVertical: "2%"
     },
     mapContainer:{
-        borderWidth: 1,
-        borderRadius: 15,
+        borderWidth: 0.4,
         overflow:"hidden",
-        width:"90%",
+        width:"100%",
         height: height * 0.55,
         backgroundColor:"white",
-        marginHorizontal:width * 0.05,
         shadowColor:"#333333",
         shadowOffset:{
             width:4,
@@ -227,17 +226,17 @@ const styles = StyleSheet.create({
         },
         shadowOpacity:0.4,
         shadowRadius:4,
-        elevation: 4,
-        marginVertical:height * 0.01
+        elevation: 6,
+        marginBottom: height * 0.009,
     },
     locationContainer:{
         width:"86%",
         minHeight: height * 0.08,
-        borderWidth: 1,
         borderRadius: 15,
         backgroundColor:"white",
         marginHorizontal:width * 0.07,
-        marginVertical:height * 0.01,
+        marginVertical:height * 0.012,
+        paddingVertical: height * 0.008,
         shadowColor:"#333333",
         shadowOffset:{
             width:3,
@@ -245,7 +244,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity:0.3,
         shadowRadius:3,
-        elevation: 3,
+        elevation: 6,
         flexDirection: "row",
         overflow: "hidden"
     },
