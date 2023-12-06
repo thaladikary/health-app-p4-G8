@@ -9,185 +9,126 @@ import {
   ScrollView,
   Image,
   Modal,
+  KeyboardAvoidingView,
 } from "react-native";
-import Navbar from "../../components/Navbar";
 import React, { useState, useEffect } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import axios from "axios";
 import { APP_ID, APP_KEY } from "@env";
 
-export default function Add({ navigation, route }) {
-  const [query, setQuery] = useState();
-  const [searchedItem, setSearchedItem] = useState();
+export default function NaturalLanguageSearch({ visible, setVisible }) {
   const [nlSuggestionList, setNlSuggestionList] = useState([]);
-  const [suggestions, setSuggestions] = useState([]);
-  const [isModalVisible, setModalVisibile] = useState(false);
+  const [isModalVisible, setModalVisibile] = useState(visible);
   const [modalSearchText, setModalSearchText] = useState();
   const [nlAddedList, setNlAddedList] = useState([]);
-  const [fontSize, setFontSize] = useState(14);
-  const currentDate = route.params && route.params.currentDate;
-  const mealType = route.params && route.params.mealType;
+  const [addedListToProp, setAddedListToProp] = useState([]);
+  const [mealType, setMealType] = useState("");
+
   const headers = {
     "x-app-id": APP_ID,
     "x-app-key": APP_KEY,
   };
 
-  const searchEndpoint = "https://trackapi.nutritionix.com/v2/search/instant";
+  useEffect(() => {
+    setVisible(isModalVisible);
+  }, [isModalVisible]);
 
-  const handleInputChange = (input) => {
-    setQuery(input);
-    if (input.trim().length != 0) {
-      const queryParams = {
-        query: input,
+  const mapAddedToPropArray = (array, mealType) => {
+    const mappedArray = array.map((item) => {
+      return {
+        prop: {
+          name: item.food_name,
+          image: item.photo.thumb,
+
+          nutriments: {
+            calories: item.nf_calories,
+            fat: item.nf_total_fat,
+            protein: item.nf_protein,
+            carbohydrates: item.nf_total_carbohydrate,
+          },
+        },
+
+        mealType: mealType,
+        servingsAmt: 1,
       };
-      let foodNameList = [];
-
-      axios
-        .get(searchEndpoint, {
-          params: queryParams,
-          headers: headers,
-        })
-        .then((response) => {
-          let foodNameArrayCommon = response.data.common;
-          let foodNameArrayBranded = response.data.branded;
-          let foodNameArray = [...foodNameArrayBranded, ...foodNameArrayCommon];
-
-          foodNameList = foodNameArray.map(
-            ({ food_name, photo, nix_item_id }) => ({
-              food_name,
-              photo,
-              nix_item_id,
-            })
-          );
-          setSuggestions(foodNameList);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    }
-  };
-
-  const requestBrandedFoodItems = (getUrl, headers, item) => {
-    const queryParams = {
-      nix_item_id: item.nix_item_id,
-    };
-    axios
-      .get(getUrl, { params: queryParams, headers: headers })
-      .then((response) => {
-        // Handle success
-        // console.log(response.data);
-        setSearchedItem(response.data);
-      })
-      .catch((error) => {
-        // Handle error
-        console.error("Error:", error);
-      });
+    });
+    return mappedArray;
   };
 
   const requestCommonFoodItems = (postUrl, foodItemPostData, headers) => {
     axios
       .post(postUrl, foodItemPostData, { headers })
       .then((response) => {
-        // Handle success
-        // console.log(response.data);
-        console.log(isModalVisible);
-        if (isModalVisible) {
-          let nlSuggestionArray = [];
-
-          setNlSuggestionList(response.data.foods);
-        } else {
-          console.log("test32432");
-          setSearchedItem(response.data);
-        }
+        setNlSuggestionList(response.data.foods);
       })
       .catch((error) => {
-        // Handle error
-        console.error("Error:", error);
+        console.log(error);
       });
-  };
-
-  useEffect(() => {
-    if (searchedItem) {
-      console.log(searchedItem);
-      let foodData = searchedItem?.foods[0];
-      console.log(foodData.food_name);
-      let prop = {
-        name: foodData.food_name,
-        image: foodData.photo.thumb,
-        nutriments: {
-          calories: foodData.nf_calories,
-          fat: foodData.nf_total_fat,
-          protein: foodData.nf_protein,
-          carbohydrates: foodData.nf_total_carbohydrate,
-        },
-      };
-
-      navigation.navigate("FoodDetails", { prop, mealType, currentDate });
-    } else {
-      console.log("test");
-    }
-  }, [searchedItem]);
-
-  const handleAddFood = (item) => {
-    console.log(item.nix_item_id);
-    const naturalQueryData = { query: `${item.food_name}` };
-    const naturalPostUrl =
-      "https://trackapi.nutritionix.com/v2/natural/nutrients"; //url for natural lanauge for common foods
-    const brandedGetUrl = "https://trackapi.nutritionix.com/v2/search/item"; //url for /search/item for branded foods
-
-    if (item.nix_item_id != undefined) {
-      //check if selected food is a brand item (i.e doritos)
-      requestBrandedFoodItems(brandedGetUrl, headers, item);
-    } else {
-      //if the selected food item is a common food (i.e apple/banana)
-
-      requestCommonFoodItems(naturalPostUrl, naturalQueryData, headers);
-    }
-  };
-
-  const renderItem = ({ item }) => (
-    <TouchableOpacity
-      style={styles.suggestionItem}
-      onPress={() => {
-        handleAddFood(item);
-      }}
-    >
-      <Image source={{ uri: item.photo.thumb }} style={styles.image} />
-      <Text>{item.food_name}</Text>
-    </TouchableOpacity>
-  );
-
-  useEffect(() => {
-    if (query === "") {
-      setSuggestions([]);
-    }
-  }, [query]);
-
-  const clearSearch = () => {
-    setSuggestions([]);
-    setQuery();
-  };
-  const handleBarcodeNavigation = () => {
-    navigation.navigate("Scanner", { mealType, currentDate }); //mealtype should be selected once in the food details page if searched from this page
-  };
-
-  const toggleModal = () => {
-    setModalVisibile(!isModalVisible);
   };
 
   const handleModalInputChange = (input) => {
     setModalSearchText(input);
-    const newTextLength = input.length;
-    const newSize = Math.max(14, 16 - newTextLength); // Example adjustment logic
-
-    setFontSize(newSize);
   };
 
   const handleSubmitModalSearch = () => {
-    const naturalPostUrl =
-      "https://trackapi.nutritionix.com/v2/natural/nutrients";
-    const naturalQueryData = { query: `${modalSearchText}` };
-    requestCommonFoodItems(naturalPostUrl, naturalQueryData, headers);
+    setMealType("");
+    const mealTypes = ["breakfast", "lunch", "dinner", "snack"];
+
+    if (modalSearchText) {
+      if (!mealTypes.includes(modalSearchText.toLowerCase().trim())) {
+        // console.log(modalSearchText);
+        //to check if input contains the specified meal types
+
+        const mealResult = findMealTypeInString(modalSearchText, mealTypes);
+
+        if (mealResult) {
+          if (!mealResult.startsWith("Error")) {
+            setMealType(mealResult);
+
+            const naturalPostUrl =
+              "https://trackapi.nutritionix.com/v2/natural/nutrients";
+            const naturalQueryData = { query: `${modalSearchText}` };
+            requestCommonFoodItems(naturalPostUrl, naturalQueryData, headers);
+          }
+        } else {
+          return console.log("Specify a meal type");
+        }
+      } else {
+        return console.log("Specify type of food");
+      }
+    } else {
+      return console.log("Specify a type of food");
+    }
+
+    // let searchTextWithoutMeal = removeWordsFromString(
+    //   modalSearchText,
+    //   wordsToCheck
+    // );
+  };
+
+  function removeWordsFromString(inputString, wordsToRemove) {
+    const pattern = new RegExp("\\b(" + wordsToRemove.join("|") + ")\\b", "gi");
+
+    const resultString = inputString.replace(pattern, "");
+
+    return resultString;
+  }
+
+  const findMealTypeInString = (inputStr, wordsToCheck) => {
+    const inputStringLower = inputStr.toLowerCase();
+
+    // Check if only one specific word exists in the input string
+    const foundWords = wordsToCheck.filter((word) =>
+      inputStringLower.includes(word.toLowerCase())
+    );
+
+    if (foundWords.length === 1) {
+      return foundWords[0];
+    } else if (foundWords.length > 1) {
+      return "Error: More than one specific word found.";
+    } else {
+      return "Error: No specific words found.";
+    }
   };
 
   const handleAddItem = (item) => {
@@ -198,8 +139,6 @@ export default function Add({ navigation, route }) {
     setNlSuggestionList((prevElements) =>
       prevElements.filter((addedItem) => addedItem.food_name !== item.food_name)
     );
-
-    console.log(nlAddedList);
   };
 
   const removeFromNlAddedList = (item) => {
@@ -208,84 +147,27 @@ export default function Add({ navigation, route }) {
     );
   };
 
+  const handleDoneNlSearch = () => {
+    const prop = mapAddedToPropArray(nlAddedList, mealType);
+    setAddedListToProp(prop); // sets the state variable that includes data to be sent to track calorie page
+    setModalVisibile(false);
+  };
+  console.log(addedListToProp);
   const clearNlSearch = () => {
     setModalSearchText();
     setNlSuggestionList([]);
     setNlAddedList([]);
+    setMealType("");
   };
 
   return (
-    <View>
+    <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.container}>
-        <View style={styles.searchBar}>
-          <Ionicons name="search" size={20} color="#aaa" />
-          <TextInput
-            style={styles.input}
-            placeholder="Search for food"
-            placeholderTextColor="#aaa"
-            value={query}
-            onChangeText={handleInputChange}
-          />
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              clearSearch();
-            }}
-          >
-            <Text style={styles.buttonText}>
-              <Ionicons name="close" size={20} color="#4470e9" />
-            </Text>
-          </TouchableOpacity>
-        </View>
-        {query === undefined || query === "" ? (
-          <View style={styles.searchOptions}>
-            <TouchableOpacity onPress={handleBarcodeNavigation}>
-              <View style={styles.searchOptionContainer}>
-                <View style={styles.nlIconBackground}>
-                  <View style={styles.nlIcon}>
-                    <Ionicons name="barcode" size={60} color="#ffff" />
-                  </View>
-                </View>
-                <Text style={[styles.nlText, styles.bsText]}>
-                  Barcode Scanner
-                </Text>
-              </View>
-            </TouchableOpacity>
-
-            <View style={styles.searchOptionContainer}>
-              <TouchableOpacity onPress={toggleModal}>
-                <View style={styles.nlIconBackground}>
-                  <View style={styles.nlIcon}>
-                    <Ionicons name="mic" size={60} color="#ffff" />
-                  </View>
-                </View>
-              </TouchableOpacity>
-
-              <Text style={styles.nlText}>Natural Languge</Text>
-              <Text style={styles.nlText}>Search</Text>
-            </View>
-          </View>
-        ) : (
-          <View></View>
-        )}
-
-        <FlatList
-          style={styles.suggestionsList}
-          data={suggestions}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={renderItem}
-        />
-      </View>
-
-      <View style={styles.container}>
-        <Modal
-          transparent={true}
-          animationType="fade"
-          visible={isModalVisible}
-          onRequestClose={toggleModal}
-        >
+        <Modal transparent={true} animationType="fade" visible={isModalVisible}>
           <View style={styles.modalOverlay}>
-            <TouchableOpacity onPress={toggleModal}>
+            <TouchableOpacity
+              onPress={(isModalVisible) => setModalVisibile(!isModalVisible)}
+            >
               <Text style={[styles.buttonText, styles.nlCloseBtn]}>
                 <Ionicons name="close" size={50} color="white" />
               </Text>
@@ -296,7 +178,7 @@ export default function Add({ navigation, route }) {
 
             <View style={styles.nlInputContainer}>
               <TextInput
-                style={[styles.modalInput, { fontSize: fontSize }]}
+                style={[styles.modalInput, { fontSize: 16 }]}
                 placeholder="For breakfast I had eggs and orange juice..."
                 placeholderTextColor="#aaa"
                 value={modalSearchText}
@@ -317,14 +199,14 @@ export default function Add({ navigation, route }) {
               {nlAddedList.length != 0 ? (
                 <Text style={styles.nlItemsFoundHeader}>Added:</Text>
               ) : undefined}
-              {nlAddedList.map((item) => {
+              {nlAddedList.map((item, index) => {
                 return (
                   <View style={styles.nlSuggestionList}>
                     <Image
                       source={{ uri: item.photo.thumb }}
                       style={[styles.nlImage]}
                     />
-                    <Text style={styles.nlFoodItem}>
+                    <Text key={index} style={styles.nlFoodItem}>
                       {item.food_name.charAt(0).toUpperCase() +
                         item.food_name.slice(1)}
                     </Text>
@@ -350,14 +232,14 @@ export default function Add({ navigation, route }) {
                 <Text style={styles.nlItemsFoundHeader}>Results:</Text>
               ) : undefined}
               <View>
-                {nlSuggestionList.map((item) => {
+                {nlSuggestionList.map((item, index) => {
                   return (
                     <View style={styles.nlSuggestionList}>
                       <Image
                         source={{ uri: item.photo.thumb }}
                         style={[styles.nlImage]}
                       />
-                      <Text style={styles.nlFoodItem}>
+                      <Text key={index} style={styles.nlFoodItem}>
                         {item.food_name.charAt(0).toUpperCase() +
                           item.food_name.slice(1)}
                       </Text>
@@ -377,21 +259,23 @@ export default function Add({ navigation, route }) {
                 <Text style={styles.nlSearchBtn}>Search</Text>
               </TouchableOpacity>
             ) : (
-              <TouchableOpacity onPress={toggleModal}>
+              <TouchableOpacity onPress={handleDoneNlSearch}>
                 <Text style={styles.nlDoneBtn}>Done</Text>
               </TouchableOpacity>
             )}
           </View>
         </Modal>
       </View>
-
-      {/* <Navbar navigation={navigation} /> */}
-    </View>
+    </KeyboardAvoidingView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
-    height: "auto",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 16,
   },
   searchBar: {
     flexDirection: "row",
@@ -573,5 +457,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "white",
     fontWeight: "bold",
+  },
+
+  nlNotSpecHeader: {
+    color: "white",
   },
 });
