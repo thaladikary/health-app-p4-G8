@@ -1,6 +1,9 @@
 import { View, Text, StyleSheet,Image, Dimensions, StatusBar, TouchableOpacity, ScrollView, Button, State} from 'react-native';
 import { useState, useEffect } from 'react';
 import MapView from 'react-native-maps';
+import {Marker} from 'react-native-maps';
+
+
 import Stars from 'react-native-stars';
 import createMapLink from 'react-native-open-maps';
 import * as Location from 'expo-location';
@@ -11,6 +14,7 @@ const { width, height } = Dimensions.get("window");
 export default function Maps ({ navigation }) {
     const [loc, setLoc] = useState({coords: {latitude: 38.4226711, longitude: -116.0849872}})
     const [cards, setCards] = useState()
+    const [markers, setMarkers] = useState()
 
     useEffect(() => {
         const getPermissions = async () => {
@@ -32,7 +36,7 @@ export default function Maps ({ navigation }) {
                 headers: {
                     "Content-Type": "application/json",
                     "X-Goog-Api-Key": GOOGLE_API_KEY,
-                    "X-Goog-FieldMask": "places.displayName,places.rating,places.userRatingCount,places.location,places.primaryTypeDisplayName,places.shortFormattedAddress"
+                    "X-Goog-FieldMask": "places.displayName,places.rating,places.userRatingCount,places.location,places.primaryTypeDisplayName,places.shortFormattedAddress,places.id"
                 },
                 body: JSON.stringify(
                     {
@@ -58,7 +62,7 @@ export default function Maps ({ navigation }) {
             headers: {
                 "Content-Type": "application/json",
                 "X-Goog-Api-Key": GOOGLE_API_KEY,
-                "X-Goog-FieldMask": "places.displayName,places.rating,places.userRatingCount,places.location,places.primaryTypeDisplayName,places.shortFormattedAddress"
+                "X-Goog-FieldMask": "places.displayName,places.rating,places.userRatingCount,places.location,places.primaryTypeDisplayName,places.shortFormattedAddress,places.id"
             },
             body: JSON.stringify(
                 {
@@ -84,7 +88,7 @@ export default function Maps ({ navigation }) {
             headers: {
                 "Content-Type": "application/json",
                 "X-Goog-Api-Key": GOOGLE_API_KEY,
-                "X-Goog-FieldMask": "places.displayName,places.rating,places.userRatingCount,places.location,places.primaryTypeDisplayName,places.shortFormattedAddress"
+                "X-Goog-FieldMask": "places.displayName,places.rating,places.userRatingCount,places.location,places.primaryTypeDisplayName,places.shortFormattedAddress,places.id"
             },
             body: JSON.stringify(
                 {
@@ -106,10 +110,20 @@ export default function Maps ({ navigation }) {
 
     function buildCards(data) {
         filteredPlaces = data.places.filter( place => place.userRatingCount > 10)
-        cardlist=[]
+        cardList=[]
+        markerList=[]
+        
         filteredPlaces.forEach((locInfo) => {
-            console.log(locInfo.displayName.text)
-            cardlist.push(
+            console.log(locInfo)
+            markerList.push(
+                <Marker
+                      key={locInfo.id}
+                      coordinate={{"latitude": locInfo.location.latitude,"longitude": locInfo.location.longitude}}
+                      title={locInfo.displayName.text}
+                      description={locInfo.primaryTypeDisplayName != undefined ? locInfo.primaryTypeDisplayName.text : ""}
+                    />
+            )
+            cardList.push(
                 <View style={styles.locationContainer}>
                     <View style={styles.locationInfo}>
                         <View style={styles.locationInfoName}>
@@ -139,7 +153,9 @@ export default function Maps ({ navigation }) {
                 </View>
             )
         })
-        return cardlist
+        console.log(markerList)
+        setMarkers(markerList)
+        return cardList
     }
 
     return(
@@ -157,7 +173,9 @@ export default function Maps ({ navigation }) {
                         longitude: loc.coords.longitude,
                         latitudeDelta: 0.0522,
                         longitudeDelta: 0.0321,
-                      }}/>
+                      }}>
+                        {markers}
+                    </MapView>
                 </View>
                 {cards}
             </ScrollView>
