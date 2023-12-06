@@ -11,6 +11,8 @@ export default function StepSix({ navigation }){
     //these are the variables used 
     const [selectedOption, setSelectedOption] = useState(null);
     // const navigation = useNavigation();
+    const currentStep = 6;
+
     
 
     //can add more options if needed
@@ -27,17 +29,29 @@ export default function StepSix({ navigation }){
     }
     //might need to do: KeyboardAvoidingView
     return(
+
+
         <KeyboardAvoidingView style={styles.container} behavior='padding'>
-
-            <View style={styles.steText}>
-                <View style={styles.progressLine} />
-                <View style={styles.progressLine} />
-                <View style={styles.progressLine} />
+            <View style={styles.progressContainer}>
+                {[...Array(8)].map((_, index) => (
+                <View
+                key={index}
+                style={[
+                    styles.progressLine,
+                    index < currentStep - 1 && styles.filledLine,
+                    index === currentStep - 1 && styles.currentLine,
+                ]}
+                />
+                ))}
             </View>
-
             <Text style={styles.steTextNumber}>Step 6 of 8</Text>
-            <Text style={styles.mainLabel}>Now lets set up a GOAL</Text>
 
+
+
+            <View style={styles.mainLabelContainer}>
+                <Image source={require('../../assets/Setup-pages/goal.png')} style={styles.mainLabelIcon}/>
+                <Text style={styles.mainLabel}>Now lets set up a GOAL</Text>
+            </View>
                 
                 {/* 3 different buttons for the 3 different options that we have 
                     We store the selected goal in setSelectedOption*/}
@@ -89,15 +103,6 @@ export default function StepSix({ navigation }){
                 </TouchableOpacity>
             </View>
 
-                {/* Finish Button and Previous buttons
-                    The Finish Button points to this page for now.  */}
-            {/* <TouchableOpacity
-                style={styles.previousButton}
-                onPress={handleFinishButton}
-            >
-                <Text style={styles.previousButtonText}>Finish</Text>
-            </TouchableOpacity> */}
-
             <TouchableOpacity
                 style={styles.previousButton}
                 onPress={() => navigation.navigate('StepSeven')}
@@ -123,58 +128,73 @@ export default function StepSix({ navigation }){
 const styles = StyleSheet.create({
 
     container: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      padding: 16,
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 16,
+        margin: 20,
+        position: 'relative',
     },
+
 
     mainLabel: {
         fontSize: 30,
         marginTop: 30,
-        position: 'absolute',
-        top: 150,
         fontWeight: 'bold',
-    },
+        // top: -120,
+      },
 
-
-
-    steText: {
+    mainLabelContainer: {
         flexDirection: 'row',
-        fontSize: 18,
-        marginBottom: 20,
+        alignItems: 'center',
         position: 'absolute',
-        top: 86,
-        color: 'dodgerblue',
-        width: '85%',
-        fontFamily: 'Georgia',
-        fontWeight: '500',
+        top: 110,
+      },
+    
+      mainLabelIcon: {
+        width: 60,
+        height: 60,
+        marginRight: 5,
+        resizeMode: 'contain',
+         top: 10,
+      },
+    
 
-        flexDirection: 'row', // Use row direction for horizontal layout
-        alignItems: 'center', // Align items in the center
-        
-    },
 
-    progressLine: {
+    progressContainer: {
+        flexDirection: 'row',
+        marginBottom: 20,
+        top: 70,
+        position: 'absolute',
+      },
+    
+      progressLine: {
         flex: 1,
         height: 2,
+        backgroundColor: '#ccc',
+      },
+    
+      filledLine: {
         backgroundColor: 'dodgerblue',
-    },
+      },
+    
+      currentLine: {
+        backgroundColor: 'dodgerblue',
+      },
 
-    steTextNumber: {
+      steTextNumber: {
         fontSize: 18,
         marginLeft: 10, // Adjust the spacing between the lines and the number
         color: 'dodgerblue',
         fontFamily: 'Georgia',
         fontWeight: '500',
-        top: -195,
+        top: 41.5,
+        position: 'absolute',
     },
+    
 
 
 
-
-
-   
 
 
     previousButton: {

@@ -49,8 +49,11 @@ export default function StepThree({ navigation }){
             </View>
 
             <Text style={styles.steTextNumber}>Step 3 of 8</Text>
-            <Text style={styles.mainLabel}>Enter your height</Text>
 
+            <View style={styles.mainLabelContainer}>
+                <Image source={require('../../assets/Setup-pages/height.png')} style={styles.mainLabelIcon}/>
+                <Text style={styles.mainLabel}>Enter your Height</Text>
+            </View>
 
             <TextInput
                 style={styles.inputWeight}
@@ -80,8 +83,6 @@ export default function StepThree({ navigation }){
                     <Text style={[styles.unitText, measurement.unit === 'cm' ? styles.selectedText : styles.unselectedText]}
                     >cm</Text>
                 </TouchableOpacity> */}
-
-
 
 
 
@@ -137,14 +138,26 @@ const styles = StyleSheet.create ({
     mainLabel: {
         fontSize: 30,
         marginTop: 30,
-        //position: 'absolute',
-        top: 100,
         fontWeight: 'bold',
+        // top: -120,
+      },
+
+
+    mainLabelContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
         position: 'absolute',
-        
-    },
-
-
+        top: 110,
+      },
+    
+      mainLabelIcon: {
+        width: 60,
+        height: 60,
+        marginRight: 5,
+        resizeMode: 'contain',
+         top: 10,
+      },
+    
 
     progressLine: {
         flex: 1,
@@ -247,11 +260,5 @@ const styles = StyleSheet.create ({
     unselectedText: {
         color: 'grey',
     },
-
-
-
-
-
-
 
 });

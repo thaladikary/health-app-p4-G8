@@ -6,17 +6,32 @@ export default function StepSeven({ navigation }){
 
     const [inputGoalValue, setInputGoalValue] = useState('0');
 
+    const currentStep = 7;
+
 
     return (
         <View style={styles.container} behavior='padding'>
-          <View style={styles.steText}>
-            <View style={styles.progressLine} />
-            <View style={styles.progressLine} />
-            <View style={styles.progressLine} />
-          </View>
-    
+            <View style={styles.progressContainer}>
+                {[...Array(8)].map((_, index) => (
+                <View
+                key={index}
+                style={[
+                    styles.progressLine,
+                    index < currentStep - 1 && styles.filledLine,
+                    index === currentStep - 1 && styles.currentLine,
+                ]}
+                />
+                ))}
+            </View>
           <Text style={styles.steTextNumber}>Step 7 of 8</Text>
-          <Text style={styles.mainLabel}>What is the Goal Weight</Text>
+
+
+          <View style={styles.mainLabelContainer}>
+                <Image source={require('../../assets/Setup-pages/target.png')} style={styles.mainLabelIcon}/>
+                <Text style={styles.mainLabel}>What's the weight goal</Text>
+            </View>
+
+
           <Text style={styles.explanationText}>Select the amount you want to Gain/Reduce</Text>
 
           <TextInput
@@ -28,12 +43,6 @@ export default function StepSeven({ navigation }){
                 onFocus={() => {}}
                 // onBlur={Keyboard.dismiss}
             ></TextInput>
-
-
-
-
-
-
           <TouchableOpacity
                 style={styles.previousButton}
                 onPress={() => navigation.navigate('StepEight')}
@@ -68,50 +77,55 @@ const styles = StyleSheet.create({
         padding: 16,
         margin: 20,
         position: 'relative',
-        //marginTop: 70,
     },
 
-    steText: {
-        flexDirection: 'row',
-        fontSize: 18,
-        marginBottom: 20,
-        position: 'absolute',
-        top: 0,
-        marginTop: 70,
-        color: 'dodgerblue',
-        fontFamily: 'Georgia',
-        fontWeight: '500',
-        flexDirection: 'row', // Use row direction for horizontal layout
-        alignItems: 'center', // Align items in the center
-
-        zIndex: 1, // Add this line
-    },
+    
 
     mainLabel: {
         fontSize: 30,
         marginTop: 30,
-        //position: 'absolute',
-        top: 70,
         fontWeight: 'bold',
+        // top: -120,
+      },
+
+
+    mainLabelContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
         position: 'absolute',
-        textAlign: 'center',
-        
-    },
+        top: 110,
+      },
+    
+      mainLabelIcon: {
+        width: 60,
+        height: 60,
+        marginRight: 5,
+        resizeMode: 'contain',
+         top: 10,
+      },
 
 
 
-    progressLine: {
-        flex: 1,
-        height: 2,
-        backgroundColor: 'dodgerblue',
-    },
-
-    emptyLine: {
+    progressContainer: {
+        flexDirection: 'row',
+        marginBottom: 20,
+        top: 70,
+        position: 'absolute',
+      },
+    
+      progressLine: {
         flex: 1,
         height: 2,
         backgroundColor: '#ccc',
-    },
-
+      },
+    
+      filledLine: {
+        backgroundColor: 'dodgerblue',
+      },
+    
+      currentLine: {
+        backgroundColor: 'dodgerblue',
+      },
 
     steTextNumber: {
         fontSize: 18,

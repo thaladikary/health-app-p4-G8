@@ -5,12 +5,14 @@ import { useUser } from '../../context/userContext';
 import { db } from '../../config/firebase';
 import { addDoc,collection } from '@firebase/firestore';
 export default function StepOne({ navigation }){
-    // if you want to have a button that navigates through different screens refer to /components/Navbar.js
 
     //using this variable to store the age of the users, we also set the initial age at 18
     const setSelectedAge = useState(18);
     const [inputAge, setInputAge] = useState('');
     // const userId = useUser().uid;
+
+    const currentStep = 1;
+
     const handleNextStep = async() => {
         // Check if inputAge is not empty before navigating to the next step
         if (inputAge.trim() !== '') {
@@ -44,13 +46,24 @@ export default function StepOne({ navigation }){
     return(
 
         <View style={styles.container} behavior='padding'>
-            
-            {/* used for the Step Progress Lines */}
-            <View style={styles.steText}>
-                <View style={styles.progressLine} />
-                <View style={styles.emptyLine} />
-                <View style={styles.emptyLine} />
+
+            {/* Using this progress line array (set to 8 steps) for the progress line. Every screen is going to have a currentStep variable */}
+
+            <View style={styles.progressContainer}>
+                {[...Array(8)].map((_, index) => (
+                <View
+                key={index}
+                style={[
+                    styles.progressLine,
+                    index < currentStep - 1 && styles.filledLine,
+                    index === currentStep - 1 && styles.currentLine,
+                ]}
+                />
+                ))}
             </View>
+
+
+
 
             <Text style={styles.steTextNumber}>Step 1 of 8</Text>
 
@@ -68,7 +81,6 @@ export default function StepOne({ navigation }){
                 value={inputAge}
                 onChangeText={(text) => setInputAge(text)}
                 onFocus={() => {}}
-                // onBlur={Keyboard.dismiss}
             ></TextInput>
 
             {/* NEXT STEP Button here */}
@@ -96,30 +108,38 @@ const styles = StyleSheet.create ({
         position: 'relative',
     },
 
-    steText: {
-        flexDirection: 'row',
+
+    steTextNumber: {
         fontSize: 18,
-        marginBottom: 20,
-        position: 'absolute',
-        top: 0,
-        marginTop: 70,
+        marginLeft: 10, // Adjust the spacing between the lines and the number
         color: 'dodgerblue',
         fontFamily: 'Georgia',
         fontWeight: '500',
-        flexDirection: 'row', 
-        alignItems: 'center', // Align items in the center
-        zIndex: 1, 
+        top: 41.5,
+        position: 'absolute',
     },
+    
 
-    // mainLabel: {
-    //     fontSize: 30,
-    //     marginTop: 30,
-    //     //position: 'absolute',
-    //     top: 100,
-    //     fontWeight: 'bold',
-    //     position: 'absolute',
-        
-    // },
+    progressContainer: {
+        flexDirection: 'row',
+        marginBottom: 20,
+        top: 70,
+        position: 'absolute',
+      },
+    
+      progressLine: {
+        flex: 1,
+        height: 2,
+        backgroundColor: '#ccc',
+      },
+    
+      filledLine: {
+        backgroundColor: 'dodgerblue',
+      },
+    
+      currentLine: {
+        backgroundColor: 'dodgerblue',
+      },
 
     mainLabel: {
         fontSize: 30,
@@ -127,6 +147,7 @@ const styles = StyleSheet.create ({
         fontWeight: 'bold',
         // top: -120,
       },
+      
 
 
     mainLabelContainer: {
@@ -145,8 +166,6 @@ const styles = StyleSheet.create ({
       },
     
 
-
-
     nextButton: {
         backgroundColor: "deepskyblue",
         fontSize: 18,
@@ -154,7 +173,7 @@ const styles = StyleSheet.create ({
         padding: 10,
         width: '75%',
         borderRadius: 25,
-        top: -50,
+        top: -20,
     },
 
     nextButtonText: {
@@ -165,7 +184,6 @@ const styles = StyleSheet.create ({
 
     },
 
-    
 
     inputAge: {
         fontSize: 26,
@@ -174,30 +192,9 @@ const styles = StyleSheet.create ({
         width: '70%',
         //marginVertical: 200,
         margin: 20,
-        top: -50,
+        top: -20,
     },
 
-    progressLine: {
-        flex: 1,
-        height: 2,
-        backgroundColor: 'dodgerblue',
-    },
-
-    emptyLine: {
-        flex: 1,
-        height: 2,
-        backgroundColor: '#ccc',
-    },
-
-    steTextNumber: {
-        fontSize: 18,
-        marginLeft: 10, // Adjust the spacing between the lines and the number
-        color: 'dodgerblue',
-        fontFamily: 'Georgia',
-        fontWeight: '500',
-        top: 41.5,
-        position: 'absolute',
-    },
     
 })
 ;

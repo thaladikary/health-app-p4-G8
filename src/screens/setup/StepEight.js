@@ -18,7 +18,14 @@ export default function StepEight({ navigation }){
           </View>
     
           <Text style={styles.steTextNumber}>Step 8 of 8</Text>
-          <Text style={styles.mainLabel}>What is the Goal Lenght</Text>
+
+
+          <View style={styles.mainLabelContainer}>
+                <Image source={require('../../assets/Setup-pages/physical-activity.png')} style={styles.mainLabelIcon}/>
+                <Text style={styles.mainLabel}>What's the goal length</Text>
+            </View>
+
+
           <Text style={styles.explanationText}>Select in how long would you like to reach your goal</Text>
 
 
@@ -90,13 +97,26 @@ const styles = StyleSheet.create({
     mainLabel: {
         fontSize: 30,
         marginTop: 30,
-        //position: 'absolute',
-        top: 70,
         fontWeight: 'bold',
+        // top: -120,
+      },
+      
+
+
+    mainLabelContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
         position: 'absolute',
-        textAlign: 'center',
-        
-    },
+        top: 110,
+      },
+    
+      mainLabelIcon: {
+        width: 60,
+        height: 60,
+        marginRight: 5,
+        resizeMode: 'contain',
+         top: 10,
+      },
 
 
 

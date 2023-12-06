@@ -6,27 +6,36 @@ export default function StepFive({ navigation }){
 
     const [selectedOption, setSelectedOption] = useState(null);
 
+    const currentStep = 5;
+
+
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
   };
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior='padding'>
-      <View style={styles.steText}>
-        <View style={styles.progressLine} />
-        <View style={styles.progressLine} />
-        <View style={styles.progressLine} />
-      </View>
+
+              <View style={styles.progressContainer}>
+                {[...Array(8)].map((_, index) => (
+                <View
+                key={index}
+                style={[
+                    styles.progressLine,
+                    index < currentStep - 1 && styles.filledLine,
+                    index === currentStep - 1 && styles.currentLine,
+                ]}
+                />
+                ))}
+              </View>
 
       <Text style={styles.steTextNumber}>Step 5 of 8</Text>
 
 
       <View style={styles.mainLabelContainer}>
-        <Image source={require('../../assets/Setup-pages/muscle-icon.jpg')} style={styles.mainLabelIcon} />
+        <Image source={require('../../assets/Setup-pages/man.png')} style={styles.mainLabelIcon} />
         <Text style={styles.mainLabel}>How Active are You?</Text>
       </View>
-
-
 
       {/* Display the options and allow the user to select one */}
       {activityOptions.map((option, index) => (
@@ -38,13 +47,8 @@ export default function StepFive({ navigation }){
           ]}
           onPress={() => handleOptionSelect(index + 1)}
         >
-            
-
-        
           <Text
             style={styles.optionText}>{`${option}`}</Text>
-
-
         </TouchableOpacity>
       ))}
 
@@ -67,21 +71,15 @@ export default function StepFive({ navigation }){
 
 const styles = StyleSheet.create({
 
+    
     container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 16,
-      },
-    
-    //   mainLabel: {
-    //     fontSize: 30,
-    //     marginTop: 30,
-    //     position: 'absolute',
-    //     top: 130,
-    //     fontWeight: 'bold',
-    //   },
-    
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 16,
+      margin: 20,
+      position: 'relative',
+  },
 
     mainLabelContainer: {
         flexDirection: 'row',
@@ -92,8 +90,14 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         marginRight: 5,
+        margin: 20,
         resizeMode: 'contain',
         top: -20,
+        borderWidth: 0.1,
+        borderColor: 'black',
+        borderRadius: 15,
+      
+
       },
     
       mainLabel: {
@@ -108,24 +112,24 @@ const styles = StyleSheet.create({
 
 
 
-      steText: {
+      progressContainer: {
         flexDirection: 'row',
-        fontSize: 18,
         marginBottom: 20,
+        top: 70,
         position: 'absolute',
-        top: 86,
-        color: 'dodgerblue',
-        width: '85%',
-        fontFamily: 'Georgia',
-        fontWeight: '500',
-    
-        flexDirection: 'row', // Use row direction for horizontal layout
-        alignItems: 'center', // Align items in the center
       },
     
       progressLine: {
         flex: 1,
         height: 2,
+        backgroundColor: '#ccc',
+      },
+    
+      filledLine: {
+        backgroundColor: 'dodgerblue',
+      },
+    
+      currentLine: {
         backgroundColor: 'dodgerblue',
       },
     
@@ -135,7 +139,7 @@ const styles = StyleSheet.create({
         color: 'dodgerblue',
         fontFamily: 'Georgia',
         fontWeight: '500',
-        top: 54.5,
+        top: 41.5,
         position: 'absolute',
 
       },
@@ -147,7 +151,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 25,
         borderWidth: 1,
-        borderColor: 'dodgerblue',
+        borderColor: 'black',
         backgroundColor: 'white',
         fontFamily: 'Georgia',
         fontWeight: '500',
@@ -179,6 +183,8 @@ const styles = StyleSheet.create({
 
         alignSelf: 'center',
       },
+
+      
     });
 
     

@@ -15,6 +15,9 @@ export default function StepTwo({ navigation, route }){
         weight: '',
         unit: 'kg',
     });
+
+    const currentStep = 2;
+
     const handleNextStep = () => {
       
        if(measurement.weight.trim()!==''){
@@ -29,16 +32,28 @@ export default function StepTwo({ navigation, route }){
     return(
         <View style={styles.container} behavior='padding'>
 
-        {/* Progress Lines 2/3 */}
-            <View style={styles.steText}>
-                <View style={styles.progressLine} />
-                <View style={styles.progressLine} />
-                <View style={styles.emptyLine} />  
+            {/* Steps line here */}
+            <View style={styles.progressContainer}>
+                {[...Array(8)].map((_, index) => (
+                <View
+                key={index}
+                style={[
+                    styles.progressLine,
+                    index < currentStep - 1 && styles.filledLine,
+                    index === currentStep - 1 && styles.currentLine,
+                ]}
+                />
+                ))}
             </View>
 
-            <Text style={styles.steTextNumber}>Step 2 of 3</Text>
-            <Text style={styles.mainLabel}>Enter your weight</Text>
 
+
+            <Text style={styles.steTextNumber}>Step 2 of 8</Text>
+
+            <View style={styles.mainLabelContainer}>
+                <Image source={require('../../assets/Setup-pages/weight-scale.png')} style={styles.mainLabelIcon}/>
+                <Text style={styles.mainLabel}>Enter your weight</Text>
+            </View>
             <View style={styles.inputContainer}>
 
                 {/* getting the input for weight, we store the value in Weight, we also store the unit in setUnit*/}
@@ -102,41 +117,29 @@ const styles = StyleSheet.create({
     mainLabel: {
         fontSize: 30,
         marginTop: 30,
-        //position: 'absolute',
-        top: 100,
         fontWeight: 'bold',
+        // top: -120,
+      },
+
+
+    mainLabelContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
         position: 'absolute',
-        
-    },
+        top: 110,
+      },
+    
+      mainLabelIcon: {
+        width: 60,
+        height: 60,
+        marginRight: 5,
+        resizeMode: 'contain',
+         top: 10,
+      },
+    
 
 
 //ste stands for Step
-    steText: {
-        flexDirection: 'row',
-        fontSize: 18,
-        marginBottom: 20,
-        position: 'absolute',
-        top: 70,
-        color: 'dodgerblue',
-        fontFamily: 'Georgia',
-        fontWeight: '500',
-        flexDirection: 'row', // Use row direction for horizontal layout
-        alignItems: 'center', // Align items in the center
-    },
-
-
-    progressLine: {
-        flex: 1,
-        height: 2,
-        backgroundColor: 'dodgerblue',
-    },
-
-    emptyLine: {
-        flex: 1,
-        height: 2,
-        backgroundColor: '#ccc',
-    },
-
     steTextNumber: {
         fontSize: 18,
         marginLeft: 10, // Adjust the spacing between the lines and the number
@@ -148,6 +151,26 @@ const styles = StyleSheet.create({
     },
 
 
+    progressContainer: {
+        flexDirection: 'row',
+        marginBottom: 20,
+        top: 70,
+        position: 'absolute',
+    },
+
+    progressLine: {
+        flex: 1,
+        height: 2,
+        backgroundColor: '#ccc',
+    },
+
+    filledLine: {
+        backgroundColor: 'dodgerblue',
+    },
+
+    currentLine: {
+        backgroundColor: 'dodgerblue',
+    },
 
     inputContainer: {
         flexDirection: 'row',

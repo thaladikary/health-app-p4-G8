@@ -28,45 +28,37 @@ export default function SetupStack(){
 
 
  
+                        
+<Stack.Screen
+                            name="StepThree"
+                            component={StepThree}
+                        />
+
+                       
+
+
+                      
+
                         <Stack.Screen
-                            name="StepFive"
-                            component={StepFive}
-                        /> 
+                            name="StepOne"
+                            component={StepOne}
+                        />
+                        <Stack.Screen
+                            name="StepTwo"
+                            component={StepTwo}
+                        />
+
+                       
 
 <                       Stack.Screen
                             name="StepFour"
                             component={StepFour}
                         />
 
-
-
-
-                        <Stack.Screen
-                            name="StepOne"
-                            component={StepOne}
-                        />
-                       
-                        <Stack.Screen
-                            name="StepTwo"
-                            component={StepTwo}
-                        />
-                         <Stack.Screen
-                            name="StepThree"
-                            component={StepThree}
-                        />
-
-
-                     
-                        
-
-{/*                         
-                        <Stack.Screen
-                            name="StepFour"
-                            component={StepFour}
-                        />   
-                         */}
-
-                         
+<                       Stack.Screen
+                            name="StepFive"
+                            component={StepFive}
+                        /> 
                        
                    
                         <Stack.Screen

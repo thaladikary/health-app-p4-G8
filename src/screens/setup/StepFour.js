@@ -5,6 +5,8 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 export default function StepFour({ navigation, route }){
 
     const [selectedGender, setSelectedGender] = useState(null);
+    const currentStep = 4;
+
 
   const handleGenderSelect = (gender) => {
     setSelectedGender(gender);
@@ -14,19 +16,23 @@ export default function StepFour({ navigation, route }){
     return(
         <KeyboardAvoidingView style={styles.container} behavior='padding'>
 
-            <View style={styles.steText}>
-                <View style={styles.progressLine} />
-                <View style={styles.progressLine} />
-                <View style={styles.progressLine} />
+            <View style={styles.progressContainer}>
+                {[...Array(8)].map((_, index) => (
+                <View
+                key={index}
+                style={[
+                    styles.progressLine,
+                    index < currentStep - 1 && styles.filledLine,
+                    index === currentStep - 1 && styles.currentLine,
+                ]}
+                />
+                ))}
             </View>
-
             <Text style={styles.steTextNumber}>Step 4 of 8</Text>
             <Text style={styles.mainLabel}>Select your Gender</Text>
 
 
             <View style={styles.genderOptionsContainer}>
-
-
 
             <TouchableOpacity
           style={[
@@ -79,15 +85,7 @@ export default function StepFour({ navigation, route }){
             >
                 <Text style={styles.previousButtonText}>Previous Step</Text>
             </TouchableOpacity>
-
-
-        
         </KeyboardAvoidingView>
-
-
-
-
-
 
 
     ) 
@@ -95,12 +93,16 @@ export default function StepFour({ navigation, route }){
 
 const styles = StyleSheet.create({
 
+    
+
     container: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
       padding: 16,
-    },
+      margin: 20,
+      position: 'relative',
+  },
 
     mainLabel: {
         fontSize: 30,
@@ -112,26 +114,25 @@ const styles = StyleSheet.create({
 
 
 
-    steText: {
-        flexDirection: 'row',
-        fontSize: 18,
-        marginBottom: 20,
-        position: 'absolute',
-        top: 86,
-        color: 'dodgerblue',
-        width: '85%',
-        fontFamily: 'Georgia',
-        fontWeight: '500',
-
-        flexDirection: 'row', // Use row direction for horizontal layout
-        alignItems: 'center', // Align items in the center
-        
+    progressContainer: {
+      flexDirection: 'row',
+      marginBottom: 20,
+      top: 70,
+      position: 'absolute',
     },
-
+  
     progressLine: {
-        flex: 1,
-        height: 2,
-        backgroundColor: 'dodgerblue',
+      flex: 1,
+      height: 2,
+      backgroundColor: '#ccc',
+    },
+  
+    filledLine: {
+      backgroundColor: 'dodgerblue',
+    },
+  
+    currentLine: {
+      backgroundColor: 'dodgerblue',
     },
 
     steTextNumber: {
@@ -191,9 +192,9 @@ const styles = StyleSheet.create({
 
 
     genderImage: {
-        width: 100, // Adjust the width as needed
-        height: 100, // Adjust the height as needed
-        marginBottom: 0, // Adjust the margin as needed
+        width: 100, 
+        height: 100, 
+        marginBottom: 0, 
         alignSelf: 'center',
 
       },
