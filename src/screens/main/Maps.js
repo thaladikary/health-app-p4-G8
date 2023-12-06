@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
         borderWidth: 0.4,
         overflow:"hidden",
         width:"100%",
-        height: height * 0.55,
+        height: height * 0.65,
         backgroundColor:"white",
         shadowColor:"#333333",
         shadowOffset:{
