@@ -36,7 +36,7 @@ export default function UserStack() {
         <Stack.Screen name="Maps" component={Maps} />
         <Stack.Screen name="Add" component={Add} />
         <Stack.Screen
-          name="NaturalLanguage"
+          name="NaturalLanguageSearch"
           component={NaturalLanguageSearch}
         />
         <Stack.Screen name="Search" component={Search} />
