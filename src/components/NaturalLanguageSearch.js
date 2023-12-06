@@ -18,6 +18,8 @@ import { APP_ID, APP_KEY } from "@env";
 import { useUser } from "../context/userContext";
 import { collection, addDoc} from '@firebase/firestore';
 import {db} from "../config/firebase"
+import { Audio } from 'expo-av';
+import * as Permissions from 'expo-permissions';
 
 export default function NaturalLanguageSearch({ visible, setVisible, navigation }) {
   const [nlSuggestionList, setNlSuggestionList] = useState([]);
@@ -26,6 +28,10 @@ export default function NaturalLanguageSearch({ visible, setVisible, navigation 
   const [nlAddedList, setNlAddedList] = useState([]);
   const [addedListToProp, setAddedListToProp] = useState([]);
   const [mealType, setMealType] = useState("");
+  const [recording, setRecording] = useState(null);
+  const [isFetching, setIsFetching] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [query, setQuery] = useState('');
   const user = useUser()
 
   const headers = {
@@ -198,6 +204,96 @@ export default function NaturalLanguageSearch({ visible, setVisible, navigation 
     setMealType("");
   };
 
+  // mic functionality here
+  const recordingOptions = {
+    // android not currently in use, but parameters are required
+    android: {
+        extension: '.m4a',
+        outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
+        audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
+        sampleRate: 44100,
+        numberOfChannels: 2,
+        bitRate: 128000,
+    },
+    ios: {
+        extension: '.wav',
+        audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
+        sampleRate: 44100,
+        numberOfChannels: 1,
+        bitRate: 128000,
+        linearPCMBitDepth: 16,
+        linearPCMIsBigEndian: false,
+        linearPCMIsFloat: false,
+    },
+};
+// The device asks for permission to use the microphone using Expo’s Permissions API.
+// Expo’s Audio API is used to record an audio file of the user’s speech.
+// The audio file is sent to a Google Cloud function, which in turn sends it to the Google Speech API.
+// The Speech API returns a text translation of the audio.
+// The audio file is deleted.
+
+const startRecording = async () => {
+  const { status } = await Permissions.getAsync(Permissions.AUDIO_RECORDING);
+  if (status !== 'granted') return;
+
+  setIsRecording(true);
+  // await Audio.setAudioModeAsync({
+  //     allowsRecordingIOS: true,
+  //     interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
+  //     playsInSilentModeIOS: true,
+  //     shouldDuckAndroid: true,
+  //     interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
+  //     playThroughEarpieceAndroid: true,
+  // });
+  const recording = new Audio.Recording();
+
+  try {
+    console.log("recording")
+      await recording.prepareToRecordAsync(recordingOptions);
+      await recording.startAsync();
+  } catch (error) {
+      console.log(error);
+      stopRecording();
+  }
+  console.log(recording.getURI())
+  setRecording(recording);
+}
+
+const stopRecording = async () => {
+  setIsRecording(false);
+  try {
+      await recording.stopAndUnloadAsync();
+  } catch (error) {
+      // Do nothing -- we are already unloaded.
+  }
+}
+  // const getTranscription = async () => {
+  //   this.setState({ isFetching: true });
+  //   try {
+  //     const info = await FileSystem.getInfoAsync(this.recording.getURI());
+  //     console.log(`FILE INFO: ${JSON.stringify(info)}`);
+  //     const uri = info.uri;
+  //     const formData = new FormData();
+  //     formData.append('file', {
+  //       uri,
+  //       type: 'audio/x-wav',
+  //       // could be anything 
+  //       name: 'speech2text'
+  //     });
+  //     const response = await fetch(config.CLOUD_FUNCTION_URL, {
+  //       method: 'POST',
+  //       body: formData
+  //     });
+  //     const data = await response.json();
+  //     this.setState({ query: data.transcript });
+  //   } catch(error) {
+  //     console.log('There was an error', error);
+  //     this.stopRecording();
+  //     this.resetRecording();
+  //   }
+  //   this.setState({ isFetching: false });
+  // }
+  
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.container}>
@@ -210,10 +306,12 @@ export default function NaturalLanguageSearch({ visible, setVisible, navigation 
                 <Ionicons name="close" size={50} color="white" />
               </Text>
             </TouchableOpacity>
-            <View style={styles.nlIconModal}>
-              <Ionicons name="mic" size={100} color="#ffff" />
-            </View>
 
+            <TouchableOpacity onPress={startRecording}>
+              <View style={styles.nlIconModal}>
+                <Ionicons name="mic" size={100} color="#ffff" />
+              </View>
+            </TouchableOpacity>
             <View style={styles.nlInputContainer}>
               <TextInput
                 style={[styles.modalInput, { fontSize: 16 }]}
