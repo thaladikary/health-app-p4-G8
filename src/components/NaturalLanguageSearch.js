@@ -9,6 +9,7 @@ import {
   ScrollView,
   Image,
   Modal,
+  KeyboardAvoidingView,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -20,6 +21,8 @@ export default function NaturalLanguageSearch({ visible, setVisible }) {
   const [isModalVisible, setModalVisibile] = useState(visible);
   const [modalSearchText, setModalSearchText] = useState();
   const [nlAddedList, setNlAddedList] = useState([]);
+  const [addedListToProp, setAddedListToProp] = useState([]);
+  const [mealType, setMealType] = useState("");
 
   const headers = {
     "x-app-id": APP_ID,
@@ -30,6 +33,28 @@ export default function NaturalLanguageSearch({ visible, setVisible }) {
     setVisible(isModalVisible);
   }, [isModalVisible]);
 
+  const mapAddedToPropArray = (array, mealType) => {
+    const mappedArray = array.map((item) => {
+      return {
+        prop: {
+          name: item.food_name,
+          image: item.photo.thumb,
+
+          nutriments: {
+            calories: item.nf_calories,
+            fat: item.nf_total_fat,
+            protein: item.nf_protein,
+            carbohydrates: item.nf_total_carbohydrate,
+          },
+        },
+
+        mealType: mealType,
+        servingsAmt: 1,
+      };
+    });
+    return mappedArray;
+  };
+
   const requestCommonFoodItems = (postUrl, foodItemPostData, headers) => {
     axios
       .post(postUrl, foodItemPostData, { headers })
@@ -37,7 +62,7 @@ export default function NaturalLanguageSearch({ visible, setVisible }) {
         setNlSuggestionList(response.data.foods);
       })
       .catch((error) => {
-        console.error("Error:", error);
+        console.log(error);
       });
   };
 
@@ -46,10 +71,40 @@ export default function NaturalLanguageSearch({ visible, setVisible }) {
   };
 
   const handleSubmitModalSearch = () => {
-    const naturalPostUrl =
-      "https://trackapi.nutritionix.com/v2/natural/nutrients";
-    const naturalQueryData = { query: `${modalSearchText}` };
-    requestCommonFoodItems(naturalPostUrl, naturalQueryData, headers);
+    setMealType("");
+    const wordsToCheck = ["breakfast", "lunch", "dinner", "snack"];
+    const result = findMealTypeInString(modalSearchText, wordsToCheck);
+
+    if (result.startsWith("Error")) {
+      // console.log(result);
+    } else {
+      console.log(`The string contains only one specific word: ${result}`);
+      setMealType(result);
+    }
+
+    if (modalSearchText && mealType != undefined) {
+      const naturalPostUrl =
+        "https://trackapi.nutritionix.com/v2/natural/nutrients";
+      const naturalQueryData = { query: `${modalSearchText}` };
+      requestCommonFoodItems(naturalPostUrl, naturalQueryData, headers);
+    }
+  };
+
+  const findMealTypeInString = (inputStr, wordsToCheck) => {
+    const inputStringLower = inputStr.toLowerCase();
+
+    // Check if only one specific word exists in the input string
+    const foundWords = wordsToCheck.filter((word) =>
+      inputStringLower.includes(word.toLowerCase())
+    );
+
+    if (foundWords.length === 1) {
+      return foundWords[0];
+    } else if (foundWords.length > 1) {
+      return "Error: More than one specific word found.";
+    } else {
+      return "Error: No specific words found.";
+    }
   };
 
   const handleAddItem = (item) => {
@@ -60,8 +115,6 @@ export default function NaturalLanguageSearch({ visible, setVisible }) {
     setNlSuggestionList((prevElements) =>
       prevElements.filter((addedItem) => addedItem.food_name !== item.food_name)
     );
-
-    console.log(nlAddedList);
   };
 
   const removeFromNlAddedList = (item) => {
@@ -70,121 +123,135 @@ export default function NaturalLanguageSearch({ visible, setVisible }) {
     );
   };
 
+  const handleDoneNlSearch = () => {
+    const prop = mapAddedToPropArray(nlAddedList, mealType);
+    setAddedListToProp(prop); // sets the state variable that includes data to be sent to track calorie page
+    setModalVisibile(false);
+  };
+  console.log(addedListToProp);
   const clearNlSearch = () => {
     setModalSearchText();
     setNlSuggestionList([]);
     setNlAddedList([]);
+    setMealType("");
   };
 
   return (
-    <View style={styles.container}>
-      <Modal transparent={true} animationType="fade" visible={isModalVisible}>
-        <View style={styles.modalOverlay}>
-          <TouchableOpacity
-            onPress={(isModalVisible) => setModalVisibile(!isModalVisible)}
-          >
-            <Text style={[styles.buttonText, styles.nlCloseBtn]}>
-              <Ionicons name="close" size={50} color="white" />
-            </Text>
-          </TouchableOpacity>
-          <View style={styles.nlIconModal}>
-            <Ionicons name="mic" size={100} color="#ffff" />
-          </View>
-
-          <View style={styles.nlInputContainer}>
-            <TextInput
-              style={[styles.modalInput, { fontSize: 16 }]}
-              placeholder="For breakfast I had eggs and orange juice..."
-              placeholderTextColor="#aaa"
-              value={modalSearchText}
-              onChangeText={handleModalInputChange}
-            />
+    <KeyboardAvoidingView style={styles.container} behavior="padding">
+      <View style={styles.container}>
+        <Modal transparent={true} animationType="fade" visible={isModalVisible}>
+          <View style={styles.modalOverlay}>
             <TouchableOpacity
-              // style={styles.button}
-              onPress={() => {
-                clearNlSearch();
-              }}
+              onPress={(isModalVisible) => setModalVisibile(!isModalVisible)}
             >
-              <Text style={styles.nlClearBtn}>
-                <Ionicons name="close" size={20} color="#4470e9" />
+              <Text style={[styles.buttonText, styles.nlCloseBtn]}>
+                <Ionicons name="close" size={50} color="white" />
               </Text>
             </TouchableOpacity>
-          </View>
-          <View>
-            {nlAddedList.length != 0 ? (
-              <Text style={styles.nlItemsFoundHeader}>Added:</Text>
-            ) : undefined}
-            {nlAddedList.map((item) => {
-              return (
-                <View style={styles.nlSuggestionList}>
-                  <Image
-                    source={{ uri: item.photo.thumb }}
-                    style={[styles.nlImage]}
-                  />
-                  <Text style={styles.nlFoodItem}>
-                    {item.food_name.charAt(0).toUpperCase() +
-                      item.food_name.slice(1)}
-                  </Text>
-                  <TouchableOpacity onPress={() => removeFromNlAddedList(item)}>
-                    <View style={styles.plusSign}>
-                      <Text style={styles.plusSignText}>
-                        <Ionicons
-                          name="checkmark-outline"
-                          size={25}
-                          color={"green"}
-                        />
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              );
-            })}
-          </View>
-          <View>
-            {nlSuggestionList.length != 0 ? (
-              <Text style={styles.nlItemsFoundHeader}>Results:</Text>
-            ) : undefined}
+            <View style={styles.nlIconModal}>
+              <Ionicons name="mic" size={100} color="#ffff" />
+            </View>
+
+            <View style={styles.nlInputContainer}>
+              <TextInput
+                style={[styles.modalInput, { fontSize: 16 }]}
+                placeholder="For breakfast I had eggs and orange juice..."
+                placeholderTextColor="#aaa"
+                value={modalSearchText}
+                onChangeText={handleModalInputChange}
+              />
+              <TouchableOpacity
+                // style={styles.button}
+                onPress={() => {
+                  clearNlSearch();
+                }}
+              >
+                <Text style={styles.nlClearBtn}>
+                  <Ionicons name="close" size={20} color="#4470e9" />
+                </Text>
+              </TouchableOpacity>
+            </View>
             <View>
-              {nlSuggestionList.map((item) => {
+              {nlAddedList.length != 0 ? (
+                <Text style={styles.nlItemsFoundHeader}>Added:</Text>
+              ) : undefined}
+              {nlAddedList.map((item, index) => {
                 return (
                   <View style={styles.nlSuggestionList}>
                     <Image
                       source={{ uri: item.photo.thumb }}
                       style={[styles.nlImage]}
                     />
-                    <Text style={styles.nlFoodItem}>
+                    <Text key={index} style={styles.nlFoodItem}>
                       {item.food_name.charAt(0).toUpperCase() +
                         item.food_name.slice(1)}
                     </Text>
-                    <TouchableOpacity onPress={() => handleAddItem(item)}>
+                    <TouchableOpacity
+                      onPress={() => removeFromNlAddedList(item)}
+                    >
                       <View style={styles.plusSign}>
-                        <Text style={styles.plusSignText}>+</Text>
+                        <Text style={styles.plusSignText}>
+                          <Ionicons
+                            name="checkmark-outline"
+                            size={25}
+                            color={"green"}
+                          />
+                        </Text>
                       </View>
                     </TouchableOpacity>
                   </View>
                 );
               })}
             </View>
-          </View>
+            <View>
+              {nlSuggestionList.length != 0 ? (
+                <Text style={styles.nlItemsFoundHeader}>Results:</Text>
+              ) : undefined}
+              <View>
+                {nlSuggestionList.map((item, index) => {
+                  return (
+                    <View style={styles.nlSuggestionList}>
+                      <Image
+                        source={{ uri: item.photo.thumb }}
+                        style={[styles.nlImage]}
+                      />
+                      <Text key={index} style={styles.nlFoodItem}>
+                        {item.food_name.charAt(0).toUpperCase() +
+                          item.food_name.slice(1)}
+                      </Text>
+                      <TouchableOpacity onPress={() => handleAddItem(item)}>
+                        <View style={styles.plusSign}>
+                          <Text style={styles.plusSignText}>+</Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
 
-          {nlAddedList.length == 0 && nlSuggestionList.length >= 0 ? (
-            <TouchableOpacity onPress={handleSubmitModalSearch}>
-              <Text style={styles.nlSearchBtn}>Search</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={() => setModalVisibile(false)}>
-              <Text style={styles.nlDoneBtn}>Done</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      </Modal>
-    </View>
+            {nlAddedList.length == 0 && nlSuggestionList.length >= 0 ? (
+              <TouchableOpacity onPress={handleSubmitModalSearch}>
+                <Text style={styles.nlSearchBtn}>Search</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity onPress={handleDoneNlSearch}>
+                <Text style={styles.nlDoneBtn}>Done</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </Modal>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    height: "auto",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 16,
   },
   searchBar: {
     flexDirection: "row",
@@ -366,5 +433,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "white",
     fontWeight: "bold",
+  },
+
+  nlNotSpecHeader: {
+    color: "white",
   },
 });
