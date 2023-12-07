@@ -20,6 +20,7 @@ import { collection, addDoc} from '@firebase/firestore';
 import {db} from "../config/firebase"
 import { Audio } from 'expo-av';
 import * as Permissions from 'expo-permissions';
+// import * as FileSystem from 'react-native-fs';
 
 export default function NaturalLanguageSearch({ visible, setVisible, navigation }) {
   const [nlSuggestionList, setNlSuggestionList] = useState([]);
@@ -28,12 +29,39 @@ export default function NaturalLanguageSearch({ visible, setVisible, navigation 
   const [nlAddedList, setNlAddedList] = useState([]);
   const [addedListToProp, setAddedListToProp] = useState([]);
   const [mealType, setMealType] = useState("");
-  const [recording, setRecording] = useState(null);
-  const [isFetching, setIsFetching] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
+  // const [recording, setRecording] = useState(null);
+  // const [isFetching, setIsFetching] = useState(false);
+  // const [isRecording, setIsRecording] = useState(false);
+  // const [storedRecording, setStoredRecording] = useState()
   const [query, setQuery] = useState('');
   const user = useUser()
-
+  useEffect(()=>{
+    const handleTranscription = async () => {
+      try {
+        const fetch = axios.get("http://localhost:3000/")
+        console.log(fetch)
+        // const audioFile = 'https://storage.googleapis.com/aai-web-samples/5_common_sports_injuries.mp3'; // Replace with your actual audio file URL
+        // const response = await fetch('http://localhost:3000/transcribe', {
+        //   method: 'POST',
+        //   headers: {
+        //     'Content-Type': 'application/json',
+        //   },
+        //   body: JSON.stringify({ audioFile }),
+        // });
+  
+        // if (!response.ok) {
+        //   throw new Error('Transcription request failed');
+        // }
+  
+        // const data = await response.json();
+        // console.log(data)
+      } catch (error) {
+        console.error('Error:', error.message);
+        
+      }
+    };
+    handleTranscription()
+  },[])
   const headers = {
     "x-app-id": APP_ID,
     "x-app-key": APP_KEY,
@@ -204,69 +232,98 @@ export default function NaturalLanguageSearch({ visible, setVisible, navigation 
     setMealType("");
   };
 
-  // mic functionality here
-  const recordingOptions = {
-    // android not currently in use, but parameters are required
-    android: {
-        extension: '.m4a',
-        outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
-        audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
-        sampleRate: 44100,
-        numberOfChannels: 2,
-        bitRate: 128000,
-    },
-    ios: {
-        extension: '.wav',
-        audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
-        sampleRate: 44100,
-        numberOfChannels: 1,
-        bitRate: 128000,
-        linearPCMBitDepth: 16,
-        linearPCMIsBigEndian: false,
-        linearPCMIsFloat: false,
-    },
-};
-// The device asks for permission to use the microphone using Expo’s Permissions API.
-// Expo’s Audio API is used to record an audio file of the user’s speech.
-// The audio file is sent to a Google Cloud function, which in turn sends it to the Google Speech API.
-// The Speech API returns a text translation of the audio.
-// The audio file is deleted.
+//   // mic functionality here
+//   const recordingOptions = {
+//     // android not currently in use, but parameters are required
+//     android: {
+//         extension: '.m4a',
+//         outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
+//         audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
+//         sampleRate: 44100,
+//         numberOfChannels: 2,
+//         bitRate: 128000,
+//     },
+//     ios: {
+//         extension: '.wav',
+//         audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
+//         sampleRate: 44100,
+//         numberOfChannels: 1,
+//         bitRate: 128000,
+//         linearPCMBitDepth: 16,
+//         linearPCMIsBigEndian: false,
+//         linearPCMIsFloat: false,
+//     },
+// };
+// // The device asks for permission to use the microphone using Expo’s Permissions API.
+// // Expo’s Audio API is used to record an audio file of the user’s speech.
+// // The audio file is sent to a Google Cloud function, which in turn sends it to the Google Speech API.
+// // The Speech API returns a text translation of the audio.
+// // The audio file is deleted.
+// const handleRecord = () => {
+//   setIsRecording(prevIsRecording => {
+//     const newIsRecording = !prevIsRecording;
 
-const startRecording = async () => {
-  const { status } = await Permissions.getAsync(Permissions.AUDIO_RECORDING);
-  if (status !== 'granted') return;
+//     if (newIsRecording) {
+//       console.log("Recording");
+//       startRecording();
+//     } else {
+//       console.log("Not recording");
+//       stopRecording();
+//     }
 
-  setIsRecording(true);
-  // await Audio.setAudioModeAsync({
-  //     allowsRecordingIOS: true,
-  //     interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
-  //     playsInSilentModeIOS: true,
-  //     shouldDuckAndroid: true,
-  //     interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-  //     playThroughEarpieceAndroid: true,
-  // });
-  const recording = new Audio.Recording();
+//     return newIsRecording;
+//   });
+// }
 
-  try {
-    console.log("recording")
-      await recording.prepareToRecordAsync(recordingOptions);
-      await recording.startAsync();
-  } catch (error) {
-      console.log(error);
-      stopRecording();
-  }
-  console.log(recording.getURI())
-  setRecording(recording);
-}
+// let recordingInstance; // Use a variable to keep track of the recording instance
 
-const stopRecording = async () => {
-  setIsRecording(false);
-  try {
-      await recording.stopAndUnloadAsync();
-  } catch (error) {
-      // Do nothing -- we are already unloaded.
-  }
-}
+// const startRecording = async () => {
+//   const { status } = await Permissions.getAsync(Permissions.AUDIO_RECORDING);
+//   if (status !== 'granted') return;
+
+//   try {
+//     console.log("recording");
+//     const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
+//     console.log(recording._uri);
+//     recordingInstance = recording; // Save the recording instance
+//     setStoredRecording(recording);
+//   } catch (error) {
+//     console.log(error);
+//   }
+// }
+
+// const stopRecording = async () => {
+//   try {
+//     if (recordingInstance) {
+//       await recordingInstance.stopAndUnloadAsync();
+//       const uri = recordingInstance.getURI();
+//       const { sound, status } = await recordingInstance.createNewLoadedSoundAsync();
+//       // Handle the temporary MP3 file here (e.g., send it to your server)
+//       console.log("Temporary MP3 File URI:", uri);
+//     } else {
+//       console.warn("Recording instance is undefined or null. Stopping and unloading skipped.");
+//     }
+//   } catch (error) {
+//     console.error("Error stopping recording:", error);
+//   }
+
+//   setStoredRecording(undefined);
+// }
+
+// const getTranscription = async (recording)=>{
+//   console.log("functiono works")
+//   try{
+//     console.log("try")
+//     if (recording) {
+   
+//     } else {
+//       console.error("Recording object is undefined or null");
+//     }
+//   }catch(e){
+//     console.error(e)
+//   }
+// }
+  
   // const getTranscription = async () => {
   //   this.setState({ isFetching: true });
   //   try {
@@ -293,6 +350,11 @@ const stopRecording = async () => {
   //   }
   //   this.setState({ isFetching: false });
   // }
+
+  const [recording, setRecording] = React.useState();
+  const [recordings, setRecordings] = React.useState([]);
+  
+
   
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -307,7 +369,7 @@ const stopRecording = async () => {
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={startRecording}>
+            <TouchableOpacity>
               <View style={styles.nlIconModal}>
                 <Ionicons name="mic" size={100} color="#ffff" />
               </View>
