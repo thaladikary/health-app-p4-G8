@@ -23,7 +23,9 @@ export default function StepTwo({ navigation, route }){
        if(measurement.weight.trim()!==''){
             // console.log(measurement)
             // console.log(inputAge)
-            navigation.navigate('StepThree',{measurement,inputAge});
+            // navigation.navigate('StepThree',{measurement,inputAge});
+            navigation.navigate('StepThree');
+            
             
        }else{
             console.warn('Please enter your weight');

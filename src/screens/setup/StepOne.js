@@ -17,11 +17,11 @@ export default function StepOne({ navigation }){
         // Check if inputAge is not empty before navigating to the next step
         if (inputAge.trim() !== '') {
             
-                const entryPath = `users/${userId}/userInfo`
-                const docRef = await addDoc(collection(db, entryPath), {age:inputAge});
-                navigation.navigate('StepTwo'  ,{inputAge});
+                // const entryPath = `users/${userId}/userInfo`
+                // const docRef = await addDoc(collection(db, entryPath), {age:inputAge});
+                navigation.navigate('StepTwo');
               
-         
+                // navigation.navigate('StepTwo'  ,{inputAge});
         } else {
             // You can add an alert or other feedback for the user to enter their age
             console.warn('Please enter your age');
