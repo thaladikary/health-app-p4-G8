@@ -137,7 +137,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginLeft: 10,
         color: 'dodgerblue',
-        fontFamily: 'Georgia',
         fontWeight: '500',
         top: 41.5,
         position: 'absolute',

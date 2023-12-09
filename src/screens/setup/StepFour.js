@@ -150,7 +150,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginLeft: 10, // Adjust the spacing between the lines and the number
     color: "dodgerblue",
-    fontFamily: "Georgia",
     fontWeight: "500",
     top: 41.5,
     position: "absolute",
@@ -170,6 +169,9 @@ const styles = StyleSheet.create({
     margin: 5,
     marginBottom: 30,
     borderRadius: 40,
+    left: -20,
+    // alignSelf: 'center',
+    // justifyContent: 'center',
   },
 
   genderOptionText: {
@@ -185,6 +187,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 30,
     width: "75%",
+    bottom: -130,
   },
 
   previousButtonText: {

@@ -123,8 +123,12 @@ export default function StepTwo({ navigation, route }) {
         </TouchableOpacity>
       </View>
 
-      <TouchableOpacity style={styles.nextButton} onPress={handleNextStep}>
-        <Text style={styles.nextButtonText}>Next Step</Text>
+
+      <View
+      style={styles.buttonContainer}>
+      
+      <TouchableOpacity style={styles.previousButton} onPress={handleNextStep}>
+        <Text style={styles.previousButtonText}>Next Step</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -133,6 +137,7 @@ export default function StepTwo({ navigation, route }) {
       >
         <Text style={styles.previousButtonText}>Previous Step</Text>
       </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -140,7 +145,7 @@ export default function StepTwo({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center",
     padding: 16,
     margin: 20,
@@ -173,7 +178,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginLeft: 10, // Adjust the spacing between the lines and the number
     color: "dodgerblue",
-    fontFamily: "Georgia",
+    fontFamily: "normal",
     fontWeight: "500",
     top: 41.5,
     position: "absolute",
@@ -206,7 +211,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "80%",
     marginBottom: 20,
-    top: 20,
+    top: 280,
   },
 
   inputWeight: {
@@ -254,6 +259,7 @@ const styles = StyleSheet.create({
     padding: 10,
     width: "75%",
     borderRadius: 25,
+    // marginBottom: 10,
   },
 
   nextButtonText: {
@@ -265,11 +271,12 @@ const styles = StyleSheet.create({
 
   previousButton: {
     backgroundColor: "deepskyblue",
-    margin: 10,
+    margin: 5,
     //marginTop: 30,
     padding: 10,
     borderRadius: 30,
     width: "75%",
+    alignSelf: 'center',
   },
 
   previousButtonText: {
@@ -281,5 +288,13 @@ const styles = StyleSheet.create({
   icon: {
     marginTop: 30,
     marginRight: 15,
+  },
+
+  buttonContainer: {
+
+    justifyContent: 'space-between',
+    alignSelf: 'stretch',
+    alignContent: 'center',
+
   },
 });

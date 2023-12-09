@@ -103,6 +103,9 @@ export default function StepSix({ navigation }){
                 </TouchableOpacity>
             </View>
 
+            <View
+            style={styles.buttonContainer}>
+
             <TouchableOpacity
                 style={styles.previousButton}
                 onPress={() => navigation.navigate('StepSeven')}
@@ -118,7 +121,9 @@ export default function StepSix({ navigation }){
             >
                 <Text style={styles.previousButtonText}>Previous Step</Text>
             </TouchableOpacity> 
-                
+            
+            </View>
+            
 
         </KeyboardAvoidingView>
     )
@@ -129,7 +134,7 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         alignItems: 'center',
         padding: 16,
         margin: 20,
@@ -186,7 +191,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginLeft: 10, // Adjust the spacing between the lines and the number
         color: 'dodgerblue',
-        fontFamily: 'Georgia',
         fontWeight: '500',
         top: 41.5,
         position: 'absolute',
@@ -203,6 +207,7 @@ const styles = StyleSheet.create({
         //marginTop: 30, 
         padding: 10,
         borderRadius: 30,
+        alignSelf: 'center',
         width: '75%',
     },
 
@@ -297,5 +302,15 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         marginBottom: 15,
+        top: 250,
     },
+
+    buttonContainer: {
+
+        justifyContent: 'space-between',
+        alignSelf: 'stretch',
+        alignContent: 'center',
+        
+    
+      },
   });

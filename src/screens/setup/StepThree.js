@@ -35,7 +35,7 @@ export default function StepThree({ navigation }) {
   };
 
   return (
-    <KeyboardAvoidingView
+    <View
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"} // Adjust the behavior based on the platform
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : -100} // Adjust the vertical offset as needed
@@ -89,6 +89,9 @@ export default function StepThree({ navigation }) {
                     >cm</Text>
                 </TouchableOpacity> */}
 
+  <View
+      style={styles.buttonContainer}>
+
       <TouchableOpacity
         style={styles.previousButton}
         onPress={() => navigation.navigate("StepFour")}
@@ -103,14 +106,15 @@ export default function StepThree({ navigation }) {
       >
         <Text style={styles.previousButtonText}>Previous Step</Text>
       </TouchableOpacity>
-    </KeyboardAvoidingView>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center",
     padding: 16,
     margin: 20,
@@ -126,7 +130,6 @@ const styles = StyleSheet.create({
     top: 0,
     marginTop: 70,
     color: "dodgerblue",
-    // fontFamily: "Georgia",
     fontWeight: "500",
     flexDirection: "row", // Use row direction for horizontal layout
     alignItems: "center", // Align items in the center
@@ -172,7 +175,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginLeft: 10, // Adjust the spacing between the lines and the number
     color: "dodgerblue",
-    // fontFamily: "Georgia",
     fontWeight: "500",
     top: 41.5,
     position: "absolute",
@@ -185,7 +187,7 @@ const styles = StyleSheet.create({
     width: "70%",
     //marginVertical: 200,
     margin: 10,
-    top: -50,
+    top: 280,
   },
 
   nextButton: {
@@ -212,6 +214,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 30,
     width: "75%",
+    alignSelf: 'center',
   },
 
   previousButtonText: {
@@ -253,5 +256,13 @@ const styles = StyleSheet.create({
   icon: {
     marginTop: 25,
     marginRight: 10,
+  },
+
+  buttonContainer: {
+
+    justifyContent: 'space-between',
+    alignSelf: 'stretch',
+    alignContent: 'center',
+
   },
 });

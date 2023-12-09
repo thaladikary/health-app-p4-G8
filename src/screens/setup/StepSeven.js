@@ -43,6 +43,11 @@ export default function StepSeven({ navigation }){
                 onFocus={() => {}}
                 // onBlur={Keyboard.dismiss}
             ></TextInput>
+
+
+          <View
+          style={styles.buttonContainer}>
+
           <TouchableOpacity
                 style={styles.previousButton}
                 onPress={() => navigation.navigate('StepEight')}
@@ -59,6 +64,7 @@ export default function StepSeven({ navigation }){
                 <Text style={styles.previousButtonText}>Previous Step</Text>
             </TouchableOpacity> 
 
+          </View>
 
           </View>
     )
@@ -72,7 +78,7 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         alignItems: 'center',
         padding: 16,
         margin: 20,
@@ -131,7 +137,6 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginLeft: 10, // Adjust the spacing between the lines and the number
         color: 'dodgerblue',
-        fontFamily: 'Georgia',
         fontWeight: '500',
         top: 41.5,
         position: 'absolute',
@@ -141,7 +146,7 @@ const styles = StyleSheet.create({
         fontSize: 10,
         fontWeight: '300',
         textAlign: 'left',
-        top: -97,
+        top: 240,
     },
 
 
@@ -163,6 +168,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 30,
         width: '75%',
+        alignSelf: 'center',
     },
 
     previousButtonText: {
@@ -173,5 +179,12 @@ const styles = StyleSheet.create({
 
     },
 
+    buttonContainer: {
+
+      justifyContent: 'space-between',
+      alignSelf: 'stretch',
+      alignContent: 'center',
+  
+    },
 
 });

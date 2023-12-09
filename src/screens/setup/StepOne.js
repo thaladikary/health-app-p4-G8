@@ -100,6 +100,9 @@ export default function StepOne({ navigation }) {
         onFocus={() => {}}
       ></TextInput>
 
+      
+
+
       {/* NEXT STEP Button here */}
       <TouchableOpacity style={styles.nextButton} onPress={handleNextStep}>
         <Text style={styles.nextButtonText}>Next Step</Text>
@@ -111,7 +114,7 @@ export default function StepOne({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "space-between", //this is what pushes the button down, the top in the top and the input in the middle
     alignItems: "center",
     padding: 16,
     margin: 20,
@@ -122,7 +125,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginLeft: 10, // Adjust the spacing between the lines and the number
     color: "dodgerblue",
-    fontFamily: "Georgia",
+    fontFamily: "normal",
     fontWeight: "500",
     top: 41.5,
     position: "absolute",
@@ -178,7 +181,7 @@ const styles = StyleSheet.create({
     padding: 10,
     width: "75%",
     borderRadius: 25,
-    top: -20,
+    // top: 100,
   },
 
   nextButtonText: {
@@ -195,11 +198,13 @@ const styles = StyleSheet.create({
     width: "70%",
     //marginVertical: 200,
     margin: 20,
-    top: -20,
+    top: 280,
   },
 
   icon: {
     marginTop: 25,
     marginRight: 15,
   },
+
+  
 });

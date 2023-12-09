@@ -8,6 +8,7 @@ export default function StepEight({ navigation }){
     const [inputGoalLenght, setInputGoalLenght] = useState('0');
 
 
+ 
     return(
 
     <View style={styles.container} behavior='padding'>
@@ -42,6 +43,9 @@ export default function StepEight({ navigation }){
 
 
 
+            <View
+            style={styles.buttonContainer}>
+
 
 
           <TouchableOpacity
@@ -59,7 +63,7 @@ export default function StepEight({ navigation }){
             >
                 <Text style={styles.previousButtonText}>Previous Step</Text>
             </TouchableOpacity> 
-
+            </View>
           
         </View>
 
@@ -70,7 +74,7 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         alignItems: 'center',
         padding: 16,
         margin: 20,
@@ -86,7 +90,6 @@ const styles = StyleSheet.create({
         top: 0,
         marginTop: 70,
         color: 'dodgerblue',
-        fontFamily: 'Georgia',
         fontWeight: '500',
         flexDirection: 'row', // Use row direction for horizontal layout
         alignItems: 'center', // Align items in the center
@@ -137,7 +140,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginLeft: 10, // Adjust the spacing between the lines and the number
         color: 'dodgerblue',
-        fontFamily: 'Georgia',
+        // fontFamily: 'Georgia',
         fontWeight: '500',
         top: 41.5,
         position: 'absolute',
@@ -147,7 +150,7 @@ const styles = StyleSheet.create({
         fontSize: 10,
         fontWeight: '300',
         textAlign: 'left',
-        top: -97,
+        top: 250,
     },
 
     inputGoalLenght: {
@@ -167,6 +170,8 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 30,
         width: '75%',
+        alignSelf: 'center',
+
     },
 
     previousButtonText: {
@@ -176,6 +181,14 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
 
     },
+
+    buttonContainer: {
+
+        justifyContent: 'space-between',
+        alignSelf: 'stretch',
+        alignContent: 'center',
+    
+      },
 
 });
 
