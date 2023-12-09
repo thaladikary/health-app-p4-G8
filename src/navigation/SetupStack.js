@@ -29,10 +29,6 @@ export default function SetupStack(){
 
  
                         
-<Stack.Screen
-                            name="StepThree"
-                            component={StepThree}
-                        />
 
                        
 
@@ -48,7 +44,11 @@ export default function SetupStack(){
                             component={StepTwo}
                         />
 
-                       
+                        <Stack.Screen
+                            name="StepThree"
+                            component={StepThree}
+                        />
+
 
 <                       Stack.Screen
                             name="StepFour"
