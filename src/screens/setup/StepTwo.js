@@ -41,7 +41,7 @@ export default function StepTwo({ navigation, route }) {
     <View style={styles.container} behavior="padding">
       {/* Steps line here */}
       <View style={styles.progressContainer}>
-        {[...Array(8)].map((_, index) => (
+        {[...Array(7)].map((_, index) => (
           <View
             key={index}
             style={[
@@ -53,7 +53,7 @@ export default function StepTwo({ navigation, route }) {
         ))}
       </View>
 
-      <Text style={styles.steTextNumber}>Step 2 of 8</Text>
+      <Text style={styles.steTextNumber}>Step 2 of 7</Text>
 
       <View style={styles.mainLabelContainer}>
         {/* <Image source={require('../../assets/Setup-pages/weight-scale.png')} style={styles.mainLabelIcon}/>

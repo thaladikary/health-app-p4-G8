@@ -58,7 +58,7 @@ export default function StepOne({ navigation }) {
       {/* Using this progress line array (set to 8 steps) for the progress line. Every screen is going to have a currentStep variable */}
 
       <View style={styles.progressContainer}>
-        {[...Array(8)].map((_, index) => (
+        {[...Array(7)].map((_, index) => (
           <View
             key={index}
             style={[
@@ -70,7 +70,7 @@ export default function StepOne({ navigation }) {
         ))}
       </View>
 
-      <Text style={styles.steTextNumber}>Step 1 of 8</Text>
+      <Text style={styles.steTextNumber}>Step 1 of 7</Text>
 
       <View style={styles.mainLabelContainer}>
         {/* <Image

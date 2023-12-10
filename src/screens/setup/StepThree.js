@@ -43,11 +43,15 @@ export default function StepThree({ navigation }) {
       {/* used for the Step Progress Lines */}
       <View style={styles.steText}>
         <View style={styles.progressLine} />
+        <View style={styles.progressLine} />
+
         <View style={styles.emptyLine} />
+        <View style={styles.emptyLine} />
+
         <View style={styles.emptyLine} />
       </View>
 
-      <Text style={styles.steTextNumber}>Step 3 of 8</Text>
+      <Text style={styles.steTextNumber}>Step 3 of 7</Text>
 
       <View style={styles.mainLabelContainer}>
         {/* <Image source={require('../../assets/Setup-pages/height.png')} style={styles.mainLabelIcon}/> */}

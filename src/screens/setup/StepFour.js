@@ -24,7 +24,7 @@ export default function StepFour({ navigation, route }) {
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.progressContainer}>
-        {[...Array(8)].map((_, index) => (
+        {[...Array(7)].map((_, index) => (
           <View
             key={index}
             style={[
@@ -35,7 +35,7 @@ export default function StepFour({ navigation, route }) {
           />
         ))}
       </View>
-      <Text style={styles.steTextNumber}>Step 4 of 8</Text>
+      <Text style={styles.steTextNumber}>Step 4 of 7</Text>
       <Text style={styles.mainLabel}>Select your Gender</Text>
 
       <View style={styles.genderOptionsContainer}>

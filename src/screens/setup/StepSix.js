@@ -33,7 +33,7 @@ export default function StepSix({ navigation }){
 
         <KeyboardAvoidingView style={styles.container} behavior='padding'>
             <View style={styles.progressContainer}>
-                {[...Array(8)].map((_, index) => (
+                {[...Array(7)].map((_, index) => (
                 <View
                 key={index}
                 style={[
@@ -44,7 +44,7 @@ export default function StepSix({ navigation }){
                 />
                 ))}
             </View>
-            <Text style={styles.steTextNumber}>Step 6 of 8</Text>
+            <Text style={styles.steTextNumber}>Step 6 of 7</Text>
 
 
 
@@ -209,6 +209,7 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         alignSelf: 'center',
         width: '75%',
+        top: -19,
     },
 
     previousButtonText: {

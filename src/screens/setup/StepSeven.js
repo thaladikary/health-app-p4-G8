@@ -4,15 +4,23 @@ import { NavigationContainer, useNavigation } from '@react-navigation/native';
 
 export default function StepSeven({ navigation }){
 
-    const [inputGoalValue, setInputGoalValue] = useState('0');
+    const [selectedOption, setSelectedOption] = useState(null);
 
+
+    const goals = [
+      'Lose 2 lbs per week',
+      'Lose 1.5 lbs per week',
+      'Lose 1 lb per week',
+      'Lose 0.5 lbs per week',
+      'Maintain current weight',
+    ];
     const currentStep = 7;
 
 
     return (
         <View style={styles.container} behavior='padding'>
             <View style={styles.progressContainer}>
-                {[...Array(8)].map((_, index) => (
+                {[...Array(7)].map((_, index) => (
                 <View
                 key={index}
                 style={[
@@ -23,7 +31,7 @@ export default function StepSeven({ navigation }){
                 />
                 ))}
             </View>
-          <Text style={styles.steTextNumber}>Step 7 of 8</Text>
+          <Text style={styles.steTextNumber}>Step 7 of 7</Text>
 
 
           <View style={styles.mainLabelContainer}>
@@ -32,17 +40,88 @@ export default function StepSeven({ navigation }){
             </View>
 
 
-          <Text style={styles.explanationText}>Select the amount you want to Gain/Reduce</Text>
 
-          <TextInput
-                style={styles.inputGoalValue}
-                placeholder="12 kg"
-                keyboardType="numeric"
-                value={inputGoalValue}
-                onChangeText={(text) => setInputGoalValue(text)}
-                onFocus={() => {}}
-                // onBlur={Keyboard.dismiss}
-            ></TextInput>
+<View style={styles.inputContainer}>
+
+<TouchableOpacity
+    style={[
+    styles.gainWeightButton,
+    selectedOption === 'Lose 2 lbs per week' ? styles.gainWeightSelected : styles.gainWeightUnselected,
+    ]}
+    onPress={() => setSelectedOption('Lose 2 lbs per week')}
+>
+    <Text style={[
+        styles.gainWeightText,
+        selectedOption === 'Lose 2 lbs per week' ? styles.gainWeightSelectedText : styles.gainWeightUnselectedText,
+    ]}>
+        Lose 2 lbs per week
+    </Text>
+</TouchableOpacity>
+
+<TouchableOpacity
+    style={[
+    styles.loseWeightButton,
+    selectedOption === 'Lose 1.5 lbs per week' ? styles.loseWeightSelected : styles.loseWeightUnselected,
+    ]}
+    onPress={() => setSelectedOption('Lose 1.5 lbs per week')}
+>
+    <Text style={[
+    styles.loseWeightText,
+    selectedOption === 'Lose 1.5 lbs per week' ? styles.loseWeightSelectedText : styles.loseWeightUnselectedText,
+    ]}>
+        Lose 1.5 lbs per week
+    </Text>
+</TouchableOpacity>
+
+<TouchableOpacity
+    style={[
+    styles.stayHealthyButton,
+    selectedOption === 'Lose 1 lb per week' ? styles.stayHealthySelected : styles.stayHealthyUnselected,
+    ]}
+    onPress={() => setSelectedOption('Lose 1 lb per week')}
+>
+    <Text style={[
+        styles.stayHealthyText,
+        selectedOption === 'Lose 1 lb per week' ? styles.stayHealthySelectedText : styles.stayHealthyUnselectedText,
+    ]}>
+        Lose 1 lb per week
+    </Text>
+</TouchableOpacity>
+
+<TouchableOpacity
+    style={[
+    styles.stayHealthyButton,
+    selectedOption === 'Lose 0.5 lbs per week' ? styles.stayHealthySelected : styles.stayHealthyUnselected,
+    ]}
+    onPress={() => setSelectedOption('Lose 0.5 lbs per week')}
+>
+    <Text style={[
+        styles.stayHealthyText,
+        selectedOption === 'Lose 0.5 lbs per week' ? styles.stayHealthySelectedText : styles.stayHealthyUnselectedText,
+    ]}>
+        Lose 0.5 lbs per week
+    </Text>
+</TouchableOpacity>
+
+<TouchableOpacity
+    style={[
+    styles.stayHealthyButton,
+    selectedOption === 'Maintain current weight' ? styles.stayHealthySelected : styles.stayHealthyUnselected,
+    ]}
+    onPress={() => setSelectedOption('Maintain current weight')}
+>
+    <Text style={[
+        styles.stayHealthyText,
+        selectedOption === 'Maintain current weight' ? styles.stayHealthySelectedText : styles.stayHealthyUnselectedText,
+    ]}>
+        Maintain current weight
+    </Text>
+</TouchableOpacity>
+</View>
+
+
+
+
 
 
           <View
@@ -159,6 +238,101 @@ const styles = StyleSheet.create({
         margin: 10,
         // top: -10,
     },
+
+
+
+    gainWeightButton: {
+      padding: 10,
+      marginBottom: 11,
+    },
+    
+    gainWeightText: {
+      fontSize: 25,
+    },
+    
+    gainWeightSelected: {
+      borderBottomWidth: 2,
+      borderColor: 'black',
+    },
+    
+    gainWeightUnselected: {
+      borderBottomWidth: 1,
+      borderColor: 'grey',
+    },
+    
+    gainWeightSelectedText: {
+      fontWeight: 'bold',
+      color: 'black',
+    },
+    
+    gainWeightUnselectedText: {
+      color: 'grey',
+    },
+    
+    // Styles for "Lose weight" option
+    loseWeightButton: {
+      padding: 10,
+      marginBottom: 11,
+    },
+    
+    loseWeightText: {
+      fontSize: 25,
+    },
+    
+    loseWeightSelected: {
+      borderBottomWidth: 2,
+      borderColor: 'black',
+    },
+    
+    loseWeightUnselected: {
+      borderBottomWidth: 1,
+      borderColor: 'grey',
+    },
+    
+    loseWeightSelectedText: {
+      fontWeight: 'bold',
+      color: 'black',
+    },
+    
+    loseWeightUnselectedText: {
+      color: 'grey',
+    },
+    
+    // Styles for "Stay Healthy" option
+    stayHealthyButton: {
+      padding: 10,
+      marginBottom: 11,
+    },
+    stayHealthyText: {
+      fontSize: 25,
+    },
+    stayHealthySelected: {
+      borderBottomWidth: 2,
+      borderColor: 'black',
+    },
+    stayHealthyUnselected: {
+      borderBottomWidth: 1,
+      borderColor: 'grey',
+    },
+    stayHealthySelectedText: {
+      fontWeight: 'bold',
+      color: 'black',
+    },
+    stayHealthyUnselectedText: {
+      color: 'grey',
+    },
+  inputContainer: {
+      marginBottom: 15,
+      top: 250,
+  },
+
+
+
+
+
+
+
+
 
     
     previousButton: {
