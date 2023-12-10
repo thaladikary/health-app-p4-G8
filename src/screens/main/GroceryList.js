@@ -32,36 +32,38 @@ export default function GroceryList({ navigation }) {
   const [itemName, setItemName] = useState("");
   const [quantity, setQuantity] = useState(0);
   const [docRefId, setDocRefId] = useState("");
-  const [update, setUpdate] = useState(false);
-  const [newQuant, setNewQuant] = useState();
 
   const user = useUser();
 
   //retrieves existing grocery items ffrom firebase
   useEffect(() => {
     console.log(groceryList);
-    const fetchGroceryItems = async () => {
-      try {
-        const userId = user.uid;
-        const entryPath = `users/${userId}/groceryList`;
-
-        const querySnapshot = await getDocs(collection(db, entryPath));
-        const items = [];
-
-        querySnapshot.forEach((doc) => {
-          // Assuming your documents have 'itemName', 'quantity', and 'docRefId' fields
-          const { itemName, quantity, docRefId } = doc.data();
-          items.push({ itemName, quantity, docRefId, id: doc.id });
-        });
-
-        setGroceryList(items);
-      } catch (error) {
-        console.error("Error fetching grocery items:", error);
-      }
-    };
-
-    fetchGroceryItems();
-  }, [newQuant, itemName]);
+    if (groceryList.length === 0) {
+      const fetchGroceryItems = async () => {
+        try {
+          const userId = user.uid;
+          const entryPath = `users/${userId}/groceryList`;
+  
+          const querySnapshot = await getDocs(collection(db, entryPath));
+          const items = [];
+  
+          querySnapshot.forEach((doc) => {
+            // Assuming your documents have 'itemName', 'quantity', and 'docRefId' fields
+            const { itemName, quantity, docRefId } = doc.data();
+            items.push({ itemName, quantity, docRefId, id: doc.id });
+          });
+          console.log("ITEMS:",items)
+  
+          setGroceryList(items);
+        } catch (error) {
+          console.error("Error fetching grocery items:", error);
+        }
+      };
+  
+      fetchGroceryItems();
+    }
+   
+  }, []);
 
   const handleInputChange = (input) => {
     setItemName(input);
@@ -89,20 +91,21 @@ export default function GroceryList({ navigation }) {
         const newItem = { itemName, quantity, docRefId: docRef.id };
 
         await updateDoc(docRef, { docRefId: docRef.id });
-
+        
         setGroceryList([...groceryList, newItem]);
         setItemName("");
         setQuantity(1);
+        console.log("Added item with id updated")
       } catch (error) {
         console.error("Error adding item: ", error);
       }
     }
   };
 
-  const deleteItem = (itemName) => {
+  const deleteItem = (item) => {
     Alert.alert(
       "Delete Item",
-      `Are you sure you want to delete ${itemName}?`,
+      `Are you sure you want to delete ${item.itemName}?`,
       [
         { text: "Cancel", style: "cancel" },
         {
@@ -110,23 +113,19 @@ export default function GroceryList({ navigation }) {
           onPress: async () => {
             try {
               // Delete the item from the state
-              const updatedList = groceryList.filter(
-                (item) => item.itemName !== itemName
-              );
-              setGroceryList(updatedList);
-
+              // const updatedList = groceryList.filter(
+              //   (item) => item.itemName !== item.itemName
+              // );
+              // setGroceryList(updatedList);
+            setGroceryList((prevList) =>
+              prevList.filter((groceryItem) => item.docRefId !== groceryItem.docRefId)
+            );
               // Delete the item from Firebase
               const userId = user.uid;
               const entryPath = `users/${userId}/groceryList`;
-
-              const itemDocRef = doc(
-                db,
-                entryPath,
-                groceryList.find((item) => item.itemName === itemName).id
-              );
-
-              // Delete the document
-              await deleteDoc(itemDocRef);
+              console.log(item.docRefId)
+              const docRef = doc(db,entryPath,item.docRefId)
+              await deleteDoc(docRef);
             } catch (error) {
               console.error("Error deleting item:", error);
             }
@@ -171,40 +170,36 @@ export default function GroceryList({ navigation }) {
       console.error("Error clearing grocery list:", error);
     }
   };
-
-  const updateQuantity = async (itemName, newQuantity) => {
-    setNewQuant(newQuantity);
+  const updateQuantity = async (item, newQuantity) => {
+    // setNewQuant(newQuantity);
+  
     try {
-      // Update the state
-
-      const updatedList = groceryList.map((item) =>
-        item.itemName === itemName ? { ...item, quantity: newQuantity } : item
-      );
-
-      console.log(groceryList);
-
-      setGroceryList(updatedList);
-
-      // Update the quantity in Firebase
+      console.log("test", item,newQuantity,item.docRefId)
       const userId = user.uid;
       const entryPath = `users/${userId}/groceryList`;
-
-      const itemDocRef = doc(
-        db,
-        entryPath,
-        updatedList.find((item) => item.itemName === itemName).id
-      );
-      console.log(updatedList);
-
-      // Update the 'quantity' field in the document
-      await updateDoc(itemDocRef, { quantity: newQuantity });
-
-      return updatedList;
+      const docRef = doc(db,entryPath,item.docRefId)
+      const updatedObject = {
+        docRefId:item.docRefId,
+        itemName: item.itemName,
+        quantity: newQuantity
+      }
+      console.log("NEWQUANT OBJ", updatedObject)
+      setGroceryList((prevList) =>
+      prevList.map((prevItem) =>
+        prevItem.docRefId === item.docRefId ? updatedObject : prevItem
+      )
+    );
+      await updateDoc(docRef,updatedObject)
+     
+  
     } catch (error) {
       console.error("Error updating quantity:", error);
     }
   };
-
+  useEffect(() => {
+    // This code will run after the component re-renders due to a state change
+    console.log("Grocery list updated:", groceryList);
+  }, [groceryList]);
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -269,7 +264,7 @@ export default function GroceryList({ navigation }) {
                       <TouchableOpacity
                         onPress={() =>
                           updateQuantity(
-                            item.itemName,
+                            item,
                             parseInt(item.quantity) + 1
                           )
                         }
@@ -281,7 +276,7 @@ export default function GroceryList({ navigation }) {
                       <TouchableOpacity
                         onPress={() =>
                           updateQuantity(
-                            item.itemName,
+                            item,
                             parseInt(item.quantity) - 1
                           )
                         }
@@ -291,7 +286,7 @@ export default function GroceryList({ navigation }) {
                         </View>
                       </TouchableOpacity>
                       <TouchableOpacity
-                        onPress={() => deleteItem(item.itemName)}
+                        onPress={() => deleteItem(item)}
                       >
                         <View style={styles.deleteIcon}>
                           <Text style={styles.deleteSign}>
