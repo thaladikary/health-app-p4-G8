@@ -33,6 +33,7 @@ export default function GroceryList({ navigation }) {
   const [quantity, setQuantity] = useState(0);
   const [docRefId, setDocRefId] = useState("");
   const [update, setUpdate] = useState(false);
+  const [newQuant, setNewQuant] = useState();
 
   const user = useUser();
 
@@ -60,7 +61,7 @@ export default function GroceryList({ navigation }) {
     };
 
     fetchGroceryItems();
-  }, []);
+  }, [newQuant, itemName]);
 
   const handleInputChange = (input) => {
     setItemName(input);
@@ -78,25 +79,6 @@ export default function GroceryList({ navigation }) {
   const addItem = async () => {
     if (itemName && quantity) {
       try {
-        // const existingItem = groceryList.find(
-        //   (item) => item.itemName.toLowerCase() === itemName.toLowerCase()
-        // );
-        // Alert.alert(
-        //   "Item Already Exists",
-        //   "Do you want to update the quantity?",
-        //   [
-        //     { text: "Cancel", style: "cancel" },
-        //     {
-        //       text: "Update",
-        //       onPress: () => {
-        //         const updatedList = updateQuantity(itemName, quantity);
-        //         setGroceryList(updatedList);
-        //         setItemName("");
-        //         setQuantity(1);
-        //       },
-        //     },
-        //   ]
-        // );
         const userId = user.uid;
         const entryPath = `users/${userId}/groceryList`;
 
@@ -107,7 +89,6 @@ export default function GroceryList({ navigation }) {
         const newItem = { itemName, quantity, docRefId: docRef.id };
 
         await updateDoc(docRef, { docRefId: docRef.id });
-        setUpdate(true);
 
         setGroceryList([...groceryList, newItem]);
         setItemName("");
@@ -192,12 +173,15 @@ export default function GroceryList({ navigation }) {
   };
 
   const updateQuantity = async (itemName, newQuantity) => {
+    setNewQuant(newQuantity);
     try {
       // Update the state
 
       const updatedList = groceryList.map((item) =>
         item.itemName === itemName ? { ...item, quantity: newQuantity } : item
       );
+
+      console.log(groceryList);
 
       setGroceryList(updatedList);
 
