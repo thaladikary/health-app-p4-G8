@@ -16,17 +16,21 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import axios from "axios";
 import { APP_ID, APP_KEY } from "@env";
 import { useUser } from "../context/userContext";
-import { collection, addDoc} from '@firebase/firestore';
-import {db} from "../config/firebase"
+import { collection, addDoc } from "@firebase/firestore";
+import { db } from "../config/firebase";
 
-export default function NaturalLanguageSearch({ visible, setVisible, navigation }) {
+export default function NaturalLanguageSearch({
+  visible,
+  setVisible,
+  navigation,
+}) {
   const [nlSuggestionList, setNlSuggestionList] = useState([]);
   const [isModalVisible, setModalVisibile] = useState(visible);
   const [modalSearchText, setModalSearchText] = useState();
   const [nlAddedList, setNlAddedList] = useState([]);
   const [addedListToProp, setAddedListToProp] = useState([]);
   const [mealType, setMealType] = useState("");
-  const user = useUser()
+  const user = useUser();
 
   const headers = {
     "x-app-id": APP_ID,
@@ -36,41 +40,34 @@ export default function NaturalLanguageSearch({ visible, setVisible, navigation 
   useEffect(() => {
     setVisible(isModalVisible);
   }, [isModalVisible]);
-  useEffect(()=>{
-    console.log("TEST",addedListToProp)
-    addedListToProp.map((entry)=>{
-
+  useEffect(() => {
+    console.log("TEST", addedListToProp);
+    addedListToProp.map((entry) => {
       const getCurrentDate = () => {
         const today = new Date();
         const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0'); 
-        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, "0");
+        const day = String(today.getDate()).padStart(2, "0");
         return `${year}-${month}-${day}`;
       };
 
-      const addToFirebase=async(entry)=>{
-        console.log("TEST")
+      const addToFirebase = async (entry) => {
+        console.log("TEST");
         try {
-            console.log("TEST2")
-            const userId = user.uid
-            const entryPath = `users/${userId}/foodDiaries/${getCurrentDate()}/entries`;
-            
-            console.log("FOODDATA,",entry)
-            const docRef = await addDoc(collection(db, entryPath), entry);
-            
+          console.log("TEST2");
+          const userId = user.uid;
+          const entryPath = `users/${userId}/foodDiaries/${getCurrentDate()}/entries`;
+
+          console.log("FOODDATA,", entry);
+          const docRef = await addDoc(collection(db, entryPath), entry);
         } catch (e) {
-            console.error("Error adding document: ", e);
+          console.error("Error adding document: ", e);
         }
-
-       
-    }
-    addToFirebase(entry)
-    navigation.navigate("TrackCalories",{entry})
-   
-    })
-
-    
-  },[addedListToProp])
+      };
+      addToFirebase(entry);
+      navigation.navigate("TrackCalories", { entry });
+    });
+  }, [addedListToProp]);
 
   const mapAddedToPropArray = (array, mealType) => {
     const mappedArray = array.map((item) => {
@@ -121,13 +118,12 @@ export default function NaturalLanguageSearch({ visible, setVisible, navigation 
         const mealResult = findMealTypeInString(modalSearchText, mealTypes);
 
         if (mealResult && !mealResult.startsWith("Error")) {
-          setMealType(mealResult === "snack"  ? "snacks" : mealResult);
+          setMealType(mealResult === "snack" ? "snacks" : mealResult);
 
-            const naturalPostUrl =
-              "https://trackapi.nutritionix.com/v2/natural/nutrients";
-            const naturalQueryData = { query: `${modalSearchText}` };
-            requestCommonFoodItems(naturalPostUrl, naturalQueryData, headers);
-          
+          const naturalPostUrl =
+            "https://trackapi.nutritionix.com/v2/natural/nutrients";
+          const naturalQueryData = { query: `${modalSearchText}` };
+          requestCommonFoodItems(naturalPostUrl, naturalQueryData, headers);
         } else {
           return console.log("Specify a meal type");
         }
