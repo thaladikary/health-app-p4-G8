@@ -17,10 +17,14 @@ import axios from "axios";
 import { APP_ID, APP_KEY } from "@env";
 import { useUser } from "../context/userContext";
 import { collection, addDoc} from '@firebase/firestore';
+import { ref,uploadBytes, getDownloadURL} from "@firebase/storage";
 import {db} from "../config/firebase"
 import { Audio } from 'expo-av';
+import { storage,  } from "../config/firebase";
 import * as Permissions from 'expo-permissions';
-// import * as FileSystem from 'react-native-fs';
+import EllipsisLoader from "./ElipsisLoader";
+
+
 
 export default function NaturalLanguageSearch({ visible, setVisible, navigation }) {
   const [nlSuggestionList, setNlSuggestionList] = useState([]);
@@ -29,39 +33,104 @@ export default function NaturalLanguageSearch({ visible, setVisible, navigation 
   const [nlAddedList, setNlAddedList] = useState([]);
   const [addedListToProp, setAddedListToProp] = useState([]);
   const [mealType, setMealType] = useState("");
-  // const [recording, setRecording] = useState(null);
-  // const [isFetching, setIsFetching] = useState(false);
-  // const [isRecording, setIsRecording] = useState(false);
-  // const [storedRecording, setStoredRecording] = useState()
-  const [query, setQuery] = useState('');
+  const [recording, setRecording] = useState()
+  const [isRecording, setIsRecording] = useState(false)
+  const [fileURL, setFileURL] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const user = useUser()
-  useEffect(()=>{
-    const handleTranscription = async () => {
-      try {
-        const fetch = axios.get("http://localhost:3000/")
-        console.log(fetch)
-        // const audioFile = 'https://storage.googleapis.com/aai-web-samples/5_common_sports_injuries.mp3'; // Replace with your actual audio file URL
-        // const response = await fetch('http://localhost:3000/transcribe', {
-        //   method: 'POST',
-        //   headers: {
-        //     'Content-Type': 'application/json',
-        //   },
-        //   body: JSON.stringify({ audioFile }),
-        // });
-  
-        // if (!response.ok) {
-        //   throw new Error('Transcription request failed');
-        // }
-  
-        // const data = await response.json();
-        // console.log(data)
-      } catch (error) {
-        console.error('Error:', error.message);
-        
+
+
+  async function startRecording() {
+    try {
+      const perm = await Audio.requestPermissionsAsync();
+      if (perm.status === "granted") {
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: true,
+          playsInSilentModeIOS: true
+        });
+        const { recording } = await Audio.Recording.createAsync({
+          ...Audio.RecordingOptionsPresets.HIGH_QUALITY,
+         outputFormat: ".mp3"
+       });
+        setRecording(recording);
       }
-    };
-    handleTranscription()
-  },[])
+    } catch (err) {}
+  }
+  async function stopRecording() {
+    try {
+      setRecording(undefined);
+      await recording.stopAndUnloadAsync();
+      const recordingFileURI = recording.getURI();
+  
+      // Upload the recording to Firebase Storage
+      const storageRef = ref(storage, 'audio/' + 'test' + '.mp3');
+      const response = await fetch(recordingFileURI);
+      const blob = await response.blob();
+  
+      await uploadBytes(storageRef, blob);
+  
+      // Get the download URL
+      const url = await getDownloadURL(storageRef)
+      console.log('Download URL:', url);
+      setFileURL(url)
+      console.log('Audio file uploaded to Firebase Storage');
+    } catch (err) {
+      console.error('Error stopping recording:', err);
+    }
+  }
+  
+  const handleRecord = () => {
+  setIsRecording(prevIsRecording => {
+    const newIsRecording = !prevIsRecording;
+
+    if (newIsRecording) {
+      console.log("Recording");
+      startRecording();
+    } else {
+      console.log("Not recording");
+      stopRecording();
+    }
+
+    return newIsRecording;
+  });
+}
+useEffect(() => {
+  async function transcribe(audio_url) {
+    try {
+      const response = await axios.post("http://placeholder/transcript", {
+        audioFile: audio_url,
+      });
+
+      console.log("RESP", response?.data);
+
+      return response?.data;
+    } catch (e) {
+      console.error(e);
+      throw e; 
+    }
+  }
+  const fetchData = async () => {
+   
+
+    if (fileURL) {
+      try {
+        setIsLoading(true);
+        const transcribeText = await transcribe(fileURL);
+        setModalSearchText(transcribeText);
+        console.log(modalSearchText);
+      } catch (error) {
+        // Handle errors here
+        console.error('Error during transcription:', error);
+      } finally {
+       
+        setIsLoading(false);
+      }
+    }
+  };
+  fetchData();
+  handleSubmitModalSearch()
+}, [fileURL]);
+
   const headers = {
     "x-app-id": APP_ID,
     "x-app-key": APP_KEY,
@@ -230,6 +299,7 @@ export default function NaturalLanguageSearch({ visible, setVisible, navigation 
     setNlSuggestionList([]);
     setNlAddedList([]);
     setMealType("");
+    setFileURL()
   };
 
 //   // mic functionality here
@@ -351,9 +421,7 @@ export default function NaturalLanguageSearch({ visible, setVisible, navigation 
   //   this.setState({ isFetching: false });
   // }
 
-  const [recording, setRecording] = React.useState();
-  const [recordings, setRecordings] = React.useState([]);
-  
+
 
   
   return (
@@ -369,9 +437,14 @@ export default function NaturalLanguageSearch({ visible, setVisible, navigation 
               </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity>
-              <View style={styles.nlIconModal}>
-                <Ionicons name="mic" size={100} color="#ffff" />
+            <TouchableOpacity onPress={handleRecord}>
+              <View style={styles.nlIconModal}> 
+              {isLoading ? (
+            <EllipsisLoader />
+              ) : (
+                <Ionicons name="mic" size={100} color={isRecording ? "red" : "#ffff"} />
+              )}
+                  
               </View>
             </TouchableOpacity>
             <View style={styles.nlInputContainer}>
@@ -473,7 +546,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 16,
+    padding: 10,
   },
   searchBar: {
     flexDirection: "row",
@@ -482,7 +555,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 8,
     elevation: 2,
-    paddingLeft: 10,
+    paddingLeft: 12,
     marginLeft: 15,
     marginRight: 15,
     marginTop: 25,
@@ -574,7 +647,7 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
   },
   modalInput: {
-    paddingLeft: 10,
+    paddingLeft: 12,
     color: "#333",
     backgroundColor: "white",
     borderRadius: 10,
