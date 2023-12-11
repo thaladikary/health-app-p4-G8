@@ -14,10 +14,17 @@ import {
 import React, { useState, useEffect } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import axios from "axios";
-import { APP_ID, APP_KEY } from "@env";
+import { APP_ID, APP_KEY, GCP_IP, GCP_PORT } from "@env";
 import { useUser } from "../context/userContext";
 import { collection, addDoc } from "@firebase/firestore";
+
+import { ref, uploadBytes, getDownloadURL } from "@firebase/storage";
 import { db } from "../config/firebase";
+import { Audio } from "expo-av";
+import { storage } from "../config/firebase";
+import * as Permissions from "expo-permissions";
+import EllipsisLoader from "./ElipsisLoader";
+
 
 export default function NaturalLanguageSearch({
   visible,
@@ -30,7 +37,104 @@ export default function NaturalLanguageSearch({
   const [nlAddedList, setNlAddedList] = useState([]);
   const [addedListToProp, setAddedListToProp] = useState([]);
   const [mealType, setMealType] = useState("");
+
+  const [recording, setRecording] = useState();
+  const [isRecording, setIsRecording] = useState(false);
+  const [fileURL, setFileURL] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const user = useUser();
+
+  async function startRecording() {
+    try {
+      const perm = await Audio.requestPermissionsAsync();
+      if (perm.status === "granted") {
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: true,
+          playsInSilentModeIOS: true,
+        });
+        const { recording } = await Audio.Recording.createAsync({
+          ...Audio.RecordingOptionsPresets.HIGH_QUALITY,
+          outputFormat: ".mp3",
+        });
+        setRecording(recording);
+      }
+    } catch (err) {}
+  }
+  async function stopRecording() {
+    try {
+      setRecording(undefined);
+      await recording.stopAndUnloadAsync();
+      const recordingFileURI = recording.getURI();
+
+      // Upload the recording to Firebase Storage
+      const storageRef = ref(storage, "audio/" + "test" + ".mp3");
+      const response = await fetch(recordingFileURI);
+      const blob = await response.blob();
+
+      await uploadBytes(storageRef, blob);
+
+      // Get the download URL
+      const url = await getDownloadURL(storageRef);
+      console.log("Download URL:", url);
+      setFileURL(url);
+      console.log("Audio file uploaded to Firebase Storage");
+    } catch (err) {
+      console.error("Error stopping recording:", err);
+    }
+  }
+
+  const handleRecord = () => {
+    setIsRecording((prevIsRecording) => {
+      const newIsRecording = !prevIsRecording;
+
+      if (newIsRecording) {
+        console.log("Recording");
+        startRecording();
+      } else {
+        console.log("Not recording");
+        stopRecording();
+      }
+
+      return newIsRecording;
+    });
+  };
+  useEffect(() => {
+    async function transcribe(audio_url) {
+      try {
+        const response = await axios.post(
+          `http://${GCP_IP}:${GCP_PORT}/transcript`,
+          {
+            audioFile: audio_url,
+          }
+        );
+
+        console.log("RESP", response?.data);
+
+        return response?.data;
+      } catch (e) {
+        console.error(e);
+        throw e;
+      }
+    }
+    const fetchData = async () => {
+      if (fileURL) {
+        try {
+          setIsLoading(true);
+          const transcribeText = await transcribe(fileURL);
+          setModalSearchText(transcribeText);
+          console.log(modalSearchText);
+        } catch (error) {
+          // Handle errors here
+          console.error("Error during transcription:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+    fetchData();
+    handleSubmitModalSearch();
+  }, [fileURL]);
+
 
   const headers = {
     "x-app-id": APP_ID,
@@ -192,7 +296,9 @@ export default function NaturalLanguageSearch({
     setNlSuggestionList([]);
     setNlAddedList([]);
     setMealType("");
+    setFileURL();
   };
+
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
@@ -206,10 +312,20 @@ export default function NaturalLanguageSearch({
                 <Ionicons name="close" size={50} color="white" />
               </Text>
             </TouchableOpacity>
-            <View style={styles.nlIconModal}>
-              <Ionicons name="mic" size={100} color="#ffff" />
-            </View>
 
+            <TouchableOpacity onPress={handleRecord}>
+              <View style={styles.nlIconModal}>
+                {isLoading ? (
+                  <EllipsisLoader />
+                ) : (
+                  <Ionicons
+                    name="mic"
+                    size={100}
+                    color={isRecording ? "red" : "#ffff"}
+                  />
+                )}
+              </View>
+            </TouchableOpacity>
             <View style={styles.nlInputContainer}>
               <TextInput
                 style={[styles.modalInput, { fontSize: 16 }]}
@@ -309,7 +425,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    padding: 16,
+    padding: 10,
   },
   searchBar: {
     flexDirection: "row",
@@ -318,11 +434,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 8,
     elevation: 2,
-    paddingLeft: 10,
-    marginLeft: 15,
-    marginRight: 15,
-    marginTop: 25,
-    marginBottom: 15,
+    // paddingLeft: 12,
+    // marginLeft: 15,
+    // marginRight: 15,
+    // marginTop: 25,
+    // marginBottom: 15,
   },
   input: {
     flex: 1,
@@ -410,7 +526,7 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
   },
   modalInput: {
-    paddingLeft: 10,
+    paddingLeft: 12,
     color: "#333",
     backgroundColor: "white",
     borderRadius: 10,

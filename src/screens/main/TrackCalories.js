@@ -26,6 +26,10 @@ import {
 } from "@firebase/firestore";
 import { db } from "../../config/firebase";
 import { Swipeable } from "react-native-gesture-handler";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 const { width, height } = Dimensions.get("window");
 export default function TrackCalories({ navigation, route }) {
@@ -66,12 +70,22 @@ export default function TrackCalories({ navigation, route }) {
     newDate.setDate(currentDate.getDate() + 1);
     setCurrentDate(newDate);
   };
-  const formattedDate = currentDate.toLocaleDateString("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
+  // const formattedDate = currentDate.toLocaleDateString("en-US", {
+  //   weekday: "short",
+  //   month: "short",
+  //   day: "numeric",
+  //   year: "numeric",
+  // });
+
+  const formattedDate =
+    currentDate.getTime() === new Date().getTime()
+      ? "Today"
+      : currentDate.toLocaleDateString("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
 
   const getCurrentDate = () => {
     const today = currentDate;
@@ -262,12 +276,16 @@ export default function TrackCalories({ navigation, route }) {
         <View style={styles.dateHeader}>
           <TouchableOpacity onPress={handlePrevDate}>
             <View>
-              <Text style={styles.arrowSize}>{"<"}</Text>
+              <Text style={styles.arrowSize}>
+                <Ionicons name="caret-back-outline" size={35} />
+              </Text>
             </View>
           </TouchableOpacity>
           <Text style={styles.dateSize}>{formattedDate}</Text>
           <TouchableOpacity onPress={handleNextDate}>
-            <Text style={styles.arrowSize}>{">"}</Text>
+            <Text style={styles.arrowSize}>
+              <Ionicons name="caret-forward-outline" size={35} />
+            </Text>
           </TouchableOpacity>
         </View>
         {/* KCAL TRACKER */}
@@ -291,7 +309,7 @@ export default function TrackCalories({ navigation, route }) {
                     progress={progress.kcal / goals.caloriesGoal}
                     showsText
                     allowFontScaling
-                    unfilledColor="lightgray"
+                    unfilledColor="#E6E6E6"
                     strokeCap="round"
                     borderWidth={0}
                     formatText={() => (
@@ -312,6 +330,7 @@ export default function TrackCalories({ navigation, route }) {
             </View>
 
             {/* MACROS TRACKER */}
+
             <View style={styles.macroTrackerContainer}>
               <View style={[styles.carbTrackerContainer]}>
                 <Text style={[styles.macroHeaderStyle, styles.flexStyle]}>
@@ -322,7 +341,7 @@ export default function TrackCalories({ navigation, route }) {
                   width={width * 0.23}
                   height={7}
                   color="#87cefa"
-                  unfilledColor="lightgray"
+                  unfilledColor="#E6E6E6"
                   strokeCap="round"
                   borderWidth={0}
                 />
@@ -339,8 +358,8 @@ export default function TrackCalories({ navigation, route }) {
                   progress={progress.protein / goals.proteinGoal}
                   width={width * 0.23}
                   height={7}
-                  color="#cd5c5c"
-                  unfilledColor="lightgray"
+                  color="#50C878"
+                  unfilledColor="#E6E6E6"
                   strokeCap="round"
                   borderWidth={0}
                 />
@@ -357,8 +376,8 @@ export default function TrackCalories({ navigation, route }) {
                   progress={progress.fats / goals.fatGoal}
                   width={width * 0.23}
                   height={7}
-                  color="#daa520"
-                  unfilledColor="lightgray"
+                  color="#FF5733"
+                  unfilledColor="#E6E6E6"
                   strokeCap="round"
                   borderWidth={0}
                 />
@@ -381,7 +400,14 @@ export default function TrackCalories({ navigation, route }) {
           >
             <View style={styles.mealContainer}>
               <View style={styles.mealFontContainer}>
-                <Text style={styles.mealFontText}>Breakfast</Text>
+                <Text style={styles.mealFontText}>
+                  <MaterialCommunityIcons
+                    name="egg-fried"
+                    size={30}
+                    color="black"
+                  />
+                  Breakfast
+                </Text>
               </View>
               <TouchableOpacity onPress={() => handleSearchMeal("breakfast")}>
                 <View style={styles.plusSign}>
@@ -426,7 +452,10 @@ export default function TrackCalories({ navigation, route }) {
           >
             <View style={styles.mealContainer}>
               <View style={styles.mealFontContainer}>
-                <Text style={styles.mealFontText}>Lunch</Text>
+                <Text style={styles.mealFontText}>
+                  <MaterialIcons name="fastfood" size={24} color="black" />
+                  Lunch
+                </Text>
               </View>
               <TouchableOpacity onPress={() => handleSearchMeal("lunch")}>
                 <View style={styles.plusSign}>
@@ -470,7 +499,14 @@ export default function TrackCalories({ navigation, route }) {
           >
             <View style={styles.mealContainer}>
               <View style={styles.mealFontContainer}>
-                <Text style={styles.mealFontText}>Dinner</Text>
+                <Text style={styles.mealFontText}>
+                  <MaterialCommunityIcons
+                    name="food-turkey"
+                    size={30}
+                    color="black"
+                  />
+                  Dinner
+                </Text>
               </View>
               <TouchableOpacity onPress={() => handleSearchMeal("dinner")}>
                 <View style={styles.plusSign}>
@@ -514,7 +550,14 @@ export default function TrackCalories({ navigation, route }) {
           >
             <View style={styles.mealContainer}>
               <View style={styles.mealFontContainer}>
-                <Text style={styles.mealFontText}>Snacks</Text>
+                <Text style={styles.mealFontText}>
+                  <MaterialCommunityIcons
+                    name="food-apple"
+                    size={30}
+                    color="black"
+                  />
+                  Snacks
+                </Text>
               </View>
               <TouchableOpacity onPress={() => handleSearchMeal("snacks")}>
                 <View style={styles.plusSign}>
@@ -548,29 +591,6 @@ export default function TrackCalories({ navigation, route }) {
                 );
               }
             })}
-          <View style={[styles.card, styles.waterTrackContainer]}>
-            <Text style={[styles.waterTrackHeader]}>Water Tracker</Text>
-            <View>
-              <Progress.Bar
-                progress={0.3}
-                width={width - 100}
-                height={25}
-                color="#00bfff"
-                unfilledColor="lightgray"
-                borderWidth={0}
-              />
-              <Text style={[styles.waterTrackAmountHeader]}>
-                <Text>Goal: </Text>
-                <Text style={[styles.waterTrackAmount]}>755/2500</Text>
-                <Text> mL</Text>
-              </Text>
-            </View>
-          </View>
-
-          <View style={[styles.card]}>
-            <Text style={[styles.weightTrackHeader]}>Weight Tracker</Text>
-            <Text>There should be a graph here...</Text>
-          </View>
         </View>
       </ScrollView>
       <Navbar navigation={navigation} active="TrackCalorie" />
@@ -581,6 +601,7 @@ export default function TrackCalories({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "white",
   },
   header: {
     fontSize: 30,
@@ -591,6 +612,7 @@ const styles = StyleSheet.create({
   mainTrackerContainer: {
     display: "flex",
     flexDirection: "column",
+    paddingBottom: 20,
   },
 
   card: {
@@ -679,33 +701,6 @@ const styles = StyleSheet.create({
   flexStyle: {
     display: "flex",
   },
-  carbTrackerContainer: {},
-  proteinTrackerContainer: {},
-  fatsTrackerContainer: {},
-
-  waterTrackContainer: {
-    height: 97,
-    alignItems: "center",
-    paddingTop: 10,
-  },
-
-  waterTrackAmount: {
-    textAlign: "center",
-    fontWeight: "bold",
-    fontSize: 15,
-  },
-
-  waterTrackAmountHeader: {
-    textAlign: "center",
-    margin: 5,
-  },
-
-  waterTrackHeader: {
-    color: "black",
-    fontWeight: "700",
-    fontSize: 15,
-    marginBottom: 5,
-  },
 
   weightTrackHeader: {
     fontWeight: "bold",
@@ -729,20 +724,24 @@ const styles = StyleSheet.create({
   },
 
   mealCard: {
-    height: 84,
+    height: 65,
     paddingTop: 12,
+    // borderBottomWidth: 1,
+    // borderBottomColor: "black",
   },
   listExistsStyle: {
     borderBottomRightRadius: 1,
     borderBottomLeftRadius: 1,
+    borderBottomWidth: 0.5,
+    borderBottomColor: "black",
   },
   mealContainer: {
     display: "flex",
     flexDirection: "row",
   },
   plusSign: {
-    width: 50,
-    height: 50,
+    width: 35,
+    height: 35,
     backgroundColor: "#eaf4fe",
     borderRadius: 50,
     display: "flex",
@@ -751,15 +750,16 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   mealFontContainer: {
-    width: width * 0.74,
+    width: width * 0.8,
   },
   expandedCard: {
     height: "auto",
     flexDirection: "row",
-    width: width * 0.915,
+    width: width * 0.929,
     borderBottomRightRadius: 2,
     borderBottomLeftRadius: 2,
     marginLeft: 15,
+    marginBottom: 2,
     backgroundColor: "white",
     // paddingLeft: 20,
     padding: 15,
@@ -767,6 +767,7 @@ const styles = StyleSheet.create({
   },
   foodNameContainer: {
     width: width * 0.74,
+    elevation: 5,
   },
   dateHeader: {
     flexDirection: "row",
@@ -786,11 +787,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     display: "flex",
     width: 80,
-    height: 80,
+    height: 67,
     marginRight: 15,
+    marginLeft: -20,
   },
   deleteText: {
     color: "white",
-    marginBottom: 10,
+    // marginBottom: 10,
   },
 });
