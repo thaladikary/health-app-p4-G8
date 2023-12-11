@@ -43,26 +43,25 @@ export default function GroceryList({ navigation }) {
         try {
           const userId = user.uid;
           const entryPath = `users/${userId}/groceryList`;
-  
+
           const querySnapshot = await getDocs(collection(db, entryPath));
           const items = [];
-  
+
           querySnapshot.forEach((doc) => {
             // Assuming your documents have 'itemName', 'quantity', and 'docRefId' fields
             const { itemName, quantity, docRefId } = doc.data();
             items.push({ itemName, quantity, docRefId, id: doc.id });
           });
-          console.log("ITEMS:",items)
-  
+          console.log("ITEMS:", items);
+
           setGroceryList(items);
         } catch (error) {
           console.error("Error fetching grocery items:", error);
         }
       };
-  
+
       fetchGroceryItems();
     }
-   
   }, []);
 
   const handleInputChange = (input) => {
@@ -91,11 +90,11 @@ export default function GroceryList({ navigation }) {
         const newItem = { itemName, quantity, docRefId: docRef.id };
 
         await updateDoc(docRef, { docRefId: docRef.id });
-        
+
         setGroceryList([...groceryList, newItem]);
         setItemName("");
         setQuantity(1);
-        console.log("Added item with id updated")
+        console.log("Added item with id updated");
       } catch (error) {
         console.error("Error adding item: ", error);
       }
@@ -117,14 +116,16 @@ export default function GroceryList({ navigation }) {
               //   (item) => item.itemName !== item.itemName
               // );
               // setGroceryList(updatedList);
-            setGroceryList((prevList) =>
-              prevList.filter((groceryItem) => item.docRefId !== groceryItem.docRefId)
-            );
+              setGroceryList((prevList) =>
+                prevList.filter(
+                  (groceryItem) => item.docRefId !== groceryItem.docRefId
+                )
+              );
               // Delete the item from Firebase
               const userId = user.uid;
               const entryPath = `users/${userId}/groceryList`;
-              console.log(item.docRefId)
-              const docRef = doc(db,entryPath,item.docRefId)
+              console.log(item.docRefId);
+              const docRef = doc(db, entryPath, item.docRefId);
               await deleteDoc(docRef);
             } catch (error) {
               console.error("Error deleting item:", error);
@@ -172,26 +173,24 @@ export default function GroceryList({ navigation }) {
   };
   const updateQuantity = async (item, newQuantity) => {
     // setNewQuant(newQuantity);
-  
+
     try {
-      console.log("test", item,newQuantity,item.docRefId)
+      console.log("test", item, newQuantity, item.docRefId);
       const userId = user.uid;
       const entryPath = `users/${userId}/groceryList`;
-      const docRef = doc(db,entryPath,item.docRefId)
+      const docRef = doc(db, entryPath, item.docRefId);
       const updatedObject = {
-        docRefId:item.docRefId,
+        docRefId: item.docRefId,
         itemName: item.itemName,
-        quantity: newQuantity
-      }
-      console.log("NEWQUANT OBJ", updatedObject)
+        quantity: newQuantity,
+      };
+      console.log("NEWQUANT OBJ", updatedObject);
       setGroceryList((prevList) =>
-      prevList.map((prevItem) =>
-        prevItem.docRefId === item.docRefId ? updatedObject : prevItem
-      )
-    );
-      await updateDoc(docRef,updatedObject)
-     
-  
+        prevList.map((prevItem) =>
+          prevItem.docRefId === item.docRefId ? updatedObject : prevItem
+        )
+      );
+      await updateDoc(docRef, updatedObject);
     } catch (error) {
       console.error("Error updating quantity:", error);
     }
@@ -263,10 +262,7 @@ export default function GroceryList({ navigation }) {
                     <View style={styles.addedCounterContainer}>
                       <TouchableOpacity
                         onPress={() =>
-                          updateQuantity(
-                            item,
-                            parseInt(item.quantity) + 1
-                          )
+                          updateQuantity(item, parseInt(item.quantity) + 1)
                         }
                       >
                         <View style={styles.addedCounter}>
@@ -275,19 +271,14 @@ export default function GroceryList({ navigation }) {
                       </TouchableOpacity>
                       <TouchableOpacity
                         onPress={() =>
-                          updateQuantity(
-                            item,
-                            parseInt(item.quantity) - 1
-                          )
+                          updateQuantity(item, parseInt(item.quantity) - 1)
                         }
                       >
                         <View style={styles.addedCounter}>
                           <Text style={styles.plusSignText}>-</Text>
                         </View>
                       </TouchableOpacity>
-                      <TouchableOpacity
-                        onPress={() => deleteItem(item)}
-                      >
+                      <TouchableOpacity onPress={() => deleteItem(item)}>
                         <View style={styles.deleteIcon}>
                           <Text style={styles.deleteSign}>
                             <Ionicons
@@ -446,7 +437,7 @@ const styles = StyleSheet.create({
     // display: "flex",
     // flexDirection: "row",
     // justifyContent: "flex-start",
-    marginLeft: 70,
+    // marginLeft: 70,
   },
 
   addedItem: {
