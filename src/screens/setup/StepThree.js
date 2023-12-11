@@ -12,21 +12,22 @@ import {
 import { useEffect, useState } from "react";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useData } from "../../context/DataContext";
 
 export default function StepThree({ navigation }) {
   const setSelectedWeight = useState(68);
-  const [inputWeight, setInputWeight] = useState("");
-  const [measurement, setMeasurement] = useState({
-    weight: "",
-    unit: "cm",
-  });
+  const { inputHeight, setInputHeight } = useData("");
+  // const [measurement, setMeasurement] = useState({
+  //   weight: "",
+  //   unit: "cm",
+  // });
 
   //I do not know if this is correct but it wouldnt work without it. Copied from StepOne
   const handleNextStep = async () => {
     // Check if inputAge is not empty before navigating to the next step
     if (inputAge.trim() !== "") {
-      const entryPath = `users/${userId}/userInfo`;
-      const docRef = await addDoc(collection(db, entryPath), { age: inputAge });
+      // const entryPath = `users/${userId}/userInfo`;
+      // const docRef = await addDoc(collection(db, entryPath), { age: inputAge });
       navigation.navigate("StepTwo", { inputAge });
     } else {
       // You can add an alert or other feedback for the user to enter their age
@@ -70,8 +71,8 @@ export default function StepThree({ navigation }) {
         style={styles.inputWeight}
         placeholder="68 cm"
         keyboardType="numeric"
-        value={inputWeight}
-        onChangeText={(text) => setInputWeight(text)}
+        value={inputHeight}
+        onChangeText={(text) => setInputHeight(text)}
         onFocus={() => {}}
         // onBlur={Keyboard.dismiss}
       ></TextInput>
@@ -93,23 +94,21 @@ export default function StepThree({ navigation }) {
                     >cm</Text>
                 </TouchableOpacity> */}
 
-  <View
-      style={styles.buttonContainer}>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.previousButton}
+          onPress={() => navigation.navigate("StepFour")}
+          // onPress={handleNextStep}
+        >
+          <Text style={styles.previousButtonText}>Next Step</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.previousButton}
-        onPress={() => navigation.navigate("StepFour")}
-        // onPress={handleNextStep}
-      >
-        <Text style={styles.previousButtonText}>Next Step</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.previousButton}
-        onPress={() => navigation.navigate("StepTwo")}
-      >
-        <Text style={styles.previousButtonText}>Previous Step</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.previousButton}
+          onPress={() => navigation.navigate("StepTwo")}
+        >
+          <Text style={styles.previousButtonText}>Previous Step</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -218,7 +217,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 30,
     width: "75%",
-    alignSelf: 'center',
+    alignSelf: "center",
   },
 
   previousButtonText: {
@@ -263,10 +262,8 @@ const styles = StyleSheet.create({
   },
 
   buttonContainer: {
-
-    justifyContent: 'space-between',
-    alignSelf: 'stretch',
-    alignContent: 'center',
-
+    justifyContent: "space-between",
+    alignSelf: "stretch",
+    alignContent: "center",
   },
 });

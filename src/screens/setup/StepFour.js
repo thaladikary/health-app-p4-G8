@@ -12,9 +12,10 @@ import {
 import { useEffect, useState } from "react";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useData } from "../../context/DataContext";
 
 export default function StepFour({ navigation, route }) {
-  const [selectedGender, setSelectedGender] = useState(null);
+  const { selectedGender, setSelectedGender } = useData();
   const currentStep = 4;
 
   const handleGenderSelect = (gender) => {
