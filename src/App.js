@@ -12,13 +12,9 @@ import { DataProvider } from "./context/DataContext";
 export default function App() {
   return (
     <SafeAreaView style={styles.container}>
-      <DataProvider>
-        <CalculateBMR />
-
-        <SetupStack></SetupStack>
-      </DataProvider>
-      {/*           
-           <RootNavigation/> */}
+      
+                
+           <RootNavigation/>
     </SafeAreaView>
   );
 }

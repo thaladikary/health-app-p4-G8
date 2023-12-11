@@ -13,7 +13,8 @@ import {
 } from "@firebase/firestore";
 import { db } from "../config/firebase";
 import SetupStack from "./SetupStack";
-
+import { DataProvider } from "../context/DataContext";
+import CalculateBMR from "../screens/setup/CalculateBMR";
 export default function RootNavigation() {
   const { user } = useAuth();
 
@@ -29,7 +30,11 @@ export default function RootNavigation() {
 
     return (
       <UserContext.Provider value={user}>
-        <SetupStack />
+        <DataProvider>
+          <CalculateBMR />
+
+          <SetupStack></SetupStack>
+        </DataProvider>
         {/* <UserStack /> */}
       </UserContext.Provider>
     );
