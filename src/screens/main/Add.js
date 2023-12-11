@@ -50,7 +50,7 @@ export default function Add({ navigation, route }) {
         .then((response) => {
           let foodNameArrayCommon = response.data.common;
           let foodNameArrayBranded = response.data.branded;
-          let foodNameArray = [...foodNameArrayBranded, ...foodNameArrayCommon];
+          let foodNameArray = [...foodNameArrayCommon, ...foodNameArrayBranded];
 
           foodNameList = foodNameArray.map(
             ({ food_name, photo, nix_item_id }) => ({
