@@ -7,109 +7,144 @@ import {
   StatusBar,
   ScrollView,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import * as Progress from "react-native-progress";
 import Navbar from "../../components/Navbar";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import {
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from "react-native-gesture-handler";
 import { useUser } from "../../context/userContext";
-import { doc, getDoc, collection, query, getDocs, where } from '@firebase/firestore';
+import {
+  doc,
+  getDoc,
+  collection,
+  query,
+  getDocs,
+  where,
+  deleteDoc,
+} from "@firebase/firestore";
 import { db } from "../../config/firebase";
+import { Swipeable } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("window");
 export default function TrackCalories({ navigation, route }) {
   const [currentDate, setCurrentDate] = useState(new Date());
-
+  const swipeableRef = useRef(null);
   const [progress, setProgress] = useState({
     kcal: 0,
     carbs: 0,
     protein: 0,
     fats: 0,
   });
-  const [goals,setGoals]= useState({
-    caloriesGoal : 2500,
+  const [goals, setGoals] = useState({
+    caloriesGoal: 2500,
     carbsGoal: 500,
-    proteinGoal:150,
-    fatGoal:100
-  })
-  const [foodDiaryList, setFoodDiaryList] = useState([])
-  const user = useUser()
+    proteinGoal: 150,
+    fatGoal: 100,
+  });
+  const [foodDiaryList, setFoodDiaryList] = useState([]);
+  const user = useUser();
+  const userId = user.uid;
   // useEffect(()=>{
   //   route.params ? setFoodDiaryList((prevList) => [...prevList, route.params.prop]) : console.log("none")
-  
+
   // },[route.params ])
   // useEffect(()=>{
-   
+
   //   console.log(foodDiaryList[0])
   // },[foodDiaryList])
-  
+
   const handlePrevDate = () => {
-   
     const newDate = new Date(currentDate);
     newDate.setDate(currentDate.getDate() - 1);
     setCurrentDate(newDate);
   };
 
   const handleNextDate = () => {
-    
     const newDate = new Date(currentDate);
     newDate.setDate(currentDate.getDate() + 1);
     setCurrentDate(newDate);
   };
-  const formattedDate = currentDate.toLocaleDateString('en-US', {
-    weekday: 'short',
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
+  const formattedDate = currentDate.toLocaleDateString("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
   });
 
   const getCurrentDate = () => {
     const today = currentDate;
     const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0'); 
-    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userId = user.uid;
-        const querySnapshot = await getDocs(collection(db, "users", userId, "userInfo"));
+        const querySnapshot = await getDocs(
+          collection(db, "users", userId, "userInfo")
+        );
         querySnapshot.forEach((doc) => {
-          try{
-            const data = doc.data()
+          try {
+            const data = doc.data();
             setGoals({
-              caloriesGoal : data.caloriesIntake,
+              caloriesGoal: data.caloriesIntake,
               carbsGoal: data.carbIntake,
-              proteinGoal:data.proteinIntake,
-              fatGoal:data.fatIntake
-            })
+              proteinGoal: data.proteinIntake,
+              fatGoal: data.fatIntake,
+            });
             // console.log(retArray[0]);
-          }catch(e){
-            console.log("not workin")
+          } catch (e) {
+            console.log("not workin");
           }
         });
       } catch (error) {
-        console.error('Error retrieving document: ', error);
+        console.error("Error retrieving document: ", error);
       }
     };
-  
+
     fetchData();
   }, []); // Add dependencies if needed
-  
-  useEffect(()=>{
-    async function fetchData(){
+  const calculateTotals = (meals) => {
+    let totals = {
+      kcal: 0,
+      carbs: 0,
+      protein: 0,
+      fats: 0,
+    };
+
+    meals.forEach((meal) => {
+      totals.kcal += meal.prop.nutriments.calories;
+      totals.carbs += meal.prop.nutriments.carbohydrates;
+      totals.protein += meal.prop.nutriments.protein;
+      totals.fats += meal.prop.nutriments.fat;
+    });
+
+    return totals;
+  };
+
+  useEffect(() => {
+    async function fetchData() {
       try {
-        const userId = user.uid;
         const date = getCurrentDate();
-        const querySnapshot = await getDocs(collection(db, "users", userId, "foodDiaries", date,"entries"));
-        const retArray = []
+        const querySnapshot = await getDocs(
+          collection(db, "users", userId, "foodDiaries", date, "entries")
+        );
+        const retArray = [];
         querySnapshot.forEach((doc) => {
-          try{
-            // console.log(doc.data())
-            retArray.push(doc.data())
+          try {
+            // console.log("DOCDATA",doc.id)
+            const dataWithId = {
+              id: doc.id,
+              ...doc.data(),
+            };
+            // console.log(dataWithId)
+            retArray.push(dataWithId);
             // console.log(retArray[0]);
-          }catch(e){
-            console.log("not workin")
+          } catch (e) {
+            console.log("not workin");
           }
         });
         const initializeProgressState = () => {
@@ -127,48 +162,114 @@ export default function TrackCalories({ navigation, route }) {
           progressState.fats += meal.prop.nutriments.fat;
           return progressState;
         };
-          
-          let totals = initializeProgressState();
-          retArray.forEach((meal)=>{
-            console.log(meal)
-            totals = calculateTotals(totals, meal);
-       
-          })
-          console.log("TOTAL",totals)
-          setProgress(totals);
-          setFoodDiaryList(retArray)
+
+        let totals = initializeProgressState();
+        retArray.forEach((meal) => {
+          console.log(meal);
+          totals = calculateTotals(totals, meal);
+        });
+        console.log("TOTAL", totals);
+        setProgress(totals);
+        setFoodDiaryList(retArray);
       } catch (error) {
-        console.error('Error retrieving document: ', error);
+        console.error("Error retrieving document: ", error);
       }
     }
-    fetchData()
-   
-  },[route.params,currentDate])
-  const handleSearchMeal=(mealType)=>{
-    navigation.navigate("Add",{mealType,currentDate})
-  }
-    const calculateRemaningCalories=()=>{
-      return Math.round(goals.caloriesGoal-progress.kcal)
-    }
+    fetchData();
+  }, [route.params, currentDate]);
+  const handleSearchMeal = (mealType) => {
+    navigation.navigate("Add", { mealType, currentDate });
+  };
+  const calculateRemaningCalories = () => {
+    return Math.round(goals.caloriesGoal - progress.kcal);
+  };
+  const handleDetails = (item) => {
+    console.log(item.prop);
+    const servingsAmt = item.servingsAmt;
+    const prop = {
+      name: item.prop.name,
+      image: item.prop.image,
+      nutriments: {
+        calories: item.prop.nutriments.calories / servingsAmt,
+        carbohydrates: item.prop.nutriments.carbohydrates / servingsAmt,
+        fat: item.prop.nutriments.fat / servingsAmt,
+        protein: item.prop.nutriments.protein / servingsAmt,
+      },
+    };
+    console.log("RPORESPOR", prop);
+    const mealType = item.mealType;
 
-    
+    const editMode = true;
+    const itemId = item.id;
+    navigation.navigate("FoodDetails", {
+      prop,
+      mealType,
+      currentDate,
+      servingsAmt,
+      editMode,
+      itemId,
+    });
+  };
+
+  const renderRightActions = (progress, dragX, itemId) => {
+    const trans = dragX.interpolate({
+      inputRange: [0, 50, 100],
+      outputRange: [0, 0.5, 1],
+    });
+
+    return (
+      <TouchableOpacity
+        onPress={() => handleDelete(itemId)}
+        style={[styles.deleteButton]}
+      >
+        <Text style={styles.deleteText}>Delete</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const handleDelete = async (itemId) => {
+    console.log("deelte");
+
+    try {
+      const date = getCurrentDate();
+      const docRef = doc(
+        db,
+        "users",
+        userId,
+        "foodDiaries",
+        date,
+        "entries",
+        itemId
+      );
+      await deleteDoc(docRef);
+      setFoodDiaryList((prevList) =>
+        prevList.filter((item) => item.id !== itemId)
+      );
+      const updatedTotals = calculateTotals(
+        foodDiaryList.filter((item) => item.id !== itemId)
+      );
+      setProgress(updatedTotals);
+      console.log("Document successfully deleted!");
+    } catch (e) {
+      console.error("Error deleting doc", e);
+    }
+  };
 
   return (
     <View style={styles.container}>
       <ScrollView>
         <Text style={styles.header}>Track Calories </Text>
         <View style={styles.dateHeader}>
-        <TouchableOpacity onPress={handlePrevDate}>
-          <View>
-            <Text  style={styles.arrowSize}>{"<"}</Text>
-          </View>
-       
-        </TouchableOpacity>
-        <Text style={styles.dateSize}>{formattedDate}</Text>
-        <TouchableOpacity onPress={handleNextDate}>
-        <Text  style={styles.arrowSize}>{">"}</Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity onPress={handlePrevDate}>
+            <View>
+              <Text style={styles.arrowSize}>{"<"}</Text>
+            </View>
+          </TouchableOpacity>
+          <Text style={styles.dateSize}>{formattedDate}</Text>
+          <TouchableOpacity onPress={handleNextDate}>
+            <Text style={styles.arrowSize}>{">"}</Text>
+          </TouchableOpacity>
+        </View>
         {/* KCAL TRACKER */}
         <View style={[styles.mainTrackerContainer]}>
           <View style={[styles.card]}>
@@ -176,7 +277,9 @@ export default function TrackCalories({ navigation, route }) {
               <View style={styles.consumedStyles}>
                 <Text style={[styles.consumedHeader]}>Consumed</Text>
                 <Text style={styles.consumedAmount}>
-                  <Text style={styles.boldText}>{Math.round(progress.kcal)}</Text>
+                  <Text style={styles.boldText}>
+                    {Math.round(progress.kcal)}
+                  </Text>
                   <Text> kcals</Text>
                 </Text>
               </View>
@@ -185,7 +288,7 @@ export default function TrackCalories({ navigation, route }) {
                   <Progress.Circle
                     size={125}
                     thickness={7}
-                    progress={progress.kcal/goals.caloriesGoal}
+                    progress={progress.kcal / goals.caloriesGoal}
                     showsText
                     allowFontScaling
                     unfilledColor="lightgray"
@@ -193,7 +296,9 @@ export default function TrackCalories({ navigation, route }) {
                     borderWidth={0}
                     formatText={() => (
                       <Text style={styles.progressContainer}>
-                        <Text style={styles.progressAmtTextStyle}>{calculateRemaningCalories()}</Text>
+                        <Text style={styles.progressAmtTextStyle}>
+                          {calculateRemaningCalories()}
+                        </Text>
                         {"\n"}
                         <Text style={styles.progressTextStyle}>remaining</Text>
                       </Text>
@@ -213,7 +318,7 @@ export default function TrackCalories({ navigation, route }) {
                   Carbs
                 </Text>
                 <Progress.Bar
-                  progress={progress.carbs/goals.carbsGoal}
+                  progress={progress.carbs / goals.carbsGoal}
                   width={width * 0.23}
                   height={7}
                   color="#87cefa"
@@ -221,7 +326,9 @@ export default function TrackCalories({ navigation, route }) {
                   strokeCap="round"
                   borderWidth={0}
                 />
-                <Text style={styles.progressTextMacros}>{Math.round(progress.carbs)}g / {goals.carbsGoal}g</Text>
+                <Text style={styles.progressTextMacros}>
+                  {Math.round(progress.carbs)}g / {goals.carbsGoal}g
+                </Text>
               </View>
 
               <View style={[styles.proteinTrackerContainer]}>
@@ -229,7 +336,7 @@ export default function TrackCalories({ navigation, route }) {
                   Protein
                 </Text>
                 <Progress.Bar
-                  progress={progress.protein/goals.proteinGoal}
+                  progress={progress.protein / goals.proteinGoal}
                   width={width * 0.23}
                   height={7}
                   color="#cd5c5c"
@@ -237,7 +344,9 @@ export default function TrackCalories({ navigation, route }) {
                   strokeCap="round"
                   borderWidth={0}
                 />
-                <Text style={styles.progressTextMacros}>{Math.round(progress.protein)}g / {goals.proteinGoal}g</Text>
+                <Text style={styles.progressTextMacros}>
+                  {Math.round(progress.protein)}g / {goals.proteinGoal}g
+                </Text>
               </View>
 
               <View style={[styles.fatsTrackerContainer]}>
@@ -245,7 +354,7 @@ export default function TrackCalories({ navigation, route }) {
                   Fats
                 </Text>
                 <Progress.Bar
-                  progress={progress.fats/goals.fatGoal}
+                  progress={progress.fats / goals.fatGoal}
                   width={width * 0.23}
                   height={7}
                   color="#daa520"
@@ -253,7 +362,9 @@ export default function TrackCalories({ navigation, route }) {
                   strokeCap="round"
                   borderWidth={0}
                 />
-                <Text style={styles.progressTextMacros}>{Math.round(progress.fats)}g / {goals.fatGoal}g</Text>
+                <Text style={styles.progressTextMacros}>
+                  {Math.round(progress.fats)}g / {goals.fatGoal}g
+                </Text>
               </View>
             </View>
           </View>
@@ -280,30 +391,30 @@ export default function TrackCalories({ navigation, route }) {
             </View>
           </View>
 
-          {   foodDiaryList.length > 0 && (
-            foodDiaryList.map((item)=>{
-              if (item.mealType==="breakfast"){
+          {foodDiaryList.length > 0 &&
+            foodDiaryList.map((item) => {
+              if (item.mealType === "breakfast") {
+                return (
+                  <Swipeable
+                    key={item.id}
+                    renderRightActions={(progress, dragX) =>
+                      renderRightActions(progress, dragX, item.id)
+                    }
+                  >
+                    <TouchableOpacity onPress={() => handleDetails(item)}>
+                      <View style={styles.expandedCard}>
+                        <View style={styles.foodNameContainer}>
+                          <Text>{item.prop.name}</Text>
+                          <Text>{item.servingsAmt} serving(s)</Text>
+                        </View>
 
-                return(
-                  <View style={styles.expandedCard}> 
-                  <View style={styles.foodNameContainer}>
-                      <Text>
-                        {item.prop.name}
-                      </Text>
-                      <Text>
-                        {item.servingsAmt} serving(s)
-                      </Text>
-                    </View> 
-                    
-                    <Text >
-                      {item.prop.nutriments.calories}
-                    </Text>
-
-                  </View>
+                        <Text>{item.prop.nutriments.calories}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </Swipeable>
                 );
               }
-            }))}
-          
+            })}
 
           <View
             style={[
@@ -325,35 +436,38 @@ export default function TrackCalories({ navigation, route }) {
             </View>
           </View>
 
-          {   foodDiaryList.length > 0 && (
-            foodDiaryList.map((item)=>{
-              if (item.mealType==="lunch"){
+          {foodDiaryList.length > 0 &&
+            foodDiaryList.map((item) => {
+              if (item.mealType === "lunch") {
+                return (
+                  <Swipeable
+                    key={item.id}
+                    renderRightActions={(progress, dragX) =>
+                      renderRightActions(progress, dragX, item.id)
+                    }
+                  >
+                    <TouchableOpacity onPress={() => handleDetails(item)}>
+                      <View style={styles.expandedCard}>
+                        <View style={styles.foodNameContainer}>
+                          <Text>{item.prop.name}</Text>
+                          <Text>{item.servingsAmt} serving(s)</Text>
+                        </View>
 
-                return(
-                  <View style={styles.expandedCard}> 
-                  <View style={styles.foodNameContainer}>
-                      <Text>
-                        {item.prop.name}
-                      </Text>
-                       <Text>
-                        {item.servingsAmt} serving(s)
-                      </Text>
-                    </View> 
-                    
-                    <Text >
-                      {item.prop.nutriments.calories}
-                    </Text>
-
-                  </View>
+                        <Text>{item.prop.nutriments.calories}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </Swipeable>
                 );
-
-            
-            }})
-            
-          )   
-                  
-                }
-          <View style={[styles.card,styles.mealCard,foodDiaryList.some(item => item.mealType === 'dinner') && styles.listExistsStyle]}>
+              }
+            })}
+          <View
+            style={[
+              styles.card,
+              styles.mealCard,
+              foodDiaryList.some((item) => item.mealType === "dinner") &&
+                styles.listExistsStyle,
+            ]}
+          >
             <View style={styles.mealContainer}>
               <View style={styles.mealFontContainer}>
                 <Text style={styles.mealFontText}>Dinner</Text>
@@ -366,29 +480,30 @@ export default function TrackCalories({ navigation, route }) {
             </View>
           </View>
 
-          {   foodDiaryList.length > 0 && (
-            foodDiaryList.map((item)=>{
-              if (item.mealType==="dinner"){
+          {foodDiaryList.length > 0 &&
+            foodDiaryList.map((item) => {
+              if (item.mealType === "dinner") {
+                return (
+                  <Swipeable
+                    key={item.id}
+                    renderRightActions={(progress, dragX) =>
+                      renderRightActions(progress, dragX, item.id)
+                    }
+                  >
+                    <TouchableOpacity onPress={() => handleDetails(item)}>
+                      <View style={styles.expandedCard}>
+                        <View style={styles.foodNameContainer}>
+                          <Text>{item.prop.name}</Text>
+                          <Text>{item.servingsAmt} serving(s)</Text>
+                        </View>
 
-                return(
-                  <View style={styles.expandedCard}> 
-                  <View style={styles.foodNameContainer}>
-                      <Text>
-                        {item.prop.name}
-                      </Text>
-                      <Text>
-                        {item.servingsAmt} serving(s)
-                      </Text>
-                    </View> 
-                    
-                    <Text >
-                      {item.prop.nutriments.calories}
-                    </Text>
-
-                  </View>
+                        <Text>{item.prop.nutriments.calories}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </Swipeable>
                 );
               }
-            }))}
+            })}
           <View
             style={[
               styles.card,
@@ -409,29 +524,30 @@ export default function TrackCalories({ navigation, route }) {
             </View>
           </View>
 
-          {   foodDiaryList.length > 0 && (
-            foodDiaryList.map((item)=>{
-              if (item.mealType==="snacks"){
+          {foodDiaryList.length > 0 &&
+            foodDiaryList.map((item) => {
+              if (item.mealType === "snacks") {
+                return (
+                  <Swipeable
+                    key={item.id}
+                    renderRightActions={(progress, dragX) =>
+                      renderRightActions(progress, dragX, item.id)
+                    }
+                  >
+                    <TouchableOpacity onPress={() => handleDetails(item)}>
+                      <View style={styles.expandedCard}>
+                        <View style={styles.foodNameContainer}>
+                          <Text>{item.prop.name}</Text>
+                          <Text>{item.servingsAmt} serving(s)</Text>
+                        </View>
 
-                return(
-                  <View style={styles.expandedCard}> 
-                  <View style={styles.foodNameContainer}>
-                      <Text>
-                        {item.prop.name}
-                      </Text>
-                      <Text>
-                        {item.servingsAmt} serving(s)
-                      </Text>
-                    </View> 
-                    
-                    <Text >
-                      {item.prop.nutriments.calories}
-                    </Text>
-
-                  </View>
+                        <Text>{item.prop.nutriments.calories}</Text>
+                      </View>
+                    </TouchableOpacity>
+                  </Swipeable>
                 );
               }
-            }))}
+            })}
           <View style={[styles.card, styles.waterTrackContainer]}>
             <Text style={[styles.waterTrackHeader]}>Water Tracker</Text>
             <View>
@@ -457,7 +573,7 @@ export default function TrackCalories({ navigation, route }) {
           </View>
         </View>
       </ScrollView>
-      <Navbar navigation={navigation} />
+      <Navbar navigation={navigation} active="TrackCalorie" />
     </View>
   );
 }
@@ -645,24 +761,36 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 2,
     marginLeft: 15,
     backgroundColor: "white",
-    paddingLeft: 20,
+    // paddingLeft: 20,
     padding: 15,
     elevation: 5,
   },
   foodNameContainer: {
     width: width * 0.74,
   },
-  dateHeader:{
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
+  dateHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
-    
   },
-  arrowSize:{
-    fontSize:30
+  arrowSize: {
+    fontSize: 30,
   },
-  dateSize:{
-    fontSize:17
-  }
+  dateSize: {
+    fontSize: 17,
+  },
+  deleteButton: {
+    backgroundColor: "red",
+    justifyContent: "center",
+    alignItems: "center",
+    display: "flex",
+    width: 80,
+    height: 80,
+    marginRight: 15,
+  },
+  deleteText: {
+    color: "white",
+    marginBottom: 10,
+  },
 });
