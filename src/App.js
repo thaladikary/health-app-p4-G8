@@ -4,15 +4,18 @@ import RootNavigation from "./navigation/RootNavigation";
 import SetupStack from "./navigation/SetupStack";
 import AuthStack from "./navigation/AuthStack";
 
+
 // so its gonna be login/register stack -> if true->
 // check if its first time -> if true ->  show setup stack
 // if false load from firebase
 export default function App() {
   return (
     <SafeAreaView style={styles.container}>
-      {/* <SetupStack></SetupStack> */}
 
-      <RootNavigation />
+      
+                
+           <RootNavigation/>
+
     </SafeAreaView>
   );
 }

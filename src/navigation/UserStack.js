@@ -21,8 +21,8 @@ const Stack = createStackNavigator();
 
 export default function UserStack() {
   return (
-    <NavigationContainer>
-      <StatusBar backgroundColor="#161213" barStyle="light-content" />
+    
+      
       <Stack.Navigator
         screenOptions={{
           headerShown: false,
@@ -45,6 +45,6 @@ export default function UserStack() {
         <Stack.Screen name="Scanner" component={Scanner} />
         <Stack.Screen name="FoodDetails" component={FoodDetails} />
       </Stack.Navigator>
-    </NavigationContainer>
+   
   );
 }
