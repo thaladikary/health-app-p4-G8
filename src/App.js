@@ -1,6 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, SafeAreaView} from 'react-native';
 import RootNavigation from './navigation/RootNavigation';
+import SetupStack from './navigation/SetupStack';
+import AuthStack from './navigation/AuthStack';
 
 
 // so its gonna be login/register stack -> if true->
@@ -10,10 +12,13 @@ export default function App() {
   return (
 
         <SafeAreaView style={styles.container}>
-           <RootNavigation/>
+     
+          <SetupStack></SetupStack>
+          
+           {/* <RootNavigation/> */}
        </SafeAreaView>
 
-        
+ 
   );
 }
 
