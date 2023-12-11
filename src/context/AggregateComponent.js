@@ -5,7 +5,7 @@ const AggregateComponent = () => {
   const {
     inputAge,
     measurement,
-    inputWeight,
+    inputHeight,
     selectedGender,
     selectedActiveOption,
     selectedGoalOption,
@@ -16,7 +16,7 @@ const AggregateComponent = () => {
   const aggregatedStates = {
     inputAge,
     measurement,
-    inputWeight,
+    inputHeight,
     selectedGender,
     selectedActiveOption,
     selectedGoalOption,

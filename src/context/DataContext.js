@@ -8,7 +8,7 @@ export const DataProvider = ({ children }) => {
     weight: "",
     unit: "kg",
   }); // THIS IS WEIGHT
-  const [inputWeight, setInputWeight] = useState(); //THIS IS HEIGHT NOT WEIGHT
+  const [inputHeight, setInputHeight] = useState(); //THIS IS HEIGHT NOT WEIGHT
   const [selectedGender, setSelectedGender] = useState();
   const [selectedActiveOption, setSelectedActiveOption] = useState();
   const [selectedGoalOption, setSelectedGoalOption] = useState();
@@ -19,8 +19,8 @@ export const DataProvider = ({ children }) => {
     setInputAge,
     measurement,
     setMeasurement,
-    inputWeight,
-    setInputWeight,
+    inputHeight,
+    setInputHeight,
     selectedGender,
     setSelectedGender,
     selectedActiveOption,

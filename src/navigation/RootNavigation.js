@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import UserStack from "./UserStack";
 import AuthStack from "./AuthStack";
 import { useAuth } from "../hooks/useAuth";
@@ -15,29 +15,73 @@ import { db } from "../config/firebase";
 import SetupStack from "./SetupStack";
 import { DataProvider } from "../context/DataContext";
 import CalculateBMR from "../screens/setup/CalculateBMR";
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { StackActions } from '@react-navigation/native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Dimensions,
+  StatusBar,
+  ScrollView,
+} from "react-native";
+import Spinner from "../components/Spinner";
+const RootStack = createStackNavigator();
 export default function RootNavigation() {
   const { user } = useAuth();
+  const [userInfo, setUserInfo] = useState(null); // Add a state variable for user info
+  const [loading, setLoading] = useState(false); // Initialize loading to false
 
-  // make sure to not include everything later in this user log because it contains api key
   const getUserInfoSnapshot = async (userId) => {
     return await getDocs(collection(db, "users", userId, "userInfo"));
   };
 
-  if (user) {
-    console.log("login successful");
-    const userId = user.uid;
-    const userInfoSnapShot = getUserInfoSnapshot(userId);
+  useEffect(() => { // Add a useEffect hook
+    if (user) {
+      console.log("login successful");
+      const userId = user.uid;
+      setLoading(true); // Set loading to true when starting to fetch data
+      getUserInfoSnapshot(userId).then((querySnapShot) => {
+        setUserInfo(querySnapShot); // Update the state variable when the Promise resolves
+        setLoading(false); // Update the loading status
+      });
+    }
+  }, [user]); // Re-run the effect when `user` changes
 
-    return (
-      <UserContext.Provider value={user}>
-        <DataProvider>
-          <CalculateBMR />
-
-          <SetupStack></SetupStack>
-        </DataProvider>
-        {/* <UserStack /> */}
-      </UserContext.Provider>
-    );
+  if (loading) {
+    return <Spinner/>; // Render a loading indicator while waiting for the data
   }
+
+  if (user) {
+    if (userInfo?.empty) {
+      console.log("No documents found in the snapshot");
+      return (
+        <NavigationContainer>
+          <UserContext.Provider value={user}>
+            <DataProvider>
+              <RootStack.Navigator initialRouteName="Setup" screenOptions={{ headerShown: false }}>
+                <RootStack.Screen name="Setup" component={SetupStack} />
+                <RootStack.Screen name="User" component={UserStack} />
+              </RootStack.Navigator>
+            </DataProvider>
+          </UserContext.Provider>
+        </NavigationContainer>
+      );
+    } else {
+      console.log("Documents found in the snapshot", userInfo);
+      return (
+        <NavigationContainer>
+          <UserContext.Provider value={user}>
+            <DataProvider>
+              <UserStack/>
+            </DataProvider>
+          </UserContext.Provider>
+        </NavigationContainer>
+      );
+    }
+  }
+
   return <AuthStack />;
 }

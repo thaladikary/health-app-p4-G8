@@ -19,11 +19,11 @@ export default function StepFive({ navigation }) {
   const currentStep = 5;
 
   const options = [
-    "Sedentary",
-    "Lightly Active",
-    "Moderately Active",
-    "Very Active",
-    "Extra Active",
+    "sedentary",
+    "lightlyActive",
+    "moderatelyActive",
+    "veryActive",
+    "extremelyActive",
   ];
 
   const handleOptionSelect = (option) => {

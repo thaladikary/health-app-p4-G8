@@ -17,10 +17,10 @@ export default function StepSeven({ navigation }) {
     useData(null);
 
   const goals = [
-    "Lose 2 lbs per week",
-    "Lose 1.5 lbs per week",
-    "Lose 1 lb per week",
-    "Lose 0.5 lbs per week",
+    "2 lbs per week",
+    "1.5 lbs per week",
+    "1 lb per week",
+    "0.5 lbs per week",
     "Maintain current weight",
   ];
   const currentStep = 7;
@@ -53,84 +53,84 @@ export default function StepSeven({ navigation }) {
         <TouchableOpacity
           style={[
             styles.gainWeightButton,
-            selectedWeightGoalOption === "Lose 2 lbs per week"
+            selectedWeightGoalOption === "2 lbs per week"
               ? styles.gainWeightSelected
               : styles.gainWeightUnselected,
           ]}
-          onPress={() => setSelectedWeightGoalOption("Lose 2 lbs per week")}
+          onPress={() => setSelectedWeightGoalOption(" 2 lbs per week")}
         >
           <Text
             style={[
               styles.gainWeightText,
-              selectedWeightGoalOption === "Lose 2 lbs per week"
+              selectedWeightGoalOption === "2 lbs per week"
                 ? styles.gainWeightSelectedText
                 : styles.gainWeightUnselectedText,
             ]}
           >
-            Lose 2 lbs per week
+             2 lbs per week
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[
             styles.loseWeightButton,
-            selectedWeightGoalOption === "Lose 1.5 lbs per week"
+            selectedWeightGoalOption === "1.5 lbs per week"
               ? styles.loseWeightSelected
               : styles.loseWeightUnselected,
           ]}
-          onPress={() => setSelectedWeightGoalOption("Lose 1.5 lbs per week")}
+          onPress={() => setSelectedWeightGoalOption("1.5 lbs per week")}
         >
           <Text
             style={[
               styles.loseWeightText,
-              selectedWeightGoalOption === "Lose 1.5 lbs per week"
+              selectedWeightGoalOption === "1.5 lbs per week"
                 ? styles.loseWeightSelectedText
                 : styles.loseWeightUnselectedText,
             ]}
           >
-            Lose 1.5 lbs per week
+            1.5 lbs per week
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[
             styles.stayHealthyButton,
-            selectedWeightGoalOption === "Lose 1 lb per week"
+            selectedWeightGoalOption === "1 lb per week"
               ? styles.stayHealthySelected
               : styles.stayHealthyUnselected,
           ]}
-          onPress={() => setSelectedWeightGoalOption("Lose 1 lb per week")}
+          onPress={() => setSelectedWeightGoalOption("1 lb per week")}
         >
           <Text
             style={[
               styles.stayHealthyText,
-              selectedWeightGoalOption === "Lose 1 lb per week"
+              selectedWeightGoalOption === "1 lb per week"
                 ? styles.stayHealthySelectedText
                 : styles.stayHealthyUnselectedText,
             ]}
           >
-            Lose 1 lb per week
+             1 lb per week
           </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[
             styles.stayHealthyButton,
-            selectedWeightGoalOption === "Lose 0.5 lbs per week"
+            selectedWeightGoalOption === "0.5 lbs per week"
               ? styles.stayHealthySelected
               : styles.stayHealthyUnselected,
           ]}
-          onPress={() => setSelectedWeightGoalOption("Lose 0.5 lbs per week")}
+          onPress={() => setSelectedWeightGoalOption("0.5 lbs per week")}
         >
           <Text
             style={[
               styles.stayHealthyText,
-              selectedWeightGoalOption === "Lose 0.5 lbs per week"
+              selectedWeightGoalOption === "0.5 lbs per week"
                 ? styles.stayHealthySelectedText
                 : styles.stayHealthyUnselectedText,
             ]}
           >
-            Lose 0.5 lbs per week
+             0.5 lbs per week
           </Text>
         </TouchableOpacity>
 

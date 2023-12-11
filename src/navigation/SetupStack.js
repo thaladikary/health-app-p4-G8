@@ -8,14 +8,11 @@ import StepFour from "../screens/setup/StepFour"
 import StepFive from "../screens/setup/StepFive"
 import StepSix from "../screens/setup/StepSix"
 import StepSeven from "../screens/setup/StepSeven"
-
-
 import CalculateBMR from '../screens/setup/CalculateBMR';
-
 const Stack = createStackNavigator();
 export default function SetupStack(){
     return(
-        <NavigationContainer>
+        
              <Stack.Navigator  
                     screenOptions={{
                         headerShown: false,
@@ -24,8 +21,8 @@ export default function SetupStack(){
                         animation:"none",
                         animationEnabled: false
                     }}>
-
-                        <Stack.Screen
+                     
+                     <Stack.Screen
                             name="StepOne"
                             component={StepOne}
                         />
@@ -38,7 +35,6 @@ export default function SetupStack(){
                             name="StepThree"
                             component={StepThree}
                         />
-
 
 <                       Stack.Screen
                             name="StepFour"
@@ -61,16 +57,11 @@ export default function SetupStack(){
                             component={StepSeven}
                         />
 
-                       
-
-
-
-
                          <Stack.Screen
                             name="CalculateBMR"
                             component={CalculateBMR}
                         />
-                    </Stack.Navigator>
-        </NavigationContainer>
+                </Stack.Navigator>
+        
     )
 }

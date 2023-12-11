@@ -16,7 +16,7 @@ import { useData } from "../../context/DataContext";
 
 export default function StepThree({ navigation }) {
   const setSelectedWeight = useState(68);
-  const { inputWeight, setInputWeight } = useData("");
+  const { inputHeight, setInputHeight } = useData("");
   // const [measurement, setMeasurement] = useState({
   //   weight: "",
   //   unit: "cm",
@@ -26,8 +26,8 @@ export default function StepThree({ navigation }) {
   const handleNextStep = async () => {
     // Check if inputAge is not empty before navigating to the next step
     if (inputAge.trim() !== "") {
-      const entryPath = `users/${userId}/userInfo`;
-      const docRef = await addDoc(collection(db, entryPath), { age: inputAge });
+      // const entryPath = `users/${userId}/userInfo`;
+      // const docRef = await addDoc(collection(db, entryPath), { age: inputAge });
       navigation.navigate("StepTwo", { inputAge });
     } else {
       // You can add an alert or other feedback for the user to enter their age
@@ -71,8 +71,8 @@ export default function StepThree({ navigation }) {
         style={styles.inputWeight}
         placeholder="68 cm"
         keyboardType="numeric"
-        value={inputWeight}
-        onChangeText={(text) => setInputWeight(text)}
+        value={inputHeight}
+        onChangeText={(text) => setInputHeight(text)}
         onFocus={() => {}}
         // onBlur={Keyboard.dismiss}
       ></TextInput>
