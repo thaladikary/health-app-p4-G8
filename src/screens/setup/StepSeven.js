@@ -129,7 +129,7 @@ export default function StepSeven({ navigation }){
 
           <TouchableOpacity
                 style={styles.previousButton}
-                onPress={() => navigation.navigate('StepEight')}
+                onPress={() => navigation.navigate('CalculateBMR')}
             >
                 <Text style={styles.previousButtonText}>Next Step</Text>
             </TouchableOpacity> 
