@@ -142,7 +142,7 @@ export default function UserProfile({ navigation }) {
           </View>
         </View>
       </ScrollView>
-      {/* <Navbar navigation={navigation} active="Profile" /> */}
+      <Navbar navigation={navigation} active="Profile" />
     </View>
     // </ImageBackground>
   );
