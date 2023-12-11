@@ -4,7 +4,14 @@ import { createStackNavigator } from '@react-navigation/stack';
 import StepOne from '../screens/setup/StepOne';
 import StepTwo from '../screens/setup/StepTwo';
 import StepThree from "../screens/setup/StepThree"
+import StepFour from "../screens/setup/StepFour"
+import StepFive from "../screens/setup/StepFive"
+import StepSix from "../screens/setup/StepSix"
+import StepSeven from "../screens/setup/StepSeven"
+
+
 import CalculateBMR from '../screens/setup/CalculateBMR';
+
 const Stack = createStackNavigator();
 export default function SetupStack(){
     return(
@@ -17,20 +24,49 @@ export default function SetupStack(){
                         animation:"none",
                         animationEnabled: false
                     }}>
-                     
+
                         <Stack.Screen
                             name="StepOne"
                             component={StepOne}
                         />
-                         <Stack.Screen
+                        <Stack.Screen
                             name="StepTwo"
                             component={StepTwo}
                         />
-                         <Stack.Screen
+
+                        <Stack.Screen
                             name="StepThree"
                             component={StepThree}
                         />
-                             <Stack.Screen
+
+
+<                       Stack.Screen
+                            name="StepFour"
+                            component={StepFour}
+                        />
+
+<                       Stack.Screen
+                            name="StepFive"
+                            component={StepFive}
+                        /> 
+                       
+                   
+                        <Stack.Screen
+                            name="StepSix"
+                            component={StepSix}
+                        /> 
+
+                        <Stack.Screen
+                            name="StepSeven"
+                            component={StepSeven}
+                        />
+
+                       
+
+
+
+
+                         <Stack.Screen
                             name="CalculateBMR"
                             component={CalculateBMR}
                         />

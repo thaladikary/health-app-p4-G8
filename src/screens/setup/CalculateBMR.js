@@ -5,7 +5,8 @@ import { db } from '../../config/firebase';
 import { addDoc,collection } from '@firebase/firestore';
 import React,{ useState, useEffect } from "react";
 export default function CalculateBMR ()  {
-    const userId = useUser().uid
+    const user = useUser()
+
     const mockData1 = {
         age: 20,
         weight: 60,
@@ -77,7 +78,7 @@ export default function CalculateBMR ()  {
       };
         useEffect(()=>{
             const fetchData = async () => {
-                const entryPath = `users/${userId}/userInfo`;
+                const entryPath = `users/${user.uid}/userInfo`;
                 const targetCaloricIntake = calculateBMR();
                 const entries = {
                   ...mockData1,

@@ -17,12 +17,14 @@ import axios from "axios";
 import { APP_ID, APP_KEY, GCP_IP, GCP_PORT } from "@env";
 import { useUser } from "../context/userContext";
 import { collection, addDoc } from "@firebase/firestore";
+
 import { ref, uploadBytes, getDownloadURL } from "@firebase/storage";
 import { db } from "../config/firebase";
 import { Audio } from "expo-av";
 import { storage } from "../config/firebase";
 import * as Permissions from "expo-permissions";
 import EllipsisLoader from "./ElipsisLoader";
+
 
 export default function NaturalLanguageSearch({
   visible,
@@ -35,6 +37,7 @@ export default function NaturalLanguageSearch({
   const [nlAddedList, setNlAddedList] = useState([]);
   const [addedListToProp, setAddedListToProp] = useState([]);
   const [mealType, setMealType] = useState("");
+
   const [recording, setRecording] = useState();
   const [isRecording, setIsRecording] = useState(false);
   const [fileURL, setFileURL] = useState();
@@ -131,6 +134,7 @@ export default function NaturalLanguageSearch({
     fetchData();
     handleSubmitModalSearch();
   }, [fileURL]);
+
 
   const headers = {
     "x-app-id": APP_ID,
@@ -295,124 +299,6 @@ export default function NaturalLanguageSearch({
     setFileURL();
   };
 
-  //   // mic functionality here
-  //   const recordingOptions = {
-  //     // android not currently in use, but parameters are required
-  //     android: {
-  //         extension: '.m4a',
-  //         outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
-  //         audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
-  //         sampleRate: 44100,
-  //         numberOfChannels: 2,
-  //         bitRate: 128000,
-  //     },
-  //     ios: {
-  //         extension: '.wav',
-  //         audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
-  //         sampleRate: 44100,
-  //         numberOfChannels: 1,
-  //         bitRate: 128000,
-  //         linearPCMBitDepth: 16,
-  //         linearPCMIsBigEndian: false,
-  //         linearPCMIsFloat: false,
-  //     },
-  // };
-  // // The device asks for permission to use the microphone using Expo’s Permissions API.
-  // // Expo’s Audio API is used to record an audio file of the user’s speech.
-  // // The audio file is sent to a Google Cloud function, which in turn sends it to the Google Speech API.
-  // // The Speech API returns a text translation of the audio.
-  // // The audio file is deleted.
-  // const handleRecord = () => {
-  //   setIsRecording(prevIsRecording => {
-  //     const newIsRecording = !prevIsRecording;
-
-  //     if (newIsRecording) {
-  //       console.log("Recording");
-  //       startRecording();
-  //     } else {
-  //       console.log("Not recording");
-  //       stopRecording();
-  //     }
-
-  //     return newIsRecording;
-  //   });
-  // }
-
-  // let recordingInstance; // Use a variable to keep track of the recording instance
-
-  // const startRecording = async () => {
-  //   const { status } = await Permissions.getAsync(Permissions.AUDIO_RECORDING);
-  //   if (status !== 'granted') return;
-
-  //   try {
-  //     console.log("recording");
-  //     const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
-  //     console.log(recording._uri);
-  //     recordingInstance = recording; // Save the recording instance
-  //     setStoredRecording(recording);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-
-  // const stopRecording = async () => {
-  //   try {
-  //     if (recordingInstance) {
-  //       await recordingInstance.stopAndUnloadAsync();
-  //       const uri = recordingInstance.getURI();
-  //       const { sound, status } = await recordingInstance.createNewLoadedSoundAsync();
-  //       // Handle the temporary MP3 file here (e.g., send it to your server)
-  //       console.log("Temporary MP3 File URI:", uri);
-  //     } else {
-  //       console.warn("Recording instance is undefined or null. Stopping and unloading skipped.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error stopping recording:", error);
-  //   }
-
-  //   setStoredRecording(undefined);
-  // }
-
-  // const getTranscription = async (recording)=>{
-  //   console.log("functiono works")
-  //   try{
-  //     console.log("try")
-  //     if (recording) {
-
-  //     } else {
-  //       console.error("Recording object is undefined or null");
-  //     }
-  //   }catch(e){
-  //     console.error(e)
-  //   }
-  // }
-
-  // const getTranscription = async () => {
-  //   this.setState({ isFetching: true });
-  //   try {
-  //     const info = await FileSystem.getInfoAsync(this.recording.getURI());
-  //     console.log(`FILE INFO: ${JSON.stringify(info)}`);
-  //     const uri = info.uri;
-  //     const formData = new FormData();
-  //     formData.append('file', {
-  //       uri,
-  //       type: 'audio/x-wav',
-  //       // could be anything
-  //       name: 'speech2text'
-  //     });
-  //     const response = await fetch(config.CLOUD_FUNCTION_URL, {
-  //       method: 'POST',
-  //       body: formData
-  //     });
-  //     const data = await response.json();
-  //     this.setState({ query: data.transcript });
-  //   } catch(error) {
-  //     console.log('There was an error', error);
-  //     this.stopRecording();
-  //     this.resetRecording();
-  //   }
-  //   this.setState({ isFetching: false });
-  // }
 
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
