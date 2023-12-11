@@ -8,7 +8,7 @@ import StepFour from "../screens/setup/StepFour"
 import StepFive from "../screens/setup/StepFive"
 import StepSix from "../screens/setup/StepSix"
 import StepSeven from "../screens/setup/StepSeven"
-import StepEight from '../screens/setup/StepEight';
+
 
 import CalculateBMR from '../screens/setup/CalculateBMR';
 
@@ -24,16 +24,6 @@ export default function SetupStack(){
                         animation:"none",
                         animationEnabled: false
                     }}>
-
-
-
- 
-                        
-
-                       
-
-
-                      
 
                         <Stack.Screen
                             name="StepOne"
@@ -71,11 +61,7 @@ export default function SetupStack(){
                             component={StepSeven}
                         />
 
-                        <Stack.Screen
-                            name="StepEight"
-                            component={StepEight}
-                        />
-
+                       
 
 
 
