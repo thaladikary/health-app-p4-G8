@@ -14,31 +14,32 @@ import {
 import React, { useState, useEffect } from "react";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import axios from "axios";
-import { APP_ID, APP_KEY } from "@env";
+import { APP_ID, APP_KEY, GCP_IP, GCP_PORT } from "@env";
 import { useUser } from "../context/userContext";
-import { collection, addDoc} from '@firebase/firestore';
-import { ref,uploadBytes, getDownloadURL} from "@firebase/storage";
-import {db} from "../config/firebase"
-import { Audio } from 'expo-av';
-import { storage,  } from "../config/firebase";
-import * as Permissions from 'expo-permissions';
+import { collection, addDoc } from "@firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "@firebase/storage";
+import { db } from "../config/firebase";
+import { Audio } from "expo-av";
+import { storage } from "../config/firebase";
+import * as Permissions from "expo-permissions";
 import EllipsisLoader from "./ElipsisLoader";
 
-
-
-export default function NaturalLanguageSearch({ visible, setVisible, navigation }) {
+export default function NaturalLanguageSearch({
+  visible,
+  setVisible,
+  navigation,
+}) {
   const [nlSuggestionList, setNlSuggestionList] = useState([]);
   const [isModalVisible, setModalVisibile] = useState(visible);
   const [modalSearchText, setModalSearchText] = useState();
   const [nlAddedList, setNlAddedList] = useState([]);
   const [addedListToProp, setAddedListToProp] = useState([]);
   const [mealType, setMealType] = useState("");
-  const [recording, setRecording] = useState()
-  const [isRecording, setIsRecording] = useState(false)
+  const [recording, setRecording] = useState();
+  const [isRecording, setIsRecording] = useState(false);
   const [fileURL, setFileURL] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const user = useUser()
-
+  const user = useUser();
 
   async function startRecording() {
     try {
@@ -46,12 +47,12 @@ export default function NaturalLanguageSearch({ visible, setVisible, navigation 
       if (perm.status === "granted") {
         await Audio.setAudioModeAsync({
           allowsRecordingIOS: true,
-          playsInSilentModeIOS: true
+          playsInSilentModeIOS: true,
         });
         const { recording } = await Audio.Recording.createAsync({
           ...Audio.RecordingOptionsPresets.HIGH_QUALITY,
-         outputFormat: ".mp3"
-       });
+          outputFormat: ".mp3",
+        });
         setRecording(recording);
       }
     } catch (err) {}
@@ -61,75 +62,75 @@ export default function NaturalLanguageSearch({ visible, setVisible, navigation 
       setRecording(undefined);
       await recording.stopAndUnloadAsync();
       const recordingFileURI = recording.getURI();
-  
+
       // Upload the recording to Firebase Storage
-      const storageRef = ref(storage, 'audio/' + 'test' + '.mp3');
+      const storageRef = ref(storage, "audio/" + "test" + ".mp3");
       const response = await fetch(recordingFileURI);
       const blob = await response.blob();
-  
+
       await uploadBytes(storageRef, blob);
-  
+
       // Get the download URL
-      const url = await getDownloadURL(storageRef)
-      console.log('Download URL:', url);
-      setFileURL(url)
-      console.log('Audio file uploaded to Firebase Storage');
+      const url = await getDownloadURL(storageRef);
+      console.log("Download URL:", url);
+      setFileURL(url);
+      console.log("Audio file uploaded to Firebase Storage");
     } catch (err) {
-      console.error('Error stopping recording:', err);
+      console.error("Error stopping recording:", err);
     }
   }
-  
+
   const handleRecord = () => {
-  setIsRecording(prevIsRecording => {
-    const newIsRecording = !prevIsRecording;
+    setIsRecording((prevIsRecording) => {
+      const newIsRecording = !prevIsRecording;
 
-    if (newIsRecording) {
-      console.log("Recording");
-      startRecording();
-    } else {
-      console.log("Not recording");
-      stopRecording();
-    }
+      if (newIsRecording) {
+        console.log("Recording");
+        startRecording();
+      } else {
+        console.log("Not recording");
+        stopRecording();
+      }
 
-    return newIsRecording;
-  });
-}
-useEffect(() => {
-  async function transcribe(audio_url) {
-    try {
-      const response = await axios.post("http://placeholder/transcript", {
-        audioFile: audio_url,
-      });
-
-      console.log("RESP", response?.data);
-
-      return response?.data;
-    } catch (e) {
-      console.error(e);
-      throw e; 
-    }
-  }
-  const fetchData = async () => {
-   
-
-    if (fileURL) {
+      return newIsRecording;
+    });
+  };
+  useEffect(() => {
+    async function transcribe(audio_url) {
       try {
-        setIsLoading(true);
-        const transcribeText = await transcribe(fileURL);
-        setModalSearchText(transcribeText);
-        console.log(modalSearchText);
-      } catch (error) {
-        // Handle errors here
-        console.error('Error during transcription:', error);
-      } finally {
-       
-        setIsLoading(false);
+        const response = await axios.post(
+          `http://${GCP_IP}:${GCP_PORT}/transcript`,
+          {
+            audioFile: audio_url,
+          }
+        );
+
+        console.log("RESP", response?.data);
+
+        return response?.data;
+      } catch (e) {
+        console.error(e);
+        throw e;
       }
     }
-  };
-  fetchData();
-  handleSubmitModalSearch()
-}, [fileURL]);
+    const fetchData = async () => {
+      if (fileURL) {
+        try {
+          setIsLoading(true);
+          const transcribeText = await transcribe(fileURL);
+          setModalSearchText(transcribeText);
+          console.log(modalSearchText);
+        } catch (error) {
+          // Handle errors here
+          console.error("Error during transcription:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+    fetchData();
+    handleSubmitModalSearch();
+  }, [fileURL]);
 
   const headers = {
     "x-app-id": APP_ID,
@@ -139,41 +140,34 @@ useEffect(() => {
   useEffect(() => {
     setVisible(isModalVisible);
   }, [isModalVisible]);
-  useEffect(()=>{
-    console.log("TEST",addedListToProp)
-    addedListToProp.map((entry)=>{
-
+  useEffect(() => {
+    console.log("TEST", addedListToProp);
+    addedListToProp.map((entry) => {
       const getCurrentDate = () => {
         const today = new Date();
         const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0'); 
-        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, "0");
+        const day = String(today.getDate()).padStart(2, "0");
         return `${year}-${month}-${day}`;
       };
 
-      const addToFirebase=async(entry)=>{
-        console.log("TEST")
+      const addToFirebase = async (entry) => {
+        console.log("TEST");
         try {
-            console.log("TEST2")
-            const userId = user.uid
-            const entryPath = `users/${userId}/foodDiaries/${getCurrentDate()}/entries`;
-            
-            console.log("FOODDATA,",entry)
-            const docRef = await addDoc(collection(db, entryPath), entry);
-            
+          console.log("TEST2");
+          const userId = user.uid;
+          const entryPath = `users/${userId}/foodDiaries/${getCurrentDate()}/entries`;
+
+          console.log("FOODDATA,", entry);
+          const docRef = await addDoc(collection(db, entryPath), entry);
         } catch (e) {
-            console.error("Error adding document: ", e);
+          console.error("Error adding document: ", e);
         }
-
-       
-    }
-    addToFirebase(entry)
-    navigation.navigate("TrackCalories",{entry})
-   
-    })
-
-    
-  },[addedListToProp])
+      };
+      addToFirebase(entry);
+      navigation.navigate("TrackCalories", { entry });
+    });
+  }, [addedListToProp]);
 
   const mapAddedToPropArray = (array, mealType) => {
     const mappedArray = array.map((item) => {
@@ -224,13 +218,12 @@ useEffect(() => {
         const mealResult = findMealTypeInString(modalSearchText, mealTypes);
 
         if (mealResult && !mealResult.startsWith("Error")) {
-          setMealType(mealResult === "snack"  ? "snacks" : mealResult);
+          setMealType(mealResult === "snack" ? "snacks" : mealResult);
 
-            const naturalPostUrl =
-              "https://trackapi.nutritionix.com/v2/natural/nutrients";
-            const naturalQueryData = { query: `${modalSearchText}` };
-            requestCommonFoodItems(naturalPostUrl, naturalQueryData, headers);
-          
+          const naturalPostUrl =
+            "https://trackapi.nutritionix.com/v2/natural/nutrients";
+          const naturalQueryData = { query: `${modalSearchText}` };
+          requestCommonFoodItems(naturalPostUrl, naturalQueryData, headers);
         } else {
           return console.log("Specify a meal type");
         }
@@ -299,101 +292,101 @@ useEffect(() => {
     setNlSuggestionList([]);
     setNlAddedList([]);
     setMealType("");
-    setFileURL()
+    setFileURL();
   };
 
-//   // mic functionality here
-//   const recordingOptions = {
-//     // android not currently in use, but parameters are required
-//     android: {
-//         extension: '.m4a',
-//         outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
-//         audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
-//         sampleRate: 44100,
-//         numberOfChannels: 2,
-//         bitRate: 128000,
-//     },
-//     ios: {
-//         extension: '.wav',
-//         audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
-//         sampleRate: 44100,
-//         numberOfChannels: 1,
-//         bitRate: 128000,
-//         linearPCMBitDepth: 16,
-//         linearPCMIsBigEndian: false,
-//         linearPCMIsFloat: false,
-//     },
-// };
-// // The device asks for permission to use the microphone using Expo’s Permissions API.
-// // Expo’s Audio API is used to record an audio file of the user’s speech.
-// // The audio file is sent to a Google Cloud function, which in turn sends it to the Google Speech API.
-// // The Speech API returns a text translation of the audio.
-// // The audio file is deleted.
-// const handleRecord = () => {
-//   setIsRecording(prevIsRecording => {
-//     const newIsRecording = !prevIsRecording;
+  //   // mic functionality here
+  //   const recordingOptions = {
+  //     // android not currently in use, but parameters are required
+  //     android: {
+  //         extension: '.m4a',
+  //         outputFormat: Audio.RECORDING_OPTION_ANDROID_OUTPUT_FORMAT_MPEG_4,
+  //         audioEncoder: Audio.RECORDING_OPTION_ANDROID_AUDIO_ENCODER_AAC,
+  //         sampleRate: 44100,
+  //         numberOfChannels: 2,
+  //         bitRate: 128000,
+  //     },
+  //     ios: {
+  //         extension: '.wav',
+  //         audioQuality: Audio.RECORDING_OPTION_IOS_AUDIO_QUALITY_HIGH,
+  //         sampleRate: 44100,
+  //         numberOfChannels: 1,
+  //         bitRate: 128000,
+  //         linearPCMBitDepth: 16,
+  //         linearPCMIsBigEndian: false,
+  //         linearPCMIsFloat: false,
+  //     },
+  // };
+  // // The device asks for permission to use the microphone using Expo’s Permissions API.
+  // // Expo’s Audio API is used to record an audio file of the user’s speech.
+  // // The audio file is sent to a Google Cloud function, which in turn sends it to the Google Speech API.
+  // // The Speech API returns a text translation of the audio.
+  // // The audio file is deleted.
+  // const handleRecord = () => {
+  //   setIsRecording(prevIsRecording => {
+  //     const newIsRecording = !prevIsRecording;
 
-//     if (newIsRecording) {
-//       console.log("Recording");
-//       startRecording();
-//     } else {
-//       console.log("Not recording");
-//       stopRecording();
-//     }
+  //     if (newIsRecording) {
+  //       console.log("Recording");
+  //       startRecording();
+  //     } else {
+  //       console.log("Not recording");
+  //       stopRecording();
+  //     }
 
-//     return newIsRecording;
-//   });
-// }
+  //     return newIsRecording;
+  //   });
+  // }
 
-// let recordingInstance; // Use a variable to keep track of the recording instance
+  // let recordingInstance; // Use a variable to keep track of the recording instance
 
-// const startRecording = async () => {
-//   const { status } = await Permissions.getAsync(Permissions.AUDIO_RECORDING);
-//   if (status !== 'granted') return;
+  // const startRecording = async () => {
+  //   const { status } = await Permissions.getAsync(Permissions.AUDIO_RECORDING);
+  //   if (status !== 'granted') return;
 
-//   try {
-//     console.log("recording");
-//     const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
-//     console.log(recording._uri);
-//     recordingInstance = recording; // Save the recording instance
-//     setStoredRecording(recording);
-//   } catch (error) {
-//     console.log(error);
-//   }
-// }
+  //   try {
+  //     console.log("recording");
+  //     const { recording } = await Audio.Recording.createAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
+  //     console.log(recording._uri);
+  //     recordingInstance = recording; // Save the recording instance
+  //     setStoredRecording(recording);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 
-// const stopRecording = async () => {
-//   try {
-//     if (recordingInstance) {
-//       await recordingInstance.stopAndUnloadAsync();
-//       const uri = recordingInstance.getURI();
-//       const { sound, status } = await recordingInstance.createNewLoadedSoundAsync();
-//       // Handle the temporary MP3 file here (e.g., send it to your server)
-//       console.log("Temporary MP3 File URI:", uri);
-//     } else {
-//       console.warn("Recording instance is undefined or null. Stopping and unloading skipped.");
-//     }
-//   } catch (error) {
-//     console.error("Error stopping recording:", error);
-//   }
+  // const stopRecording = async () => {
+  //   try {
+  //     if (recordingInstance) {
+  //       await recordingInstance.stopAndUnloadAsync();
+  //       const uri = recordingInstance.getURI();
+  //       const { sound, status } = await recordingInstance.createNewLoadedSoundAsync();
+  //       // Handle the temporary MP3 file here (e.g., send it to your server)
+  //       console.log("Temporary MP3 File URI:", uri);
+  //     } else {
+  //       console.warn("Recording instance is undefined or null. Stopping and unloading skipped.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error stopping recording:", error);
+  //   }
 
-//   setStoredRecording(undefined);
-// }
+  //   setStoredRecording(undefined);
+  // }
 
-// const getTranscription = async (recording)=>{
-//   console.log("functiono works")
-//   try{
-//     console.log("try")
-//     if (recording) {
-   
-//     } else {
-//       console.error("Recording object is undefined or null");
-//     }
-//   }catch(e){
-//     console.error(e)
-//   }
-// }
-  
+  // const getTranscription = async (recording)=>{
+  //   console.log("functiono works")
+  //   try{
+  //     console.log("try")
+  //     if (recording) {
+
+  //     } else {
+  //       console.error("Recording object is undefined or null");
+  //     }
+  //   }catch(e){
+  //     console.error(e)
+  //   }
+  // }
+
   // const getTranscription = async () => {
   //   this.setState({ isFetching: true });
   //   try {
@@ -404,7 +397,7 @@ useEffect(() => {
   //     formData.append('file', {
   //       uri,
   //       type: 'audio/x-wav',
-  //       // could be anything 
+  //       // could be anything
   //       name: 'speech2text'
   //     });
   //     const response = await fetch(config.CLOUD_FUNCTION_URL, {
@@ -421,9 +414,6 @@ useEffect(() => {
   //   this.setState({ isFetching: false });
   // }
 
-
-
-  
   return (
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.container}>
@@ -438,13 +428,16 @@ useEffect(() => {
             </TouchableOpacity>
 
             <TouchableOpacity onPress={handleRecord}>
-              <View style={styles.nlIconModal}> 
-              {isLoading ? (
-            <EllipsisLoader />
-              ) : (
-                <Ionicons name="mic" size={100} color={isRecording ? "red" : "#ffff"} />
-              )}
-                  
+              <View style={styles.nlIconModal}>
+                {isLoading ? (
+                  <EllipsisLoader />
+                ) : (
+                  <Ionicons
+                    name="mic"
+                    size={100}
+                    color={isRecording ? "red" : "#ffff"}
+                  />
+                )}
               </View>
             </TouchableOpacity>
             <View style={styles.nlInputContainer}>
@@ -555,11 +548,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     borderRadius: 8,
     elevation: 2,
-    paddingLeft: 12,
-    marginLeft: 15,
-    marginRight: 15,
-    marginTop: 25,
-    marginBottom: 15,
+    // paddingLeft: 12,
+    // marginLeft: 15,
+    // marginRight: 15,
+    // marginTop: 25,
+    // marginBottom: 15,
   },
   input: {
     flex: 1,
