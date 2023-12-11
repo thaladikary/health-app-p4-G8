@@ -171,49 +171,6 @@ export default function Add({ navigation, route }) {
     navigation.navigate("Scanner", { mealType, currentDate }); //mealtype should be selected once in the food details page if searched from this page
   };
 
-  const toggleModal = () => {
-    setModalVisibile(!isModalVisible);
-  };
-
-  const handleModalInputChange = (input) => {
-    setModalSearchText(input);
-    const newTextLength = input.length;
-    const newSize = Math.max(14, 16 - newTextLength); // Example adjustment logic
-
-    setFontSize(newSize);
-  };
-
-  const handleSubmitModalSearch = () => {
-    const naturalPostUrl =
-      "https://trackapi.nutritionix.com/v2/natural/nutrients";
-    const naturalQueryData = { query: `${modalSearchText}` };
-    requestCommonFoodItems(naturalPostUrl, naturalQueryData, headers);
-  };
-
-  const handleAddItem = (item) => {
-    // console.log(item);
-    setNlAddedList((prevList) => [...prevList, item]);
-
-    //remove clicked item from suggestion list
-    setNlSuggestionList((prevElements) =>
-      prevElements.filter((addedItem) => addedItem.food_name !== item.food_name)
-    );
-
-    console.log(nlAddedList);
-  };
-
-  const removeFromNlAddedList = (item) => {
-    setNlAddedList((prevElements) =>
-      prevElements.filter((addedItem) => addedItem.food_name !== item.food_name)
-    );
-  };
-
-  const clearNlSearch = () => {
-    setModalSearchText();
-    setNlSuggestionList([]);
-    setNlAddedList([]);
-  };
-
   return (
     <View>
       <View style={styles.container}>
@@ -251,19 +208,6 @@ export default function Add({ navigation, route }) {
                 </Text>
               </View>
             </TouchableOpacity>
-
-            <View style={styles.searchOptionContainer}>
-              <TouchableOpacity onPress={toggleModal}>
-                <View style={styles.nlIconBackground}>
-                  <View style={styles.nlIcon}>
-                    <Ionicons name="mic" size={60} color="#ffff" />
-                  </View>
-                </View>
-              </TouchableOpacity>
-
-              <Text style={styles.nlText}>Natural Languge</Text>
-              <Text style={styles.nlText}>Search</Text>
-            </View>
           </View>
         ) : (
           <View></View>
@@ -275,114 +219,6 @@ export default function Add({ navigation, route }) {
           keyExtractor={(item, index) => index.toString()}
           renderItem={renderItem}
         />
-      </View>
-
-      <View style={styles.container}>
-        <Modal
-          transparent={true}
-          animationType="fade"
-          visible={isModalVisible}
-          onRequestClose={toggleModal}
-        >
-          <View style={styles.modalOverlay}>
-            <TouchableOpacity onPress={toggleModal}>
-              <Text style={[styles.buttonText, styles.nlCloseBtn]}>
-                <Ionicons name="close" size={50} color="white" />
-              </Text>
-            </TouchableOpacity>
-            <View style={styles.nlIconModal}>
-              <Ionicons name="mic" size={100} color="#ffff" />
-            </View>
-
-            <View style={styles.nlInputContainer}>
-              <TextInput
-                style={[styles.modalInput, { fontSize: fontSize }]}
-                placeholder="For breakfast I had eggs and orange juice..."
-                placeholderTextColor="#aaa"
-                value={modalSearchText}
-                onChangeText={handleModalInputChange}
-              />
-              <TouchableOpacity
-                // style={styles.button}
-                onPress={() => {
-                  clearNlSearch();
-                }}
-              >
-                <Text style={styles.nlClearBtn}>
-                  <Ionicons name="close" size={20} color="#4470e9" />
-                </Text>
-              </TouchableOpacity>
-            </View>
-            <View>
-              {nlAddedList.length != 0 ? (
-                <Text style={styles.nlItemsFoundHeader}>Added:</Text>
-              ) : undefined}
-              {nlAddedList.map((item) => {
-                return (
-                  <View style={styles.nlSuggestionList}>
-                    <Image
-                      source={{ uri: item.photo.thumb }}
-                      style={[styles.nlImage]}
-                    />
-                    <Text style={styles.nlFoodItem}>
-                      {item.food_name.charAt(0).toUpperCase() +
-                        item.food_name.slice(1)}
-                    </Text>
-                    <TouchableOpacity
-                      onPress={() => removeFromNlAddedList(item)}
-                    >
-                      <View style={styles.plusSign}>
-                        <Text style={styles.plusSignText}>
-                          <Ionicons
-                            name="checkmark-outline"
-                            size={25}
-                            color={"green"}
-                          />
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
-                  </View>
-                );
-              })}
-            </View>
-            <View>
-              {nlSuggestionList.length != 0 ? (
-                <Text style={styles.nlItemsFoundHeader}>Results:</Text>
-              ) : undefined}
-              <View>
-                {nlSuggestionList.map((item) => {
-                  return (
-                    <View style={styles.nlSuggestionList}>
-                      <Image
-                        source={{ uri: item.photo.thumb }}
-                        style={[styles.nlImage]}
-                      />
-                      <Text style={styles.nlFoodItem}>
-                        {item.food_name.charAt(0).toUpperCase() +
-                          item.food_name.slice(1)}
-                      </Text>
-                      <TouchableOpacity onPress={() => handleAddItem(item)}>
-                        <View style={styles.plusSign}>
-                          <Text style={styles.plusSignText}>+</Text>
-                        </View>
-                      </TouchableOpacity>
-                    </View>
-                  );
-                })}
-              </View>
-            </View>
-
-            {nlAddedList.length == 0 && nlSuggestionList.length >= 0 ? (
-              <TouchableOpacity onPress={handleSubmitModalSearch}>
-                <Text style={styles.nlSearchBtn}>Search</Text>
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity onPress={toggleModal}>
-                <Text style={styles.nlDoneBtn}>Done</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        </Modal>
       </View>
 
       {/* <Navbar navigation={navigation} /> */}
