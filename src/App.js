@@ -13,8 +13,8 @@ export default function App() {
   return (
 
         <SafeAreaView style={styles.container}>
-          <CalculateBMR/>
-          {/* <SetupStack></SetupStack> */}
+          {/* <CalculateBMR/> */}
+          <SetupStack></SetupStack>
 {/*           
            <RootNavigation/> */}
        </SafeAreaView>
