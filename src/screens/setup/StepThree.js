@@ -12,14 +12,15 @@ import {
 import { useEffect, useState } from "react";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useData } from "../../context/DataContext";
 
 export default function StepThree({ navigation }) {
   const setSelectedWeight = useState(68);
-  const [inputWeight, setInputWeight] = useState("");
-  const [measurement, setMeasurement] = useState({
-    weight: "",
-    unit: "cm",
-  });
+  const { inputWeight, setInputWeight } = useData("");
+  // const [measurement, setMeasurement] = useState({
+  //   weight: "",
+  //   unit: "cm",
+  // });
 
   //I do not know if this is correct but it wouldnt work without it. Copied from StepOne
   const handleNextStep = async () => {
@@ -93,23 +94,21 @@ export default function StepThree({ navigation }) {
                     >cm</Text>
                 </TouchableOpacity> */}
 
-  <View
-      style={styles.buttonContainer}>
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.previousButton}
+          onPress={() => navigation.navigate("StepFour")}
+          // onPress={handleNextStep}
+        >
+          <Text style={styles.previousButtonText}>Next Step</Text>
+        </TouchableOpacity>
 
-      <TouchableOpacity
-        style={styles.previousButton}
-        onPress={() => navigation.navigate("StepFour")}
-        // onPress={handleNextStep}
-      >
-        <Text style={styles.previousButtonText}>Next Step</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.previousButton}
-        onPress={() => navigation.navigate("StepTwo")}
-      >
-        <Text style={styles.previousButtonText}>Previous Step</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.previousButton}
+          onPress={() => navigation.navigate("StepTwo")}
+        >
+          <Text style={styles.previousButtonText}>Previous Step</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -218,7 +217,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 30,
     width: "75%",
-    alignSelf: 'center',
+    alignSelf: "center",
   },
 
   previousButtonText: {
@@ -263,10 +262,8 @@ const styles = StyleSheet.create({
   },
 
   buttonContainer: {
-
-    justifyContent: 'space-between',
-    alignSelf: 'stretch',
-    alignContent: 'center',
-
+    justifyContent: "space-between",
+    alignSelf: "stretch",
+    alignContent: "center",
   },
 });

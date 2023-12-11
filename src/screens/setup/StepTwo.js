@@ -15,12 +15,13 @@ import { useUser } from "../../context/userContext";
 import { db } from "../../config/firebase";
 import { addDoc, collection } from "@firebase/firestore";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useData } from "../../context/DataContext";
 
 export default function StepTwo({ navigation, route }) {
   //creating the variables used in this function
   // const inputAge = route.params.inputAge
 
-  const [measurement, setMeasurement] = useState({
+  const { measurement, setMeasurement } = useData({
     weight: "",
     unit: "kg",
   });
@@ -123,20 +124,20 @@ export default function StepTwo({ navigation, route }) {
         </TouchableOpacity>
       </View>
 
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={styles.previousButton}
+          onPress={handleNextStep}
+        >
+          <Text style={styles.previousButtonText}>Next Step</Text>
+        </TouchableOpacity>
 
-      <View
-      style={styles.buttonContainer}>
-      
-      <TouchableOpacity style={styles.previousButton} onPress={handleNextStep}>
-        <Text style={styles.previousButtonText}>Next Step</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.previousButton}
-        onPress={() => navigation.navigate("StepOne")}
-      >
-        <Text style={styles.previousButtonText}>Previous Step</Text>
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.previousButton}
+          onPress={() => navigation.navigate("StepOne")}
+        >
+          <Text style={styles.previousButtonText}>Previous Step</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -276,7 +277,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 30,
     width: "75%",
-    alignSelf: 'center',
+    alignSelf: "center",
   },
 
   previousButtonText: {
@@ -291,10 +292,8 @@ const styles = StyleSheet.create({
   },
 
   buttonContainer: {
-
-    justifyContent: 'space-between',
-    alignSelf: 'stretch',
-    alignContent: 'center',
-
+    justifyContent: "space-between",
+    alignSelf: "stretch",
+    alignContent: "center",
   },
 });
