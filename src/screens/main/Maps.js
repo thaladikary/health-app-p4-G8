@@ -27,8 +27,12 @@ export default function Maps({ navigation }) {
   });
   const [cards, setCards] = useState();
   const [markers, setMarkers] = useState();
+  const [selected, setSelected] = useState("Food");
+  const [distance, setDistance] = useState(2);
 
-  useEffect(() => {
+  
+
+  useEffect( () => {
     const getPermissions = async () => {
       await Location.requestForegroundPermissionsAsync();
       let currentLocation = await Location.getLastKnownPositionAsync({}); // quickly gets the location so everything loads fast
@@ -36,11 +40,20 @@ export default function Maps({ navigation }) {
       currentLocation = await Location.getCurrentPositionAsync({}); // accuratly gets the location with a small dely
       setLoc(currentLocation);
     };
-    getPermissions();
-    displayFood();
+    getPermissions()
+    displayFood()
   }, []);
 
-  async function displayFood() {
+  const delay = (delayInms) => {
+    return new Promise(resolve => setTimeout(resolve, delayInms));
+  };
+
+  async function displayFood(overrideDistance) {
+    let dist = distance
+    if (Number.isInteger(overrideDistance)) {
+      dist = overrideDistance
+    }
+
     let request = await fetch(
       "https://places.googleapis.com/v1/places:searchText",
       {
@@ -54,43 +67,16 @@ export default function Maps({ navigation }) {
         body: JSON.stringify({
           textQuery: "healthy restaurants",
           maxResultCount: 10,
-          locationBias: {
-            circle: {
-              center: {
-                latitude: loc.coords.latitude,
-                longitude: loc.coords.longitude,
-              },
-              radius: 2000.0,
-            },
-          },
-        }),
-      }
-    );
-    responce = await request.json();
-    setCards(buildCards(responce));
-  }
-
-  async function displayGyms() {
-    let request = await fetch(
-      "https://places.googleapis.com/v1/places:searchNearby",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Goog-Api-Key": GOOGLE_API_KEY,
-          "X-Goog-FieldMask":
-            "places.displayName,places.rating,places.userRatingCount,places.location,places.primaryTypeDisplayName,places.shortFormattedAddress,places.id",
-        },
-        body: JSON.stringify({
-          includedTypes: ["gym"],
-          maxResultCount: 10,
           locationRestriction: {
-            circle: {
-              center: {
-                latitude: loc.coords.latitude,
-                longitude: loc.coords.longitude,
+            rectangle: {
+              low: {
+                latitude: (loc.coords.latitude - ((1 / 112) * dist)),
+                longitude: (loc.coords.longitude - ((1 / 112) * dist)),
               },
-              radius: 2000.0,
+              high: {
+                latitude: (loc.coords.latitude  + ((1 / 112) * dist)),
+                longitude: (loc.coords.longitude  + ((1 / 112) * dist)),
+              }
             },
           },
         }),
@@ -98,9 +84,51 @@ export default function Maps({ navigation }) {
     );
     responce = await request.json();
     setCards(buildCards(responce));
+    setSelected("Food")
   }
 
-  async function displayRecreation() {
+  async function displayGyms(overrideDistance) {
+    let dist = distance
+    if (Number.isInteger(overrideDistance)) {
+      dist = overrideDistance
+    }
+      let response = await fetch(
+        "https://places.googleapis.com/v1/places:searchNearby",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Goog-Api-Key": GOOGLE_API_KEY,
+            "X-Goog-FieldMask":
+              "places.displayName,places.rating,places.userRatingCount,places.location,places.primaryTypeDisplayName,places.shortFormattedAddress,places.id",
+          },
+          body: JSON.stringify({
+            includedTypes: ["gym"],
+            maxResultCount: 10,
+            locationRestriction: {
+              circle: {
+                center: {
+                  latitude: loc.coords.latitude,
+                  longitude: loc.coords.longitude,
+                },
+                radius: (dist * 1000),
+              },
+            },
+          }), 
+        }
+      );
+      response = await response.json();
+      setCards(buildCards(response));
+      setSelected("Gyms")   
+  }
+
+  async function displayRecreation(overrideDistance) {
+    //setLoc({coords: { latitude: loc.coords.latitude + 0.000000001, longitude: loc.coords.longitude }})
+    let dist = distance
+    if (Number.isInteger(overrideDistance)) {
+      dist = overrideDistance
+    }
+    
     let request = await fetch(
       "https://places.googleapis.com/v1/places:searchNearby",
       {
@@ -126,7 +154,7 @@ export default function Maps({ navigation }) {
                 latitude: loc.coords.latitude,
                 longitude: loc.coords.longitude,
               },
-              radius: 2000.0,
+              radius: (dist * 1000),
             },
           },
         }),
@@ -134,6 +162,7 @@ export default function Maps({ navigation }) {
     );
     responce = await request.json();
     setCards(buildCards(responce));
+    setSelected("Recreation")
   }
 
   function buildCards(data) {
@@ -215,6 +244,36 @@ export default function Maps({ navigation }) {
     return cardList;
   }
 
+  function displayDistance2() {
+    setDistance(2)
+    rerenderMap(2)
+  }
+
+  function displayDistance4() {
+    setDistance(4)
+    rerenderMap(4)
+  }
+
+  function displayDistance6() {
+    setDistance(6)
+    rerenderMap(6)
+  }
+  
+  function rerenderMap(num) {
+    switch(selected){
+      case "Food":
+      displayFood(num)
+      break
+      case "Recreation":
+      displayRecreation(num)
+      break
+      case "Gyms":
+      displayGyms(num)
+      break
+    }
+
+  }
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -233,14 +292,25 @@ export default function Maps({ navigation }) {
           </MapView>
         </View>
         <View style={styles.buttons}>
-          <TouchableOpacity style={styles.button} onPress={displayGyms}>
-            <Text style={styles.buttonText}>Gyms</Text>
+          <TouchableOpacity style={[styles.button, selected == "Gyms" ? styles.buttonSelected : styles.nothing]} onPress={displayGyms}>
+            <Text style={[styles.buttonText, selected == "Gyms" ? styles.buttonTextSelected : styles.nothing]}>Gyms</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={displayRecreation}>
-            <Text style={styles.buttonText}>Recreation</Text>
+          <TouchableOpacity style={[styles.button, selected == "Recreation" ? styles.buttonSelected : styles.nothing]} onPress={displayRecreation}>
+            <Text style={[styles.buttonText, selected == "Recreation" ? styles.buttonTextSelected : styles.nothing]}>Recreation</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={displayFood}>
-            <Text style={styles.buttonText}>Food</Text>
+          <TouchableOpacity style={[styles.button, selected == "Food" ? styles.buttonSelected : styles.nothing]} onPress={displayFood}>
+            <Text style={[styles.buttonText, selected == "Food" ? styles.buttonTextSelected : styles.nothing]}>Food</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.distanceButtons}>
+          <TouchableOpacity style={[styles.distanceButton, distance == 2 ? styles.buttonSelected : styles.nothing]} onPress={displayDistance2}>
+            <Text style={[styles.buttonText, distance == 2 ? styles.buttonTextSelected : styles.nothing]}>2</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.distanceButton, distance == 4 ? styles.buttonSelected : styles.nothing]} onPress={displayDistance4}>
+            <Text style={[styles.buttonText, distance == 4 ? styles.buttonTextSelected : styles.nothing]}>4</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.distanceButton, distance == 6 ? styles.buttonSelected : styles.nothing]} onPress={displayDistance6}>
+            <Text style={[styles.buttonText, distance == 6 ? styles.buttonTextSelected : styles.nothing]}>6</Text>
           </TouchableOpacity>
         </View>
         {cards}
@@ -258,12 +328,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-evenly",
     display: "flex",
+    position:"absolute",
+    width:"90%"
   },
   button: {
-    marginVertical: "1.5%",
-    borderWidth: 0.8,
-    borderRadius: 18,
-    backgroundColor: "white",
+    marginVertical: "4%",
+    borderWidth: 0.2,
+    borderRadius: 0,
+    backgroundColor: "#eeeeee",
     shadowColor: "#333333",
     shadowOffset: {
       width: 6,
@@ -272,13 +344,21 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.6,
     shadowRadius: 4,
     elevation: 7,
+    opacity: 0.7
   },
   buttonText: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "bold",
     textAlign: "center",
     paddingHorizontal: "2.2%",
-    paddingVertical: "2%",
+    paddingVertical: "1%",
+  },
+  buttonTextSelected: {
+    color: "#1d86de"
+  },
+  buttonSelected: {
+    backgroundColor: "#ffffff",
+    opacity: 0.8
   },
   mapContainer: {
     borderWidth: 0.4,
@@ -357,4 +437,30 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#1FA5DE",
   },
+  distanceButtons: {
+    position:"absolute",
+    width:"10%",
+    right:(width * 0.027),
+    top: (height * 0.075),
+    flexDirection:"column",
+    justifyContent: "space-evenly",
+    display: "flex",
+  },
+  distanceButton:{
+    marginVertical: "14%",
+    borderWidth: 0.2,
+    borderRadius: 0,
+    backgroundColor: "#eeeeee",
+    shadowColor: "#333333",
+    shadowOffset: {
+      width: 6,
+      height: 6,
+    },
+    shadowOpacity: 0.6,
+    shadowRadius: 4,
+    elevation: 7,
+    opacity: 0.7
+  }, nothing: {
+
+  }
 });
