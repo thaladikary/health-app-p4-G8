@@ -17,11 +17,12 @@ import { useUser } from "../../context/userContext";
 import { db } from "../../config/firebase";
 import { addDoc, collection } from "@firebase/firestore";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useData } from "../../context/DataContext";
 
 export default function StepOne({ navigation }) {
   //using this variable to store the age of the users, we also set the initial age at 18
   const setSelectedAge = useState(18);
-  const [inputAge, setInputAge] = useState("");
+  const { inputAge, setInputAge } = useData();
   // const userId = useUser().uid;
 
   const currentStep = 1;
@@ -99,9 +100,6 @@ export default function StepOne({ navigation }) {
         onChangeText={(text) => setInputAge(text)}
         onFocus={() => {}}
       ></TextInput>
-
-      
-
 
       {/* NEXT STEP Button here */}
       <TouchableOpacity style={styles.nextButton} onPress={handleNextStep}>
@@ -205,6 +203,4 @@ const styles = StyleSheet.create({
     marginTop: 25,
     marginRight: 15,
   },
-
-  
 });

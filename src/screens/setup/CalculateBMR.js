@@ -1,21 +1,32 @@
-import { View, Text, StyleSheet } from 'react-native';
-import { useUser } from '../../context/userContext';
-import { db } from '../../config/firebase';
-import { addDoc, collection } from '@firebase/firestore';
-import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet } from "react-native";
+import { useUser } from "../../context/userContext";
+import { db } from "../../config/firebase";
+import { addDoc, collection } from "@firebase/firestore";
+import React, { useState, useEffect } from "react";
+import { DataProvider, useData } from "../../context/DataContext";
 
 export default function CalculateBMR() {
   const user = useUser();
+  const {
+    inputAge,
+    measurement,
+    inputWeight,
+    selectedGender,
+    selectedActiveOption,
+    selectedGoalOption,
+    selectedWeightGoalOption,
+  } = useData();
 
   const mockData1 = {
-    age: 20,
-    weight: 60,
-    height: 175,
-    gender: 'male',
-    activity: 'moderatelyActive',
-    lbsGoalPerWeek: 2,
-    goal: 'gainWeight',
+    age: inputAge,
+    weight: measurement,
+    height: inputWeight,
+    gender: selectedGender,
+    activity: selectedActiveOption,
+    lbsGoalPerWeek: selectedGoalOption,
+    goal: selectedWeightGoalOption,
   };
+  console.log(mockData1);
 
   const activityMultipliers = {
     sedentary: 1.2,
@@ -26,12 +37,13 @@ export default function CalculateBMR() {
   };
 
   const calculateBMR = () => {
-    const { weight, height, age, gender, activity, lbsGoalPerWeek, goal } = mockData1;
+    const { weight, height, age, gender, activity, lbsGoalPerWeek, goal } =
+      mockData1;
 
     let bmr;
-    if (gender.toLowerCase() === 'male') {
+    if (gender.toLowerCase() === "male") {
       bmr = 66.47 + 13.75 * weight + 5.003 * height - 6.755 * age;
-    } else if (gender.toLowerCase() === 'female') {
+    } else if (gender.toLowerCase() === "female") {
       bmr = 655.1 + 9.563 * weight + 1.85 * height - 4.676 * age;
     }
 
@@ -41,11 +53,11 @@ export default function CalculateBMR() {
     const totalCaloricIntake = lbsGoalPerWeek * 3500;
     const dailyCaloricExtra = totalCaloricIntake / 7; // Assuming durationGoalInDays is a week
     let targetDailyCaloricIntake;
-    if (goal === 'gainWeight') {
+    if (goal === "gainWeight") {
       targetDailyCaloricIntake = tdee + dailyCaloricExtra;
-    } else if (goal === 'loseWeight') {
+    } else if (goal === "loseWeight") {
       targetDailyCaloricIntake = tdee - dailyCaloricExtra;
-    } else if (goal === 'stayHealthy') {
+    } else if (goal === "stayHealthy") {
       targetDailyCaloricIntake = tdee;
     }
 
@@ -81,26 +93,27 @@ export default function CalculateBMR() {
         caloriesIntake: targetCaloricIntake,
         carbIntake: calculateMacronutrients(targetCaloricIntake).carbGrams,
         fatIntake: calculateMacronutrients(targetCaloricIntake).fatGrams,
-        proteinIntake: calculateMacronutrients(targetCaloricIntake).proteinGrams,
+        proteinIntake:
+          calculateMacronutrients(targetCaloricIntake).proteinGrams,
       };
 
       try {
         const docRef = await addDoc(collection(db, entryPath), entries);
-        console.log('Document added successfully with ID: ', docRef.id);
+        console.log("Document added successfully with ID: ", docRef.id);
       } catch (error) {
-        console.error('Error adding document: ', error);
+        console.error("Error adding document: ", error);
       }
     };
 
     fetchData();
   }, []);
-console.log(calculateBMR())
+  // console.log(calculateBMR());
   return (
-    <View>
-      <Text>{calculateBMR()}</Text>
+    <View style={{ margin: 5 }}>
+      {/* <Text>{calculateBMR()}</Text>
       <Text>{calculateMacronutrients(calculateBMR()).proteinGrams}</Text>
       <Text>{calculateMacronutrients(calculateBMR()).fatGrams}</Text>
-      <Text>{calculateMacronutrients(calculateBMR()).carbGrams}</Text>
+      <Text>{calculateMacronutrients(calculateBMR()).carbGrams}</Text> */}
     </View>
   );
 }
